@@ -20,7 +20,6 @@ namespace On_the_Line
         public Rectangle _spotlight;
         bool isclicked = false;
         public List<Laser> lasers = new List<Laser>();
-        int shootStyle = 0; 
         public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure)
         {
             _color = color;
@@ -34,34 +33,37 @@ namespace On_the_Line
             for(int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
-                if (lasers[i]._rect.X > 500 || lasers[i]._rect.X < 0 || lasers[i]._rect.Y < 0 || lasers[i]._rect.Y > 1000 || Game1.lose)
+                if ((Game1.screen == 1 && (lasers[i]._rect.X > 500 || lasers[i]._rect.X < 0 || lasers[i]._rect.Y < 0 || lasers[i]._rect.Y > 1000) || Game1.lose)||Game1.screen == 2 && !lasers[i]._rect.Intersects(Game1.shootStyleButton.rectangle))
                 {
                     lasers.Remove(lasers[i]);
                     i--;
                 }
             }
             mouseState = Mouse.GetState();
-            if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y))
+            if (Game1.screen != 2)
             {
-                isclicked = true;
-                Game1.pause = false;
-            }
-            if (mouseState.LeftButton == ButtonState.Released)
-            {
-                isclicked = false;
-                Game1.pause = true;
-            }
-            if (isclicked)
-            {
-                _position.X = mouseState.X - (_texture.Width / 2);
-                KeyboardState ks = Keyboard.GetState();
-                if (ks.IsKeyDown(Keys.LeftShift))
+                if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y))
                 {
-                    _position.Y += 1;
+                    isclicked = true;
+                    Game1.pause = false;
                 }
-                else
+                if (mouseState.LeftButton == ButtonState.Released)
                 {
-                    _position.Y = mouseState.Y - (_texture.Height / 2);
+                    isclicked = false;
+                    Game1.pause = true;
+                }
+                if (isclicked)
+                {
+                    _position.X = mouseState.X - (_texture.Width / 2);
+                    KeyboardState ks = Keyboard.GetState();
+                    if (ks.IsKeyDown(Keys.LeftShift))
+                    {
+                        _position.Y += 1;
+                    }
+                    else
+                    {
+                        _position.Y = mouseState.Y - (_texture.Height / 2);
+                    }
                 }
             }
             _hitbox = new Rectangle((int)_position.X + _texture.Width/4, (int)_position.Y + _texture.Height/4, _texture.Width/2, _texture.Height/2);
@@ -72,7 +74,7 @@ namespace On_the_Line
             Vector2 startPos = new Vector2(_position.X + _texture.Width / 2, _position.Y + _texture.Height / 2);
             if (lasers.Count < 500)
             {
-                if (shootStyle == 0)
+                if (Game1.shootStyle == 0)
                 {
                     int laserLives = 7;
                     Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
@@ -80,7 +82,7 @@ namespace On_the_Line
                     lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
                 }
-                else if (shootStyle == 1)
+                else if (Game1.shootStyle == 1)
                 {
                     int laserLives = 5;
                     Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 500);
@@ -93,7 +95,7 @@ namespace On_the_Line
                     lasers.Add(new Laser(startPos, -2, 0, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
                 }
-                else if (shootStyle == 2)
+                else if (Game1.shootStyle == 2)
                 {
                     int laserLives = 2;
                     Game1.laserCooldown = new TimeSpan(0, 0, 0, 4, 0);
@@ -127,10 +129,10 @@ namespace On_the_Line
                     lasers.Add(new Laser(startPos, 3, -4, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, 3, -5, texture, laserLives, laserColor));
                 }
-                else if (shootStyle == 3)
+                else if (Game1.shootStyle == 3)
                 {
                     int laserLives = 1;
-                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
+                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 0, 900);
                     startPos.X = 10;
                     for (int d = 0; d < 20; d++)
                     {

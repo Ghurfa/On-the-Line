@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace On_the_Line
 {
-    class Button
+    public class Button
     {
-        Rectangle rectangle;
+        public Rectangle rectangle;
         public Texture2D _texture;
         MouseState lastMS;
         public bool clicked;
