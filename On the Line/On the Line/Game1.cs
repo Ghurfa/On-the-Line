@@ -522,7 +522,7 @@ namespace On_the_Line
                     else if (colorScheme == "Chocolate")
                     {
                         colorButton._texture = Content.Load<Texture2D>("DefaultButton");
-                        colorScheme = "Default";
+                        colorScheme = "Default";//h
                     }
                 }
                 gamemodeButton.Update();
