@@ -393,6 +393,10 @@ namespace On_the_Line
                     foreach (Obstacles obstacle in obstacles)
                     {
                         obstacle.Update();
+                        if (gamemode == "fastmode")
+                        {
+                            obstacle.Update();
+                        }
                     }
                     if (isLoading)
                     {
@@ -413,11 +417,6 @@ namespace On_the_Line
                         {
                             if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
                             {
-                                for (int y = 255; y > 0; y--)
-                                {
-
-                                    obstacles[0]._color.A = (byte)y;
-                                }
                                 obstacles.RemoveAt(0);
                             }
                             else
@@ -451,6 +450,10 @@ namespace On_the_Line
                 else if (!lose && !pause)
                 {
                     score++;
+                    if(gamemode == "fastmode")
+                    {
+                        score++;
+                    }
                 }
                 if (!isLoading && !lose)
                 {
@@ -459,6 +462,10 @@ namespace On_the_Line
                     {
                         Obstacles obstacle = obstacles[i];
                         obstacle.Update();
+                        if (gamemode == "fastmode")
+                        {
+                            obstacle.Update();
+                        }
                         if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._collide == true && !pause)
                         {
                             isLoading = true;
@@ -522,7 +529,7 @@ namespace On_the_Line
                     else if (colorScheme == "Chocolate")
                     {
                         colorButton._texture = Content.Load<Texture2D>("DefaultButton");
-                        colorScheme = "Default";//h
+                        colorScheme = "Default";
                     }
                 }
                 gamemodeButton.Update();
@@ -539,6 +546,11 @@ namespace On_the_Line
                         gamemode = "spotlight";
                     }
                     else if (gamemode == "spotlight")
+                    {
+                        gamemodeButton._texture = Content.Load<Texture2D>("FastmodeButton");
+                        gamemode = "fastmode";
+                    }
+                    else if (gamemode == "fastmode")
                     {
                         gamemodeButton._texture = Content.Load<Texture2D>("Regularbutton");
                         gamemode = "regular";

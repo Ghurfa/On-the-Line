@@ -54,15 +54,19 @@ namespace On_the_Line
                 }
                 if (isclicked)
                 {
-                    _position.X = mouseState.X - (_texture.Width / 2);
                     KeyboardState ks = Keyboard.GetState();
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
-                        _position.Y += 1;
+                        _position.Y++;
+                        if(Game1.gamemode == "fastmode")
+                        {
+                            _position.Y++;
+                        }
                     }
                     else
                     {
                         _position.Y = mouseState.Y - (_texture.Height / 2);
+                        _position.X = mouseState.X - (_texture.Width / 2);
                     }
                 }
             }
@@ -148,14 +152,14 @@ namespace On_the_Line
             {
                 laser.Draw(spriteBatch);
             }
-            if (Game1.lose == false)
-            {
+            //if (Game1.lose == false)
+            //{
                 spriteBatch.Draw(_texture, _position, _color);
                 if (Game1.gamemode == "spotlight")
                 {
                     spriteBatch.Draw(_spotlightTexture, new Vector2(_spotlight.X, _spotlight.Y), Game1.textColor);
                 }
-            }
+            //}
         }
     }
 }
