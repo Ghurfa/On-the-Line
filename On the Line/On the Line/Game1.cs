@@ -60,6 +60,7 @@ namespace On_the_Line
         public static string colorScheme = "Default";
 
         List<int> levels = new List<int>();
+        List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
 
         public Game1()
@@ -172,6 +173,10 @@ namespace On_the_Line
                     {
                         obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, true, 0, 0, 0));
                     }
+                    else if (currentPixel.R == 254)
+                    {
+                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B));
+                    }
                     else if (currentPixel != Color.White)
                     {
                         if (gamemode == "darkmode")
@@ -202,6 +207,7 @@ namespace On_the_Line
                     if (ks.IsKeyDown(Keys.R) && !lastKs.IsKeyDown(Keys.R))
                     {
                         obstacles.Clear();
+                        enemies.Clear();
                         startNewGame();
                     }
                     if (ks.IsKeyDown(Keys.Up))
@@ -243,6 +249,22 @@ namespace On_the_Line
                         {
                             newObstacle(highestObstacle);
                         }
+                        for (int i = 0; i < enemies.Count; i++)
+                        {
+                            Enemy enemy = enemies[i];
+                            enemy.Update();
+                            if (ks.IsKeyDown(Keys.RightControl))
+                            {
+                                enemy.Update();
+                            }
+                            if (ks.IsKeyDown(Keys.LeftControl))
+                            {
+                                for (int d = 0; d < 6; d++)
+                                {
+                                    enemy.Update();
+                                }
+                            }
+                        }
                     }
                     else if (ks.IsKeyDown(Keys.Down))
                     {
@@ -263,6 +285,15 @@ namespace On_the_Line
                         if (highestObstacle >= 0)
                         {
                             newObstacle(highestObstacle);
+                        }
+                        for (int i = 0; i < enemies.Count; i++)
+                        {
+                            Enemy enemy = enemies[i];
+                            enemy.Update();
+                            if (ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.LeftControl))
+                            {
+                                enemy.Update();
+                            }
                         }
                     }
                 }
@@ -363,6 +394,10 @@ namespace On_the_Line
             if (!pause)
             {
                 laserElapsedTime += gameTime.ElapsedGameTime;
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.laserElapsedTime += gameTime.ElapsedGameTime;
+                }
             }
             if (laserElapsedTime >= laserCooldown)
             {
@@ -450,7 +485,7 @@ namespace On_the_Line
                 else if (!lose && !pause)
                 {
                     score++;
-                    if(gamemode == "fastmode")
+                    if (gamemode == "fastmode")
                     {
                         score++;
                     }
@@ -501,6 +536,10 @@ namespace On_the_Line
                     if (highestObstacle >= 0 && obstacles.Count < 2000)
                     {
                         newObstacle(highestObstacle);
+                    }
+                    foreach (Enemy enemy in enemies)
+                    {
+                        enemy.Update();
                     }
                 }
                 keyboardStuff();
@@ -597,6 +636,10 @@ namespace On_the_Line
                 for (int i = 0; i < obstacles.Count; i++)
                 {
                     obstacles[i].Draw(spriteBatch);
+                }
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.Draw(spriteBatch);
                 }
                 spriteBatch.DrawString(font, string.Format("{0}", obstacles.Count), new Vector2(0, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(400, 950), textColor);

@@ -26,8 +26,11 @@ namespace On_the_Line
         }
         public void Update()
         {
-            _rect.X += _moveX;
-            _rect.Y += _moveY;
+            if (!Game1.pause)
+            {
+                _rect.X += _moveX;
+                _rect.Y += _moveY;
+            }
         }
         public void Draw(SpriteBatch spriteBatch)
         {

@@ -18,17 +18,39 @@ namespace On_the_Line
         Texture2D _spotlightTexture;
         public Rectangle _hitbox;
         public Rectangle _spotlight;
+        int _direction = 0;
+        public int _shootStyle;
         bool isclicked = false;
         public List<Laser> lasers = new List<Laser>();
-        public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure)
+        bool showWhenLose;
+        public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, int shootStyle = 0, int direction = 0)
         {
             _color = color;
             _texture = texture;
             _hitbox = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
             _spotlightTexture = spotlightTexure;
+            _shootStyle = shootStyle;
+            _direction = direction;
         }
         public void Update()
         {
+            _shootStyle = Game1.shootStyle;
+            if (_shootStyle == 0)
+            {
+                Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
+            }
+            else if (_shootStyle == 1)
+            {                
+                Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 500);
+            }
+            else if (_shootStyle == 2)
+            {
+                Game1.laserCooldown = new TimeSpan(0, 0, 0, 4, 0);
+            }
+            else if (_shootStyle == 3)
+            {
+                Game1.laserCooldown = new TimeSpan(0, 0, 0, 0, 900);
+            }
             _spotlight = new Rectangle((int)_position.X + _texture.Width/2 - 100, (int)_position.Y + _texture.Height/2 - 100, 200, 200);
             for(int i = 0; i < lasers.Count; i++)
             {
@@ -78,18 +100,37 @@ namespace On_the_Line
             Vector2 startPos = new Vector2(_position.X + _texture.Width / 2, _position.Y + _texture.Height / 2);
             if (lasers.Count < 500)
             {
-                if (Game1.shootStyle == 0)
+                if (_shootStyle == 0)
                 {
                     int laserLives = 7;
-                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
-                    lasers.Add(new Laser(startPos, 0, -2, texture, laserLives, laserColor));
-                    lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
-                    lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
+                    if (_direction == 0)
+                    {
+                        lasers.Add(new Laser(startPos, 0, -2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
+                    }
+                    else if (_direction == 1)
+                    {
+                        lasers.Add(new Laser(startPos, -2, 0, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
+                    }
+                    else if (_direction == 2)
+                    {
+                        lasers.Add(new Laser(startPos, 0, 2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, 2, 2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
+                    }
+                    else if (_direction == 3)
+                    {
+                        lasers.Add(new Laser(startPos, 2, 0, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, 2, 2, texture, laserLives, laserColor));
+                        lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
+                    }
                 }
-                else if (Game1.shootStyle == 1)
+                else if (_shootStyle == 1)
                 {
                     int laserLives = 5;
-                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 1, 500);
                     lasers.Add(new Laser(startPos, 0, 2, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, 2, 2, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, 2, 0, texture, laserLives, laserColor));
@@ -99,10 +140,9 @@ namespace On_the_Line
                     lasers.Add(new Laser(startPos, -2, 0, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
                 }
-                else if (Game1.shootStyle == 2)
+                else if (_shootStyle == 2)
                 {
                     int laserLives = 2;
-                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 4, 0);
                     lasers.Add(new Laser(startPos, -1, 0, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, -1, -1, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, -1, -2, texture, laserLives, laserColor));
@@ -133,10 +173,9 @@ namespace On_the_Line
                     lasers.Add(new Laser(startPos, 3, -4, texture, laserLives, laserColor));
                     lasers.Add(new Laser(startPos, 3, -5, texture, laserLives, laserColor));
                 }
-                else if (Game1.shootStyle == 3)
+                else if (_shootStyle == 3)
                 {
                     int laserLives = 1;
-                    Game1.laserCooldown = new TimeSpan(0, 0, 0, 0, 900);
                     startPos.X = 10;
                     for (int d = 0; d < 20; d++)
                     {
@@ -152,14 +191,15 @@ namespace On_the_Line
             {
                 laser.Draw(spriteBatch);
             }
-            //if (Game1.lose == false)
-            //{
+            if (!Game1.lose|| Game1.lose && showWhenLose)
+            {
                 spriteBatch.Draw(_texture, _position, _color);
                 if (Game1.gamemode == "spotlight")
                 {
                     spriteBatch.Draw(_spotlightTexture, new Vector2(_spotlight.X, _spotlight.Y), Game1.textColor);
                 }
-            //}
+            }
         }
     }
 }
+ 
