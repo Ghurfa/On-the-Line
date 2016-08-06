@@ -20,6 +20,10 @@ namespace On_the_Line
             rectangle = new Rectangle(X, Y, texture.Width, texture.Height);
             _texture = texture;
         }
+
+        /// <summary>
+        /// This is the balls update
+        /// </summary>
         public void Update()
         {
             //_texture.Name = string.Format("{0}Button", Game1.colorScheme);

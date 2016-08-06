@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace On_the_Line
 {
@@ -20,7 +21,7 @@ namespace On_the_Line
             _moveX = moveX;
             _moveY = moveY;
             _texture = texture;
-            _rect = new Rectangle((int) startPos.X, (int)startPos.Y, texture.Width, texture.Height);
+            _rect = new Rectangle((int)startPos.X, (int)startPos.Y, texture.Width, texture.Height);
             _lives = lives;
             _color = color;
         }
@@ -30,6 +31,19 @@ namespace On_the_Line
             {
                 _rect.X += _moveX;
                 _rect.Y += _moveY;
+            }
+            KeyboardState ks = new KeyboardState();
+            if (ks.IsKeyDown(Keys.Up))
+            {
+                _rect.Y++;
+                if (ks.IsKeyDown(Keys.RightControl))
+                {
+                    _rect.Y++;
+                }
+                if (ks.IsKeyDown(Keys.LeftControl))
+                {
+                    _rect.Y += 6;
+                }
             }
         }
         public void Draw(SpriteBatch spriteBatch)

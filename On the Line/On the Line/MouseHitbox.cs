@@ -14,7 +14,7 @@ namespace On_the_Line
         public Color _color;
         MouseState mouseState;
         MouseState lastMouseState;
-        Texture2D _texture;
+        public Texture2D _texture;
         Texture2D _spotlightTexture;
         public Rectangle _hitbox;
         public Rectangle _spotlight;

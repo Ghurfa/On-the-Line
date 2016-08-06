@@ -14,6 +14,20 @@ namespace On_the_Line
     /// <summary>
     /// This is the main type for your game
     /// </summary>
+
+    /// <TODO>
+    /// make lasers move with up/down arrow keys
+    /// </TODO>
+    
+    ///<doneToday>
+    ///Enemies kill you
+    ///Can kill enemies
+    ///Enemies shoot slower
+    ///
+    ///</doneToday> 
+    
+
+
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -54,7 +68,7 @@ namespace On_the_Line
         Button gamemodeButton;
         public static Button shootStyleButton;
 
-        bool isLoading = false;
+        public static bool isLoading = false;
         int highestObstacle = -500;
 
         public static string colorScheme = "Default";
@@ -134,7 +148,7 @@ namespace On_the_Line
 
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 16);
+            int randomNumber = random.Next(16, 17);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -448,37 +462,44 @@ namespace On_the_Line
                     }
                     else
                     {
-                        if (obstacles.Count > 0)
+                        if (enemies.Count > 0)
                         {
-                            if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
-                            {
-                                obstacles.RemoveAt(0);
-                            }
-                            else
-                            {
-                                //for (int i = 0; i < 76; i++)
-                                //{
-                                int randomNumber = random.Next(0, obstacles.Count - 1);
-
-                                obstacles.RemoveAt(randomNumber);
-                                //}
-                            }
-                            /*
-                             * 
-                             * obstacles.RemoveAt(0);
-                             * if ((ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.RightControl)) && obstacles.Count > 3)
-                             * {
-                             *    obstacles.RemoveAt(0);
-                             *    obstacles.RemoveAt(0);
-                             *    obstacles.RemoveAt(0);
-                             *    obstacles.RemoveAt(0);
-                             * }
-                             */
+                            enemies.RemoveAt(0);
                         }
                         else
                         {
-                            lose = false;
-                            startNewGame();
+                            if (obstacles.Count > 0)
+                            {
+                                if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
+                                {
+                                    obstacles.RemoveAt(0);
+                                }
+                                else
+                                {
+                                    //for (int i = 0; i < 76; i++)
+                                    //{
+                                    int randomNumber = random.Next(0, obstacles.Count - 1);
+
+                                    obstacles.RemoveAt(randomNumber);
+                                    //}
+                                }
+                                /*
+                                 * 
+                                 * obstacles.RemoveAt(0);
+                                 * if ((ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.RightControl)) && obstacles.Count > 3)
+                                 * {
+                                 *    obstacles.RemoveAt(0);
+                                 *    obstacles.RemoveAt(0);
+                                 *    obstacles.RemoveAt(0);
+                                 *    obstacles.RemoveAt(0);
+                                 * }
+                                 */
+                            }
+                            else
+                            {
+                                lose = false;
+                                startNewGame();
+                            }
                         }
                     }
                 }
@@ -537,9 +558,23 @@ namespace On_the_Line
                     {
                         newObstacle(highestObstacle);
                     }
-                    foreach (Enemy enemy in enemies)
+                    for (int i = 0; i < enemies.Count; i++)
                     {
+                        Enemy enemy = enemies[i];
                         enemy.Update();
+                        if (gamemode == "fastmode")
+                        {
+                            enemy.Update();
+                        }
+                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                        {
+                            Laser laser = mouseHitbox.lasers[x];
+                            if (enemy.body._hitbox.Intersects(laser._rect))
+                            {
+                                enemies.Remove(enemy);
+                                mouseHitbox.lasers.Remove(laser);
+                            }
+                        }
                     }
                 }
                 keyboardStuff();
@@ -644,6 +679,12 @@ namespace On_the_Line
                 spriteBatch.DrawString(font, string.Format("{0}", obstacles.Count), new Vector2(0, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(400, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("{0}", mouseHitbox.lasers.Count), new Vector2(240, 950), textColor);
+
+                //Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
+                //pixel.SetData<Color>(new Color[] { Color.White });
+
+                // if (enemies.Count > 0)
+                //    spriteBatch.Draw(pixel, enemies[0].body._hitbox, Color.Red);
             }
             else if (screen == 2)
             {
