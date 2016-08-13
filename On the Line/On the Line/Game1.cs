@@ -11,23 +11,20 @@ using Microsoft.Xna.Framework.Media;
 
 namespace On_the_Line
 {
+
+    /// <TODO>
+    /// 
+    /// </TODO>
+
+    ///<doneToday>
+    ///
+    ///</doneToday> 
+
+
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-
-    /// <TODO>
-    /// make lasers move with up/down arrow keys
-    /// </TODO>
-    
-    ///<doneToday>
-    ///Enemies kill you
-    ///Can kill enemies
-    ///Enemies shoot slower
-    ///
-    ///</doneToday> 
-    
-
-
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -51,7 +48,7 @@ namespace On_the_Line
         public static Color insideColor;
         Color ballColor;
         public static Color textColor;
-        Color laserColor;
+        public static Color laserColor;
         int score = 0;
         int fps;
         int frames;
@@ -74,7 +71,7 @@ namespace On_the_Line
         public static string colorScheme = "Default";
 
         List<int> levels = new List<int>();
-        List<Enemy> enemies = new List<Enemy>();
+        public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
 
         public Game1()
@@ -134,7 +131,9 @@ namespace On_the_Line
         {
             // TODO: Unload any non ContentManager content here
         }
-
+        /// <summary>
+        /// Sets up everything for a new game
+        /// </summary>
         void startNewGame()
         {
             lose = false;
@@ -145,17 +144,24 @@ namespace On_the_Line
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"));
             mouseHitbox._position = new Vector2(238, 250);
         }
-
+        /// <summary>
+        /// Chooses a random obstacle to load
+        /// </summary>
+        /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(16, 17);
+            int randomNumber = random.Next(1, 19);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
             }
             loadObstacle(yOffset, string.Format("Obstacle{0}", randomNumber));
         }
-
+        /// <summary>
+        /// Loads an obstacle
+        /// </summary>
+        /// <param name="yOffset"></param>
+        /// <param name="obstacleName">The name of the obstacle to load</param>
         void loadObstacle(float yOffset, string obstacleName)
         {
             Texture2D obstacleTexture = Content.Load<Texture2D>(obstacleName);
@@ -187,9 +193,13 @@ namespace On_the_Line
                     {
                         obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, true, 0, 0, 0));
                     }
+                    else if (currentPixel == Color.Orange)
+                    {
+                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), 0, 0, true));
+                    }
                     else if (currentPixel.R == 254)
                     {
-                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B));
+                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B, false));
                     }
                     else if (currentPixel != Color.White)
                     {
@@ -205,7 +215,6 @@ namespace On_the_Line
                 }
             }
         }
-
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -287,9 +296,16 @@ namespace On_the_Line
                         {
                             Obstacles obstacle = obstacles[i];
                             obstacle.Update();
-                            if (ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.LeftControl))
+                            if (ks.IsKeyDown(Keys.RightControl))
                             {
                                 obstacle.Update();
+                            }
+                            if (ks.IsKeyDown(Keys.LeftControl))
+                            {
+                                for (int d = 0; d < 6; d++)
+                                {
+                                    obstacle.Update();
+                                }
                             }
                             if (obstacle.hitbox.Y < highestObstacle)
                             {
@@ -315,12 +331,15 @@ namespace On_the_Line
                 if (ks.IsKeyDown(Keys.Space) && canShootLaser)
                 {
                     canShootLaser = false;
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor);
+                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
                     laserElapsedTime = TimeSpan.Zero;
                 }
             }
             lastKs = ks;
         }
+        /// <summary>
+        /// This checks the color scheme and chooses the color
+        /// </summary>
         void checkColorScheme()
         {
             if (colorScheme == "Default")
@@ -343,7 +362,7 @@ namespace On_the_Line
             }
             else if (colorScheme == "Ice")
             {
-                ballColor = new Color(0, 240, 220);
+                ballColor = new Color(255, 150, 0);
                 textColor = new Color(255, 150, 0);
                 laserColor = new Color(255, 150, 0);
                 if (gamemode == "darkmode" || gamemode == "spotlight")
@@ -390,7 +409,7 @@ namespace On_the_Line
                 }
                 else
                 {
-                    wallColor = new Color(40, 10, 0);
+                    wallColor = Color.White;
                     outsideColor = new Color(40, 10, 0);
                     insideColor = new Color(80, 50, 20);
                 }
@@ -575,6 +594,22 @@ namespace On_the_Line
                                 mouseHitbox.lasers.Remove(laser);
                             }
                         }
+                        for (int y = 0; y < enemies.Count; y++)
+                        {
+                            Enemy targetedEnemy = enemies[y];
+                            if (enemy != targetedEnemy)
+                            {
+                                for (int x = 0; x < enemy.body.lasers.Count; x++)
+                                {
+                                    Laser laser = enemy.body.lasers[x];
+                                    if (targetedEnemy.body._hitbox.Intersects(laser._rect))
+                                    {
+                                        enemies.Remove(targetedEnemy);
+                                        enemy.body.lasers.Remove(laser);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 keyboardStuff();
@@ -633,7 +668,8 @@ namespace On_the_Line
                 shootStyleButton.Update();
                 if (shootStyleButton.clicked)
                 {
-                    if (shootStyle != 3)
+                    mouseHitbox.lasers.Clear();
+                    if (shootStyle != 4)
                     {
                         shootStyle++;
                     }
@@ -642,7 +678,8 @@ namespace On_the_Line
                         shootStyle = 0;
                     }
                     canShootLaser = true;
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor);
+                    mouseHitbox.Update();
+                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
                 }
                 backButton.Update();
                 if (backButton.clicked)
@@ -677,7 +714,7 @@ namespace On_the_Line
                     enemy.Draw(spriteBatch);
                 }
                 spriteBatch.DrawString(font, string.Format("{0}", obstacles.Count), new Vector2(0, 950), textColor);
-                spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(400, 950), textColor);
+                spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(380, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("{0}", mouseHitbox.lasers.Count), new Vector2(240, 950), textColor);
 
                 //Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
