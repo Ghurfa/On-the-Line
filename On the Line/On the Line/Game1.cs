@@ -139,7 +139,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(19, 20);
+            int randomNumber = random.Next(20, 21);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
