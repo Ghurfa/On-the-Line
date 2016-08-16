@@ -38,6 +38,12 @@ namespace On_the_Line
             {
                 laserCooldown = new TimeSpan(0, 0, 0, 0, 900);
             }
+            else if (body._shootStyle == 4)
+            {
+                laserCooldown = new TimeSpan(0, 0, 0, 3, 0);
+            }
+
+            body.fireLasers(_laserTexture, Game1.wallColor, false);
         }
         public void Update()
         {
@@ -51,9 +57,6 @@ namespace On_the_Line
                 else
                 {
                     body.fireLasers(_laserTexture, Game1.wallColor, false);
-                    Random random = new Random();
-                    TimeSpan addTimeSpan = new TimeSpan(0, 0, 0, 0, 100 * (random.Next(1, 4) - 2));
-                    laserCooldown = laserCooldown + addTimeSpan;
                 }
             }
             body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);

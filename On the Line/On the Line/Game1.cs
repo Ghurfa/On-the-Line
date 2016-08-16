@@ -11,17 +11,6 @@ using Microsoft.Xna.Framework.Media;
 
 namespace On_the_Line
 {
-
-    /// <TODO>
-    /// 
-    /// </TODO>
-
-    ///<doneToday>
-    ///
-    ///</doneToday> 
-
-
-
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -150,7 +139,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 19);
+            int randomNumber = random.Next(19, 20);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -715,7 +704,12 @@ namespace On_the_Line
                 }
                 spriteBatch.DrawString(font, string.Format("{0}", obstacles.Count), new Vector2(0, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(380, 950), textColor);
-                spriteBatch.DrawString(font, string.Format("{0}", mouseHitbox.lasers.Count), new Vector2(240, 950), textColor);
+                int laserCount = mouseHitbox.lasers.Count;
+                foreach (Enemy enemy in enemies)
+                {
+                    laserCount += enemy.body.lasers.Count();
+                }
+                spriteBatch.DrawString(font, string.Format("{0}", laserCount), new Vector2(240, 950), textColor);
 
                 //Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
                 //pixel.SetData<Color>(new Color[] { Color.White });

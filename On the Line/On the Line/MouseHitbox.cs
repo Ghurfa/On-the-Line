@@ -167,35 +167,126 @@ namespace On_the_Line
                     else if (_shootStyle == 2)
                     {
                         int laserLives = 2;
-                        lasers.Add(new Laser(startPos, -1, 0, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -1, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -1, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -1, -3, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -1, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -1, -5, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 0, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, 0, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, -3, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 1, -5, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, -3, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, -5, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, -3, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, -5, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -3, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -3, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -3, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -3, -5, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 3, -1, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 3, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 3, -4, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 3, -5, texture, laserLives, laserColor));
+                        if (_direction == 0)
+                        {
+                            lasers.Add(new Laser(startPos, -1, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -5, texture, laserLives, laserColor));
+                        }
+                        else if (_direction == 1)
+                        {
+                            lasers.Add(new Laser(startPos, -1, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -4, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -5, 3, texture, laserLives, laserColor));
+                        }
+                        else if (_direction == 2)
+                        {
+                            lasers.Add(new Laser(startPos, -1, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -1, 5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -3, 5, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 4, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 5, texture, laserLives, laserColor));
+                        }
+                        else if (_direction == 3)
+                        {
+                            lasers.Add(new Laser(startPos, 1, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, -1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, 1, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 3, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, -3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 1, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 4, 3, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 5, 3, texture, laserLives, laserColor));
+                        }
                     }
                     else if (_shootStyle == 3)
                     {
