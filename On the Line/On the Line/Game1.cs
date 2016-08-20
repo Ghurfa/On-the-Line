@@ -139,7 +139,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(20, 21);
+            int randomNumber = random.Next(1, 21);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -149,7 +149,7 @@ namespace On_the_Line
         /// <summary>
         /// Loads an obstacle
         /// </summary>
-        /// <param name="yOffset"></param>
+        /// <param name="yOffset">The y-offset to load  the obstacle at</param>
         /// <param name="obstacleName">The name of the obstacle to load</param>
         void loadObstacle(float yOffset, string obstacleName)
         {
@@ -662,7 +662,7 @@ namespace On_the_Line
                 if (shootStyleButton.clicked)
                 {
                     mouseHitbox.lasers.Clear();
-                    if (shootStyle != 4)
+                    if (shootStyle != 5)
                     {
                         shootStyle++;
                     }

@@ -22,11 +22,10 @@ namespace On_the_Line
         }
 
         /// <summary>
-        /// This is the balls update
+        /// This is the ball's update
         /// </summary>
         public void Update()
         {
-            //_texture.Name = string.Format("{0}Button", Game1.colorScheme);
             MouseState MS = Mouse.GetState();
             if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released && rectangle.Contains(MS.X, MS.Y))
             {
