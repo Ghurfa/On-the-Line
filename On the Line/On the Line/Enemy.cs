@@ -28,7 +28,7 @@ namespace On_the_Line
             }
             else if (body._shootStyle == 1)
             {
-                laserCooldown = new TimeSpan(0, 0, 0, 1, 500);
+                laserCooldown = new TimeSpan(0, 0, 0, 0, 750);
             }
             else if (body._shootStyle == 2)
             {

@@ -24,15 +24,26 @@ namespace On_the_Line
         public Color _color;
         public Texture2D _texture;
         public Rectangle hitbox;
-        public bool _collide;
         public bool _breaks;
+        public bool _indestrucable;
         public int _moveX;
         public int _moveY;
         public int _maxMove;
         public int move = 1;
         int slow = 0;
-
-        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool collide, bool breaks, int moveX, int moveY, int maxmove)
+        /// <summary>
+        /// Loads an obstacle
+        /// </summary>
+        /// <param name="texture">The texture of the obstacle</param>
+        /// <param name="position">The position of the obstacle</param>
+        /// <param name="size">The size of the obstacle</param>
+        /// <param name="color">The color of the obstacle</param>
+        /// <param name="breaks">Whether or not the obstacle breaks</param>
+        /// <param name="moveX">How much the obstacle moves in the X axis</param>
+        /// <param name="moveY">How much the obstacle moves in the Y axis</param>
+        /// <param name="maxmove">The maximum amount of times the obstacle moves</param>
+        /// <param name="indescructable">Whether or not the obstacle absorbs a laser</param>
+        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable)
         {
             _startPosition = position;
             Position = _startPosition;
@@ -40,11 +51,11 @@ namespace On_the_Line
             _size = size;
             _texture = texture;
             hitbox = new Rectangle((int)position.X, (int)position.Y, (int)(_texture.Width * _size.X), (int)(_texture.Height * _size.Y));
-            _collide = collide;
             _moveX = moveX;
             _moveY = moveY;
             _maxMove = maxmove;
             _breaks = breaks;
+            _indestrucable = indescructable;
         }
 
         public void Update()
@@ -59,12 +70,17 @@ namespace On_the_Line
                     }
                     for (int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
                     {
-                        if (hitbox.Intersects(Game1.mouseHitbox.lasers[i]._rect) && _color != Game1.wallColor && _collide)
+                        Laser laser = Game1.mouseHitbox.lasers[i];
+                        if (hitbox.Intersects(laser._rect) && _color != Game1.wallColor)
                         {
+                            if (_indestrucable)
+                            {
+                                Game1.mouseHitbox.lasers.Remove(laser);
+                            }
                             Game1.mouseHitbox.lasers[i]._lives--;
                             if (Game1.mouseHitbox.lasers[i]._lives <= 0)
                             {
-                                Game1.mouseHitbox.lasers.Remove(Game1.mouseHitbox.lasers[i]);
+                                Game1.mouseHitbox.lasers.Remove(laser);
                             }
                             _color = Game1.wallColor;
                         }
@@ -87,6 +103,14 @@ namespace On_the_Line
                             _color = Game1.insideColor;
                         }
                     }
+                }
+            }
+            for(int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
+            {
+                Laser laser = Game1.mouseHitbox.lasers[i];
+                if (laser._rect.Intersects(hitbox) && _indestrucable)
+                {
+                    Game1.mouseHitbox.lasers.Remove(laser);
                 }
             }
             slow++;

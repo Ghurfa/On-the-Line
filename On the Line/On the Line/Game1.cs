@@ -139,7 +139,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(19, 20);
+            int randomNumber = random.Next(20, 21);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -167,24 +167,28 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, true, false, 0, 0, 0)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, 0, 0, 0, false)); //Outside Background
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), outsideColor, true, false, 0, 0, 0)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), outsideColor, false, 0, 0, 0, false)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, true, false, 0, 0, 0));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, false, 0, 0, 0, false));
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, true, 0, 0, 0));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0,false));
                     }
                     else if (currentPixel == Color.Orange)
                     {
                         enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), 0, 0, true));
+                    }
+                    else if (currentPixel == Color.Black)
+                    {
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true));
                     }
                     else if (currentPixel.R == 254)
                     {
@@ -194,11 +198,11 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, true, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
                         }
                     }
                 }
@@ -530,7 +534,7 @@ namespace On_the_Line
                         {
                             obstacle.Update();
                         }
-                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._collide == true && !pause)
+                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && !pause)
                         {
                             isLoading = true;
                         }

@@ -118,8 +118,8 @@ namespace On_the_Line
             {
                 if (aims)
                 {
-                    int aimX = ((int)Game1.mouseHitbox._hitbox.X - (int)startPos.X)/25;
-                    int aimY = ((int)Game1.mouseHitbox._hitbox.Y - (int)startPos.Y)/25;
+                    int aimX = ((int)Game1.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
+                    int aimY = ((int)Game1.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
                     lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
                 }
                 else
@@ -155,14 +155,36 @@ namespace On_the_Line
                     else if (_shootStyle == 1)
                     {
                         int laserLives = 5;
-                        lasers.Add(new Laser(startPos, 0, 2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, 2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, 0, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, 0, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, 0, texture, laserLives, laserColor));
-                        lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
+                        if (_direction == 0)
+                        {
+                            lasers.Add(new Laser(startPos, 0, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 2, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, 0, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, -2, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 0, texture, laserLives, laserColor));
+                            lasers.Add(new Laser(startPos, -2, 2, texture, laserLives, laserColor));
+                        }
+                        else if (_direction == 1)
+                        {
+                            int xSpeed = 2;
+                            int ySpeed = 2;
+                            int startX = (int) startPos.X + 50;
+                            int startY;
+                            for (int x = 0; x < 2; x++)
+                            {
+                                startY = (int)startPos.Y + 50;
+                                for (int y = 0; y < 2; y++)
+                                {
+                                    lasers.Add(new Laser(new Vector2(startX,startY), xSpeed, ySpeed, texture, laserLives, laserColor));
+                                    ySpeed *= -1;
+                                    startY -= 100;
+                                }
+                                xSpeed *= -1;
+                                startX -= 100;
+                            }
+                        }
                     }
                     else if (_shootStyle == 2)
                     {
@@ -301,7 +323,7 @@ namespace On_the_Line
                     else if (_shootStyle == 4)
                     {
                         int laserLives = 1;
-                        startPos.Y = _position.Y - 38; 
+                        startPos.Y = _position.Y - 38;
                         for (int i = 0; i < 5; i++)
                         {
                             startPos.X = _position.X - 38;
