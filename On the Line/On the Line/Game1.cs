@@ -43,6 +43,7 @@ namespace On_the_Line
         int frames;
         public static int screen = 0;
         bool canShootLaser = true;
+        bool shootingLaser = false;
         public static int shootStyle = 0;
         //public static bool darkmode = true;
         public static string gamemode = "regular";
@@ -97,17 +98,13 @@ namespace On_the_Line
             pixel.SetData<Color>(new Color[] { Color.White });
             startButton = new Button(125, 250, Content.Load<Texture2D>("StartButton"));
             optionsButton = new Button(125, 400, Content.Load<Texture2D>("OptionsButton"));
-            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"));
+            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
 
             colorButton = new Button(125, 100, Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
             gamemodeButton = new Button(125, 300, Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
             shootStyleButton = new Button(125, 500, Content.Load<Texture2D>("EmptyButton"));
 
             backButton = new Button(125, 700, Content.Load<Texture2D>("BackButton"));
-            //obstacles.Add(new Obstacles(Content.Load<Texture2D>("Obstacle1"), new Vector2(0, 0), Color.White));
-            //obstacles.Add(new Obstacles(Content.Load<Texture2D>("Obstacle1"), new Vector2(0, -500), Color.White));
-            //randomTexture(obstacles[1]);
-            //randomTexture(obstacles[2]);
 
             // TODO: use this.Content to load your game content here
         }
@@ -130,7 +127,7 @@ namespace On_the_Line
             score = 0;
             loadObstacle(1000, "blankObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 5)));
-            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"));
+            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
             mouseHitbox._position = new Vector2(238, 250);
         }
         /// <summary>
@@ -139,7 +136,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 21);
+            int randomNumber = random.Next(20, 21);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -180,7 +177,7 @@ namespace On_the_Line
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0,false));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false));
                     }
                     else if (currentPixel == Color.Orange)
                     {
@@ -323,9 +320,25 @@ namespace On_the_Line
 
                 if (ks.IsKeyDown(Keys.Space) && canShootLaser)
                 {
-                    canShootLaser = false;
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                    shootingLaser = true;
                     laserElapsedTime = TimeSpan.Zero;
+                }
+                if (shootingLaser)
+                {
+                    int times = 0;
+                    //do
+                    //{
+                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                    if (mouseHitbox.reloadCycle == 0 && mouseHitbox.slow == 0)
+                    {
+                        times++;
+                    }
+                    //} while (times != 2);
+                    if (times == 1)
+                    {
+                        canShootLaser = false;
+                        shootingLaser = false;
+                    }
                 }
             }
             lastKs = ks;
@@ -423,6 +436,7 @@ namespace On_the_Line
                 foreach (Enemy enemy in enemies)
                 {
                     enemy.laserElapsedTime += gameTime.ElapsedGameTime;
+
                 }
             }
             if (laserElapsedTime >= laserCooldown)
@@ -470,48 +484,26 @@ namespace On_the_Line
                         loadObstacle(500 + loadHeight, "Loading");
                         isLoading = false;
                         mouseHitbox.lasers.Clear();
-
                     }
                     else
                     {
-                        if (enemies.Count > 0)
+                        if (obstacles.Count > 0)
                         {
-                            enemies.RemoveAt(0);
-                        }
-                        else
-                        {
-                            if (obstacles.Count > 0)
+                            if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
                             {
-                                if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
-                                {
-                                    obstacles.RemoveAt(0);
-                                }
-                                else
-                                {
-                                    //for (int i = 0; i < 76; i++)
-                                    //{
-                                    int randomNumber = random.Next(0, obstacles.Count - 1);
-
-                                    obstacles.RemoveAt(randomNumber);
-                                    //}
-                                }
-                                /*
-                                 * 
-                                 * obstacles.RemoveAt(0);
-                                 * if ((ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.RightControl)) && obstacles.Count > 3)
-                                 * {
-                                 *    obstacles.RemoveAt(0);
-                                 *    obstacles.RemoveAt(0);
-                                 *    obstacles.RemoveAt(0);
-                                 *    obstacles.RemoveAt(0);
-                                 * }
-                                 */
+                                obstacles.RemoveAt(0);
                             }
                             else
                             {
-                                lose = false;
-                                startNewGame();
+                                enemies.Clear();
+                                int randomNumber = random.Next(0, obstacles.Count - 1);
+                                obstacles.RemoveAt(randomNumber);
                             }
+                        }
+                        else
+                        {
+                            lose = false;
+                            startNewGame();
                         }
                     }
                 }
@@ -672,7 +664,15 @@ namespace On_the_Line
                     }
                     canShootLaser = true;
                     mouseHitbox.Update();
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                    int times = 0;
+                    do
+                    {
+                        mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                        if (mouseHitbox.reloadCycle != 0 && mouseHitbox.slow == 0)
+                        {
+                            times++;
+                        }
+                    } while (times != 2);
                 }
                 backButton.Update();
                 if (backButton.clicked)
@@ -714,12 +714,6 @@ namespace On_the_Line
                     laserCount += enemy.body.lasers.Count();
                 }
                 spriteBatch.DrawString(font, string.Format("{0}", laserCount), new Vector2(240, 950), textColor);
-
-                //Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
-                //pixel.SetData<Color>(new Color[] { Color.White });
-
-                // if (enemies.Count > 0)
-                //    spriteBatch.Draw(pixel, enemies[0].body._hitbox, Color.Red);
             }
             else if (screen == 2)
             {

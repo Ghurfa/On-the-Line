@@ -16,9 +16,10 @@ namespace On_the_Line
         Texture2D _laserTexture;
         int slow = 0;
         bool aims;
+        bool shooting = false;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim)
         {
-            body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, shootstyle, direction);
+            body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, shootstyle, direction);
             body._position = position;
             _laserTexture = laserTexture;
             aims = doesAim;
@@ -49,14 +50,31 @@ namespace On_the_Line
         {
             if (laserElapsedTime >= laserCooldown)
             {
-                laserElapsedTime = TimeSpan.Zero;
                 if (aims)
                 {
                     body.fireLasers(_laserTexture, Game1.wallColor, true);
                 }
                 else
                 {
-                    body.fireLasers(_laserTexture, Game1.wallColor, false);
+                    shooting = true;
+                    laserElapsedTime = TimeSpan.Zero;
+                }
+            }
+            if (shooting)
+            {
+                int times = 0;
+                //do
+                //{
+                body.fireLasers(_laserTexture, Game1.wallColor, false);
+                if (body.reloadCycle == 0 && body.slow == 0)
+                {
+                    times++;
+                }
+                //} while (times != 2);
+                laserElapsedTime = TimeSpan.Zero;
+                if (times == 1)
+                {
+                    shooting = false;
                 }
             }
             body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
@@ -137,4 +155,6 @@ namespace On_the_Line
             body.Draw(spriteBatch);
         }
     }
+
 }
+
