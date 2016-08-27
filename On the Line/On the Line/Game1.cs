@@ -136,7 +136,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(20, 21);
+            int randomNumber = random.Next(17, 18);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -436,7 +436,6 @@ namespace On_the_Line
                 foreach (Enemy enemy in enemies)
                 {
                     enemy.laserElapsedTime += gameTime.ElapsedGameTime;
-
                 }
             }
             if (laserElapsedTime >= laserCooldown)

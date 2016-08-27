@@ -57,8 +57,9 @@ namespace On_the_Line
                 else
                 {
                     shooting = true;
-                    laserElapsedTime = TimeSpan.Zero;
                 }
+
+                laserElapsedTime = TimeSpan.Zero;
             }
             if (shooting)
             {

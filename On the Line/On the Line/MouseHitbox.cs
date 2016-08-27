@@ -120,20 +120,21 @@ namespace On_the_Line
             {
                 laserCount += enemy.body.lasers.Count();
             }
-            if (slow == 10)
+            if (aims)
             {
-                slow = 0;
-                reloadCycle++;
-                if (laserCount < 500)
+                int aimX = ((int)Game1.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
+                int aimY = ((int)Game1.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
+                lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
+            }
+            else
+            {
+                if (slow == 10)
                 {
-                    if (aims)
+                    slow = 0;
+                    reloadCycle++;
+                    if (laserCount < 500)
                     {
-                        int aimX = ((int)Game1.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
-                        int aimY = ((int)Game1.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
-                        lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
-                    }
-                    else
-                    {
+
                         if (_shootStyle == 0)
                         {
                             int laserLives = 7;
@@ -333,10 +334,11 @@ namespace On_the_Line
                         }
                     }
                 }
-            }
-            else
-            {
-                slow++;
+
+                else
+                {
+                    slow++;
+                }
             }
         }
         /// <summary>
