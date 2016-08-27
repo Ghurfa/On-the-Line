@@ -48,6 +48,8 @@ namespace On_the_Line
         //public static bool darkmode = true;
         public static string gamemode = "regular";
 
+        int testnumber;
+
         Button startButton;
         Button optionsButton;
         Button colorButton;
@@ -122,11 +124,12 @@ namespace On_the_Line
         /// </summary>
         void startNewGame()
         {
+            testnumber = 31;
             lose = false;
             canShootLaser = true;
             score = 0;
-            loadObstacle(1000, "blankObstacle");
-            loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 5)));
+            loadObstacle(1000, "blankObstacle", 500);
+            loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 5)), 500);
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
             mouseHitbox._position = new Vector2(238, 250);
         }
@@ -136,7 +139,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(17, 18);
+            int randomNumber = random.Next(1, 21);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -148,7 +151,7 @@ namespace On_the_Line
         /// </summary>
         /// <param name="yOffset">The y-offset to load  the obstacle at</param>
         /// <param name="obstacleName">The name of the obstacle to load</param>
-        void loadObstacle(float yOffset, string obstacleName)
+        void loadObstacle(float yOffset, string obstacleName, float xOffset = 0f)
         {
             Texture2D obstacleTexture = Content.Load<Texture2D>(obstacleName);
             Color[] pixels = new Color[obstacleTexture.Width * obstacleTexture.Height];
@@ -164,42 +167,42 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, 0, 0, 0, false)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, 0, 0, 0, false)); //Outside Background
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), outsideColor, false, 0, 0, 0, false)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outsideColor, false, 0, 0, 0, false)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, false, 0, 0, 0, false));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, false, 0, 0, 0, false));
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false));
                     }
                     else if (currentPixel == Color.Orange)
                     {
-                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), 0, 0, true));
+                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), 0, 0, true));
                     }
                     else if (currentPixel == Color.Black)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true));
                     }
                     else if (currentPixel.R == 254)
                     {
-                        enemies.Add(new Enemy(new Vector2(x * 25, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B, false));
+                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B, false));
                     }
                     else if (currentPixel != Color.White)
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false));
                         }
                     }
                 }
@@ -317,6 +320,7 @@ namespace On_the_Line
                         }
                     }
                 }
+
 
                 if (ks.IsKeyDown(Keys.Space) && canShootLaser)
                 {
@@ -462,134 +466,145 @@ namespace On_the_Line
             {
                 KeyboardState ks = Keyboard.GetState();
                 mouseHitbox.Update();
-                if (lose || isLoading)
+                if (testnumber > 0)
                 {
-                    foreach (Obstacles obstacle in obstacles)
+                    foreach (Obstacles obstalce in obstacles)
                     {
-                        obstacle.Update();
-                        if (gamemode == "fastmode")
+                        obstalce.hitbox.X -= testnumber;
+                    }
+                    testnumber--;
+                }
+                else
+                {
+                    if (lose || isLoading)
+                    {
+                        foreach (Obstacles obstacle in obstacles)
                         {
                             obstacle.Update();
-                        }
-                    }
-                    if (isLoading)
-                    {
-                        lose = true;
-                        int loadHeight = highestObstacle;
-                        while (loadHeight < 0)
-                        {
-                            loadHeight += 25;
-                        }
-                        loadObstacle(500 + loadHeight, "Loading");
-                        isLoading = false;
-                        mouseHitbox.lasers.Clear();
-                    }
-                    else
-                    {
-                        if (obstacles.Count > 0)
-                        {
-                            if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
+                            if (gamemode == "fastmode")
                             {
-                                obstacles.RemoveAt(0);
+                                obstacle.Update();
                             }
-                            else
+                        }
+                        if (isLoading)
+                        {
+                            lose = true;
+                            int loadHeight = highestObstacle;
+                            while (loadHeight < 0)
                             {
-                                enemies.Clear();
-                                int randomNumber = random.Next(0, obstacles.Count - 1);
-                                obstacles.RemoveAt(randomNumber);
+                                loadHeight += 25;
                             }
+                            loadObstacle(500 + loadHeight, "Loading");
+                            isLoading = false;
+                            mouseHitbox.lasers.Clear();
                         }
                         else
                         {
-                            lose = false;
-                            startNewGame();
+                            if (obstacles.Count > 0)
+                            {
+                                if (obstacles.Count > 76 /*76 is num of obstacles in the loading obstacles*/)
+                                {
+                                    obstacles.RemoveAt(0);
+                                }
+                                else
+                                {
+                                    enemies.Clear();
+                                    int randomNumber = random.Next(0, obstacles.Count - 1);
+                                    obstacles.RemoveAt(randomNumber);
+                                }
+                            }
+                            else
+                            {
+                                lose = false;
+                                startNewGame();
+                            }
                         }
                     }
-                }
-                else if (!lose && !pause)
-                {
-                    score++;
-                    if (gamemode == "fastmode")
+                    else if (!lose && !pause)
                     {
                         score++;
-                    }
-                }
-                if (!isLoading && !lose)
-                {
-                    highestObstacle = 10;
-                    for (int i = 0; i < obstacles.Count; i++)
-                    {
-                        Obstacles obstacle = obstacles[i];
-                        obstacle.Update();
                         if (gamemode == "fastmode")
                         {
+                            score++;
+                        }
+                    }
+                    if (!isLoading && !lose)
+                    {
+                        highestObstacle = 10;
+                        for (int i = 0; i < obstacles.Count; i++)
+                        {
+                            Obstacles obstacle = obstacles[i];
                             obstacle.Update();
-                        }
-                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && !pause)
-                        {
-                            isLoading = true;
-                        }
-                        if (obstacle.hitbox.Y < highestObstacle)
-                        {
-                            highestObstacle = obstacle.hitbox.Y;
-                        }
-                        if (obstacle._breaks)
-                        {
-                            for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                            if (gamemode == "fastmode")
                             {
-                                Laser laser = mouseHitbox.lasers[x];
-                                if (laser._rect.Intersects(obstacle.hitbox))
+                                obstacle.Update();
+                            }
+                            if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && !pause)
+                            {
+                                isLoading = true;
+                            }
+                            if (obstacle.hitbox.Y < highestObstacle)
+                            {
+                                highestObstacle = obstacle.hitbox.Y;
+                            }
+                            if (obstacle._breaks)
+                            {
+                                for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                                 {
-                                    obstacles.Remove(obstacle);
-                                    score += 10;
-                                    i--;
-                                    laser._lives--;
-                                    if (laser._lives <= 0)
+                                    Laser laser = mouseHitbox.lasers[x];
+                                    if (laser._rect.Intersects(obstacle.hitbox))
                                     {
-                                        Game1.mouseHitbox.lasers.Remove(laser);
+                                        obstacles.Remove(obstacle);
+                                        score += 10;
+                                        i--;
+                                        laser._lives--;
+                                        if (laser._lives <= 0)
+                                        {
+                                            Game1.mouseHitbox.lasers.Remove(laser);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (obstacle.hitbox.Y > 2000)
-                        {
-                            obstacles.Remove(obstacle);
-                            i--;
-                        }
-                    }
-                    if (highestObstacle >= 0 && obstacles.Count < 2000)
-                    {
-                        newObstacle(highestObstacle);
-                    }
-                    for (int i = 0; i < enemies.Count; i++)
-                    {
-                        Enemy enemy = enemies[i];
-                        enemy.Update();
-                        if (gamemode == "fastmode")
-                        {
-                            enemy.Update();
-                        }
-                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
-                        {
-                            Laser laser = mouseHitbox.lasers[x];
-                            if (enemy.body._hitbox.Intersects(laser._rect))
+                            if (obstacle.hitbox.Y > 2000)
                             {
-                                enemies.Remove(enemy);
-                                mouseHitbox.lasers.Remove(laser);
+                                obstacles.Remove(obstacle);
+                                i--;
                             }
                         }
-                        for (int y = 0; y < enemies.Count; y++)
+                        if (highestObstacle >= 0 && obstacles.Count < 2000)
                         {
-                            Enemy targetedEnemy = enemies[y];
-                            if (enemy != targetedEnemy)
+                            newObstacle(highestObstacle);
+                        }
+                        for (int i = 0; i < enemies.Count; i++)
+                        {
+                            Enemy enemy = enemies[i];
+                            enemy.Update();
+                            if (gamemode == "fastmode")
                             {
-                                for (int x = 0; x < enemy.body.lasers.Count; x++)
+                                enemy.Update();
+                            }
+                            for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                            {
+                                Laser laser = mouseHitbox.lasers[x];
+                                if (enemy.body._hitbox.Intersects(laser._rect))
                                 {
-                                    Laser laser = enemy.body.lasers[x];
-                                    if (targetedEnemy.body._hitbox.Intersects(laser._rect))
+                                    enemies.Remove(enemy);
+                                    mouseHitbox.lasers.Remove(laser);
+                                }
+                            }
+                            for (int y = 0; y < enemies.Count; y++)
+                            {
+                                Enemy targetedEnemy = enemies[y];
+                                if (enemy != targetedEnemy)
+                                {
+                                    for (int x = 0; x < enemy.body.lasers.Count; x++)
                                     {
-                                        enemies.Remove(targetedEnemy);
-                                        enemy.body.lasers.Remove(laser);
+                                        Laser laser = enemy.body.lasers[x];
+                                        if (targetedEnemy.body._hitbox.Intersects(laser._rect))
+                                        {
+                                            enemies.Remove(targetedEnemy);
+                                            enemy.body.lasers.Remove(laser);
+                                        }
                                     }
                                 }
                             }
