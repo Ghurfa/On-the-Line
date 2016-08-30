@@ -304,7 +304,7 @@ namespace On_the_Line
                                 {
                                     lasers.Add(new Laser(startPos, 0, 0, texture, laserLives, laserColor));
                                     startPos.X += 25;
-                                }//rawr
+                                }
                                 startPos.Y += 25;
                             }
                             if (reloadCycle == 1)

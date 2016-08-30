@@ -283,13 +283,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="startingObstacle4.png">
-      <Name>startingObstacle4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="EmptyButton.png">
       <Name>EmptyButton</Name>
       <Importer>TextureImporter</Importer>

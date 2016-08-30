@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Diagnostics;
 
 namespace On_the_Line
 {
@@ -48,7 +49,7 @@ namespace On_the_Line
         //public static bool darkmode = true;
         public static string gamemode = "regular";
 
-        int testnumber;
+        int slideSpeed;
 
         Button startButton;
         Button optionsButton;
@@ -124,12 +125,12 @@ namespace On_the_Line
         /// </summary>
         void startNewGame()
         {
-            testnumber = 31;
+            slideSpeed = 31;
             lose = false;
             canShootLaser = true;
             score = 0;
             loadObstacle(1000, "blankObstacle", 500);
-            loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 5)), 500);
+            loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)), 500);
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
             mouseHitbox._position = new Vector2(238, 250);
         }
@@ -465,17 +466,23 @@ namespace On_the_Line
             else if (screen == 1)//gameplay
             {
                 KeyboardState ks = Keyboard.GetState();
-                mouseHitbox.Update();
-                if (testnumber > 0)
+                if (slideSpeed > 0)
                 {
+                    pause = true;
                     foreach (Obstacles obstalce in obstacles)
                     {
-                        obstalce.hitbox.X -= testnumber;
+                        if (slideSpeed == 31)//random number
+                        {
+                            obstalce.Position -= new Vector2(4, 0);
+                        }
+                        obstalce.Position -= new Vector2(slideSpeed, 0);
+                        obstalce.Update();
                     }
-                    testnumber--;
+                    slideSpeed--;
                 }
                 else
                 {
+                    mouseHitbox.Update();
                     if (lose || isLoading)
                     {
                         foreach (Obstacles obstacle in obstacles)
