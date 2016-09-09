@@ -114,7 +114,7 @@ namespace On_the_Line
                             }
                             else
                             {
-                                _color = Game1.insideColor;
+                                _color = Game1.backgroundColor;
                             }
                         }
                     }
@@ -186,7 +186,14 @@ namespace On_the_Line
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, hitbox, _color);
+            if (_slideSpeed < 30)
+            {
+                if(position.Y > 930 && _color != Game1.textColor)
+                {
+                    _color = Game1.backgroundColor;
+                }
+                spriteBatch.Draw(_texture, hitbox, _color);
+            }
 
         }
     }

@@ -10,8 +10,8 @@ namespace On_the_Line
 {
     public class Laser
     {
-        int _moveX;
-        int _moveY;
+        public int _moveX;
+        public int _moveY;
         public Rectangle _rect;
         Texture2D _texture;
         public int _lives;

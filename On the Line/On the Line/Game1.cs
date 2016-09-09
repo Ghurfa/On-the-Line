@@ -35,7 +35,7 @@ namespace On_the_Line
         Random random = new Random();
         public static Color wallColor;
         public static Color outsideColor;
-        public static Color insideColor;
+        public static Color backgroundColor;
         Color ballColor;
         public static Color textColor;
         public static Color laserColor;
@@ -165,7 +165,7 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, 0, 0, 0, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, 31)); //Outside Background
                         }
                         else
                         {
@@ -196,7 +196,7 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), insideColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, 31));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, 31));
                         }
                         else
                         {
@@ -311,15 +311,20 @@ namespace On_the_Line
                         {
                             Enemy enemy = enemies[i];
                             enemy.Update();
-                            if (ks.IsKeyDown(Keys.RightControl) || ks.IsKeyDown(Keys.LeftControl))
+                            if (ks.IsKeyDown(Keys.RightControl))
                             {
                                 enemy.Update();
+                            }
+                            if (ks.IsKeyDown(Keys.LeftControl))
+                            {
+                                for (int d = 0; d < 6; d++)
+                                {
+                                    enemy.Update();
+                                }
                             }
                         }
                     }
                 }
-
-
                 if (ks.IsKeyDown(Keys.Space) && canShootLaser)
                 {
                     shootingLaser = true;
@@ -359,13 +364,13 @@ namespace On_the_Line
                 {
                     wallColor = Color.White;
                     outsideColor = Color.White;
-                    insideColor = Color.Black;
+                    backgroundColor = Color.Black;
                 }
                 else
                 {
                     wallColor = Color.Black;
                     outsideColor = Color.Black;
-                    insideColor = Color.White;
+                    backgroundColor = Color.White;
                 }
             }
             else if (colorScheme == "Ice")
@@ -377,13 +382,13 @@ namespace On_the_Line
                 {
                     wallColor = new Color(0, 240, 220);
                     outsideColor = new Color(0, 240, 220);
-                    insideColor = new Color(13, 13, 13);
+                    backgroundColor = new Color(13, 13, 13);
                 }
                 else
                 {
                     wallColor = new Color(0, 240, 220);
                     outsideColor = new Color(0, 240, 220);
-                    insideColor = new Color(13, 13, 13);
+                    backgroundColor = new Color(13, 13, 13);
                 }
             }
             else if (colorScheme == "Beach")
@@ -395,13 +400,13 @@ namespace On_the_Line
                 {
                     wallColor = new Color(30, 44, 96);
                     outsideColor = new Color(30, 44, 96);
-                    insideColor = new Color(255, 183, 45);
+                    backgroundColor = new Color(255, 183, 45);
                 }
                 else
                 {
                     wallColor = new Color(45, 105, 174);
                     outsideColor = new Color(30, 44, 96);
-                    insideColor = new Color(255, 183, 45);
+                    backgroundColor = new Color(255, 183, 45);
                 }
             }
             else if (colorScheme == "Chocolate")
@@ -413,13 +418,13 @@ namespace On_the_Line
                 {
                     wallColor = new Color(40, 10, 0);
                     outsideColor = new Color(40, 10, 0);
-                    insideColor = new Color(80, 50, 20);
+                    backgroundColor = new Color(80, 50, 20);
                 }
                 else
                 {
                     wallColor = Color.White;
                     outsideColor = new Color(40, 10, 0);
-                    insideColor = new Color(80, 50, 20);
+                    backgroundColor = new Color(80, 50, 20);
                 }
             }
         }
@@ -528,7 +533,7 @@ namespace On_the_Line
                         {
                             obstacle.Update();
                         }
-                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0)
+                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !pause)
                         {
                             isLoading = true;
                         }
@@ -690,7 +695,7 @@ namespace On_the_Line
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(insideColor);
+            GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
             if (screen == 0)//main menu
             {

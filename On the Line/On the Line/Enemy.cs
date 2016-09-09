@@ -64,14 +64,11 @@ namespace On_the_Line
             if (shooting)
             {
                 int times = 0;
-                //do
-                //{
                 body.fireLasers(_laserTexture, Game1.wallColor, false);
                 if (body.reloadCycle == 0 && body.slow == 0)
                 {
                     times++;
                 }
-                //} while (times != 2);
                 laserElapsedTime = TimeSpan.Zero;
                 if (times == 1)
                 {
@@ -86,7 +83,6 @@ namespace On_the_Line
                 if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
                 {
                     body.lasers.Remove(body.lasers[i]);
-                    //i--;
                 }
                 if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
                 {
@@ -94,61 +90,28 @@ namespace On_the_Line
                     Game1.isLoading = true;
                 }
             }
-            slow++;
-            if (slow == 5)
-            {
-                slow = 0;
-            }
             KeyboardState ks = Keyboard.GetState();
-            if ((ks.IsKeyDown(Keys.Up)))
+            if (ks.IsKeyDown(Keys.Up))
             {
                 body._position.Y++;
-                if (ks.IsKeyDown(Keys.RightControl))
-                {
-                    body._hitbox.Y++;
-                }
-                if (ks.IsKeyDown(Keys.LeftControl))
-                {
-                    body._hitbox.Y += 6;
-                }
-
                 foreach (Laser laser in body.lasers)
                 {
-                    laser._rect.Y++;
+                    laser._rect.X += laser._moveX;
+                    laser._rect.Y += laser._moveY;
                 }
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
                 body._position.Y--;
-                if (ks.IsKeyDown(Keys.RightControl))
-                {
-                    body._hitbox.Y--;
-                }
-                if (ks.IsKeyDown(Keys.LeftControl))
-                {
-                    body._hitbox.Y -= 6;
-                }
                 foreach (Laser laser in body.lasers)
                 {
-                    laser._rect.Y--;
+                    laser._rect.X -= laser._moveX;
+                    laser._rect.Y -= laser._moveY;
                 }
             }
             else if (!Game1.pause && !Game1.lose)
             {
                 body._position.Y++;
-                if (ks.IsKeyDown(Keys.RightControl))
-                {
-                    body._hitbox.Y++;
-                }
-                if (ks.IsKeyDown(Keys.LeftControl))
-                {
-                    body._hitbox.Y += 6;
-                }
-
-                foreach (Laser laser in body.lasers)
-                {
-                    laser._rect.Y++;
-                }
             }
         }
         public void Draw(SpriteBatch spriteBatch)
