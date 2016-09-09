@@ -34,7 +34,7 @@ namespace On_the_Line
         List<Obstacles> obstacles = new List<Obstacles>();
         Random random = new Random();
         public static Color wallColor;
-        public static Color outsideColor;
+        public static Color outerWallColor;
         public static Color backgroundColor;
         Color ballColor;
         public static Color textColor;
@@ -137,7 +137,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 21);
+            int randomNumber = random.Next(21, 22);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -169,7 +169,7 @@ namespace On_the_Line
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outsideColor, false, 0, 0, 0, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, 31)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
@@ -224,127 +224,130 @@ namespace On_the_Line
                         enemies.Clear();
                         startNewGame();
                     }
-                    if (ks.IsKeyDown(Keys.Up))
+                    if (!lose)
                     {
-                        int highestObstacle = 10;
-                        for (int i = 0; i < obstacles.Count; i++)
+                        if (ks.IsKeyDown(Keys.Up))
                         {
-                            Obstacles obstacle = obstacles[i];
-                            obstacle.Update();
-                            for (int x = 0; x < Game1.mouseHitbox.lasers.Count; x++)
+                            int highestObstacle = 10;
+                            for (int i = 0; i < obstacles.Count; i++)
                             {
-                                if (obstacle.hitbox.Intersects(Game1.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
+                                Obstacles obstacle = obstacles[i];
+                                obstacle.Update();
+                                for (int x = 0; x < Game1.mouseHitbox.lasers.Count; x++)
                                 {
-                                    Game1.mouseHitbox.lasers[x]._lives -= 2;
-                                    if (Game1.mouseHitbox.lasers[x]._lives <= 0)
+                                    if (obstacle.hitbox.Intersects(Game1.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
                                     {
-                                        Game1.mouseHitbox.lasers.Remove(Game1.mouseHitbox.lasers[x]);
+                                        Game1.mouseHitbox.lasers[x]._lives -= 2;
+                                        if (Game1.mouseHitbox.lasers[x]._lives <= 0)
+                                        {
+                                            Game1.mouseHitbox.lasers.Remove(Game1.mouseHitbox.lasers[x]);
+                                        }
+                                        obstacles.Remove(obstacle);
                                     }
-                                    obstacles.Remove(obstacle);
                                 }
-                            }
-                            if (ks.IsKeyDown(Keys.RightControl))
-                            {
-                                obstacle.Update();
-                            }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
+                                if (ks.IsKeyDown(Keys.RightControl))
                                 {
                                     obstacle.Update();
                                 }
+                                if (ks.IsKeyDown(Keys.LeftControl))
+                                {
+                                    for (int d = 0; d < 6; d++)
+                                    {
+                                        obstacle.Update();
+                                    }
+                                }
+                                if (obstacle.hitbox.Y < highestObstacle)
+                                {
+                                    highestObstacle = obstacle.hitbox.Y;
+                                }
                             }
-                            if (obstacle.hitbox.Y < highestObstacle)
+                            if (highestObstacle >= 0)
                             {
-                                highestObstacle = obstacle.hitbox.Y;
+                                newObstacle(highestObstacle);
                             }
-                        }
-                        if (highestObstacle >= 0)
-                        {
-                            newObstacle(highestObstacle);
-                        }
-                        for (int i = 0; i < enemies.Count; i++)
-                        {
-                            Enemy enemy = enemies[i];
-                            enemy.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                            for (int i = 0; i < enemies.Count; i++)
                             {
+                                Enemy enemy = enemies[i];
                                 enemy.Update();
-                            }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
+                                if (ks.IsKeyDown(Keys.RightControl))
                                 {
                                     enemy.Update();
                                 }
+                                if (ks.IsKeyDown(Keys.LeftControl))
+                                {
+                                    for (int d = 0; d < 6; d++)
+                                    {
+                                        enemy.Update();
+                                    }
+                                }
                             }
                         }
-                    }
-                    else if (ks.IsKeyDown(Keys.Down))
-                    {
-                        int highestObstacle = 10;
-                        for (int i = 0; i < obstacles.Count; i++)
+                        else if (ks.IsKeyDown(Keys.Down))
                         {
-                            Obstacles obstacle = obstacles[i];
-                            obstacle.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                            int highestObstacle = 10;
+                            for (int i = 0; i < obstacles.Count; i++)
                             {
+                                Obstacles obstacle = obstacles[i];
                                 obstacle.Update();
-                            }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
+                                if (ks.IsKeyDown(Keys.RightControl))
                                 {
                                     obstacle.Update();
                                 }
+                                if (ks.IsKeyDown(Keys.LeftControl))
+                                {
+                                    for (int d = 0; d < 6; d++)
+                                    {
+                                        obstacle.Update();
+                                    }
+                                }
+                                if (obstacle.hitbox.Y < highestObstacle)
+                                {
+                                    highestObstacle = obstacle.hitbox.Y;
+                                }
                             }
-                            if (obstacle.hitbox.Y < highestObstacle)
+                            if (highestObstacle >= 0)
                             {
-                                highestObstacle = obstacle.hitbox.Y;
+                                newObstacle(highestObstacle);
                             }
-                        }
-                        if (highestObstacle >= 0)
-                        {
-                            newObstacle(highestObstacle);
-                        }
-                        for (int i = 0; i < enemies.Count; i++)
-                        {
-                            Enemy enemy = enemies[i];
-                            enemy.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                            for (int i = 0; i < enemies.Count; i++)
                             {
+                                Enemy enemy = enemies[i];
                                 enemy.Update();
-                            }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
+                                if (ks.IsKeyDown(Keys.RightControl))
                                 {
                                     enemy.Update();
+                                }
+                                if (ks.IsKeyDown(Keys.LeftControl))
+                                {
+                                    for (int d = 0; d < 6; d++)
+                                    {
+                                        enemy.Update();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                if (ks.IsKeyDown(Keys.Space) && canShootLaser)
-                {
-                    shootingLaser = true;
-                    laserElapsedTime = TimeSpan.Zero;
-                }
-                if (shootingLaser)
-                {
-                    int times = 0;
-                    //do
-                    //{
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
-                    if (mouseHitbox.reloadCycle == 0 && mouseHitbox.slow == 0)
+                    if (ks.IsKeyDown(Keys.Space) && canShootLaser)
                     {
-                        times++;
+                        shootingLaser = true;
+                        laserElapsedTime = TimeSpan.Zero;
                     }
-                    //} while (times != 2);
-                    if (times == 1)
+                    if (shootingLaser)
                     {
-                        canShootLaser = false;
-                        shootingLaser = false;
+                        int times = 0;
+                        //do
+                        //{
+                        mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                        if (mouseHitbox.reloadCycle == 0 && mouseHitbox.slow == 0)
+                        {
+                            times++;
+                        }
+                        //} while (times != 2);
+                        if (times == 1)
+                        {
+                            canShootLaser = false;
+                            shootingLaser = false;
+                        }
                     }
                 }
             }
@@ -358,18 +361,18 @@ namespace On_the_Line
             if (colorScheme == "Default")
             {
                 ballColor = Color.LightGray;
-                textColor = Color.DarkGreen;
+                textColor = Color.Red;
                 laserColor = Color.Red;
                 if (gamemode == "darkmode" || gamemode == "spotlight")
                 {
                     wallColor = Color.White;
-                    outsideColor = Color.White;
+                    outerWallColor = Color.White;
                     backgroundColor = Color.Black;
                 }
                 else
                 {
                     wallColor = Color.Black;
-                    outsideColor = Color.Black;
+                    outerWallColor = Color.Black;
                     backgroundColor = Color.White;
                 }
             }
@@ -381,32 +384,32 @@ namespace On_the_Line
                 if (gamemode == "darkmode" || gamemode == "spotlight")
                 {
                     wallColor = new Color(0, 240, 220);
-                    outsideColor = new Color(0, 240, 220);
+                    outerWallColor = new Color(0, 240, 220);
                     backgroundColor = new Color(13, 13, 13);
                 }
                 else
                 {
                     wallColor = new Color(0, 240, 220);
-                    outsideColor = new Color(0, 240, 220);
+                    outerWallColor = new Color(0, 240, 220);
                     backgroundColor = new Color(13, 13, 13);
                 }
             }
             else if (colorScheme == "Beach")
             {
                 ballColor = new Color(45, 105, 174);
-                textColor = new Color(45, 105, 174);
+                textColor = new Color(0, 183, 45);
                 laserColor = new Color(45, 105, 174);
                 if (gamemode == "darkmode" || gamemode == "spotlight")
                 {
                     wallColor = new Color(30, 44, 96);
-                    outsideColor = new Color(30, 44, 96);
-                    backgroundColor = new Color(255, 183, 45);
+                    outerWallColor = new Color(30, 44, 96);
+                    backgroundColor = new Color(240, 210, 150);
                 }
                 else
                 {
                     wallColor = new Color(45, 105, 174);
-                    outsideColor = new Color(30, 44, 96);
-                    backgroundColor = new Color(255, 183, 45);
+                    outerWallColor = new Color(30, 44, 96);
+                    backgroundColor = new Color(240, 210, 150);
                 }
             }
             else if (colorScheme == "Chocolate")
@@ -417,13 +420,13 @@ namespace On_the_Line
                 if (gamemode == "darkmode" || gamemode == "spotlight")
                 {
                     wallColor = new Color(40, 10, 0);
-                    outsideColor = new Color(40, 10, 0);
+                    outerWallColor = new Color(40, 10, 0);
                     backgroundColor = new Color(80, 50, 20);
                 }
                 else
                 {
                     wallColor = Color.White;
-                    outsideColor = new Color(40, 10, 0);
+                    outerWallColor = new Color(40, 10, 0);
                     backgroundColor = new Color(80, 50, 20);
                 }
             }

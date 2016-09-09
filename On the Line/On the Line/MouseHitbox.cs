@@ -134,7 +134,6 @@ namespace On_the_Line
                     reloadCycle++;
                     if (laserCount < 500)
                     {
-
                         if (_shootStyle == 0)
                         {
                             int laserLives = 7;
@@ -297,15 +296,31 @@ namespace On_the_Line
                         {
                             int laserLives = 1;
                             startPos.Y = _position.Y - 38;
-                            for (int i = 0; i < 5; i++)
+                            if (_direction == 0)
                             {
-                                startPos.X = _position.X - 38;
-                                for (int d = 0; d < 5; d++)
+                                for (int i = 0; i < 5; i++)
                                 {
-                                    lasers.Add(new Laser(startPos, 0, 0, texture, laserLives, laserColor));
-                                    startPos.X += 25;
+                                    startPos.X = _position.X - 38;
+                                    for (int d = 0; d < 5; d++)
+                                    {
+                                        lasers.Add(new Laser(startPos, 0, 0, texture, laserLives, laserColor));
+                                        startPos.X += 25;
+                                    }
+                                    startPos.Y += 25;
                                 }
-                                startPos.Y += 25;
+                            }
+                            else if (_direction == 1)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    startPos.X = _position.X - 38;
+                                    for (int d = 0; d < 5; d++)
+                                    {
+                                        lasers.Add(new Laser(startPos, 0, 1, texture, laserLives, laserColor));
+                                        startPos.X += 25;
+                                    }
+                                    startPos.Y += 25;
+                                }
                             }
                             if (reloadCycle == 1)
                             {
@@ -315,17 +330,69 @@ namespace On_the_Line
                         else if (_shootStyle == 5)
                         {
                             int laserLives = 10;
-                            startPos.X -= 25;
-                            for (int a = 1; a > -2; a -= 2)
+                            if (_direction == 0)
                             {
-                                for (int i = 0; i < 3; i++)
+                                startPos.X -= 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
                                 {
-                                    lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, -10, texture, laserLives, laserColor));
-                                    startPos.X += 12;
-                                    startPos.Y += 12 * a;
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, -10, texture, laserLives, laserColor));
+                                        startPos.X += 12;
+                                        startPos.Y -= 12 * a;
+                                    }
+                                    startPos.X -= 12;
+                                    startPos.Y += 12;
                                 }
-                                startPos.X -= 12;
-                                startPos.Y -= 12;
+                            }
+                            else if (_direction == 1)
+                            {
+                                startPos.X += 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 10, 0, texture, laserLives, laserColor));
+                                        startPos.Y += 12;
+                                        startPos.X += 12 * a;
+                                    }
+                                    startPos.Y -= 12;
+                                    startPos.X -= 12;
+                                }
+                            }
+                            else if (_direction == 2)
+                            {
+                                startPos.X -= 25;
+                                startPos.Y += 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, 10, texture, laserLives, laserColor));
+                                        startPos.X += 12;
+                                        startPos.Y += 12 * a;
+                                    }
+                                    startPos.X -= 12;
+                                    startPos.Y -= 12;
+                                }
+                            }
+                            else if (_direction == 3)
+                            {
+                                startPos.X -= 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), -10, 0, texture, laserLives, laserColor));
+                                        startPos.Y += 12;
+                                        startPos.X -= 12 * a;
+                                    }
+                                    startPos.Y -= 12;
+                                    startPos.X += 12;
+                                }
                             }
                             if (reloadCycle == 1)
                             {

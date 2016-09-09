@@ -43,6 +43,10 @@ namespace On_the_Line
             {
                 laserCooldown = new TimeSpan(0, 0, 0, 3, 0);
             }
+            else if (body._shootStyle == 5)
+            {
+                laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
+            }
 
             body.fireLasers(_laserTexture, Game1.wallColor, false);
         }

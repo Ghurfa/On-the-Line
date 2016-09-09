@@ -118,6 +118,13 @@ namespace On_the_Line
                             }
                         }
                     }
+                    else
+                    {
+                        if(_moveX != 0 || _moveY != 0)
+                        {
+                            _color = Game1.outerWallColor;
+                        }
+                    }
                 }
                 for (int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
                 {
@@ -188,7 +195,7 @@ namespace On_the_Line
         {
             if (_slideSpeed < 30)
             {
-                if(position.Y > 930 && _color != Game1.textColor)
+                if((position.Y > 930) && _color != Game1.textColor)
                 {
                     _color = Game1.backgroundColor;
                 }
