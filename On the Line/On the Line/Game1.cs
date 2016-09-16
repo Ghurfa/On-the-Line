@@ -137,7 +137,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(21, 22);
+            int randomNumber = random.Next(1, 22);
             if (randomNumber == 8 || randomNumber == 15)
             {
                 yOffset -= 500;
@@ -430,6 +430,24 @@ namespace On_the_Line
                     backgroundColor = new Color(80, 50, 20);
                 }
             }
+            else if(colorScheme == "School")
+            {
+                ballColor = Color.Black;
+                textColor = Color.Black;
+                laserColor = Color.Black;
+                if (gamemode == "darkmode" || gamemode == "spotlight")
+                {
+                    wallColor = new Color(10, 10, 10);
+                    outerWallColor = new Color(10, 10, 10);
+                    backgroundColor = new Color(20, 20, 20);
+                }
+                else
+                {
+                    wallColor = new Color(10, 10, 10);
+                    outerWallColor = new Color(10, 10, 10);
+                    backgroundColor = new Color(20, 20, 20);
+                }
+            }
         }
         protected override void Update(GameTime gameTime)
         {
@@ -631,6 +649,11 @@ namespace On_the_Line
                         colorScheme = "Chocolate";
                     }
                     else if (colorScheme == "Chocolate")
+                    {
+                        colorButton._texture = Content.Load<Texture2D>("SchoolButton");
+                        colorScheme = "School";
+                    }
+                    else if (colorScheme == "School")
                     {
                         colorButton._texture = Content.Load<Texture2D>("DefaultButton");
                         colorScheme = "Default";
