@@ -30,6 +30,7 @@ namespace On_the_Line
         public int _moveY;
         public int _maxMove;
         public int move = 1;
+        public bool _gateway;
         int slow = 0;
         public int _slideSpeed;
         /// <summary>
@@ -44,7 +45,7 @@ namespace On_the_Line
         /// <param name="moveY">How much the obstacle moves in the Y axis</param>
         /// <param name="maxmove">The maximum amount of times the obstacle moves</param>
         /// <param name="indescructable">Whether or not the obstacle absorbs a laser</param>
-        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, int slideSpeed)
+        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway, int slideSpeed)
         {
             _startPosition = position;
             Position = _startPosition;
@@ -58,6 +59,7 @@ namespace On_the_Line
             _breaks = breaks;
             _indestrucable = indescructable;
             _slideSpeed = slideSpeed;
+            _gateway = gateway;
         }
 
         public void Update()
@@ -195,7 +197,7 @@ namespace On_the_Line
         {
             if (_slideSpeed < 30)
             {
-                if((position.Y > 930) && _color != Game1.textColor)
+                if(((position.Y > 930) && _color != Game1.textColor)||_gateway)
                 {
                     _color = Game1.backgroundColor;
                 }

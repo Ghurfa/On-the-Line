@@ -80,8 +80,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blankObstacle.png">
-      <Name>blankObstacle</Name>
+    <Compile Include="LowerStartingObstacle.png">
+      <Name>LowerStartingObstacle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -348,6 +348,20 @@
   <ItemGroup>
     <Compile Include="SchoolButton.png">
       <Name>SchoolButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Obstacle22.png">
+      <Name>Obstacle22</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Obstacle23.png">
+      <Name>Obstacle23</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

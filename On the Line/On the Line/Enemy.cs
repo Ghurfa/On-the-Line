@@ -16,8 +16,9 @@ namespace On_the_Line
         Texture2D _laserTexture;
         int slow = 0;
         bool aims;
+        public bool _rams;
         bool shooting = false;
-        public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim)
+        public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
         {
             body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, shootstyle, direction);
             body._position = position;
@@ -47,53 +48,65 @@ namespace On_the_Line
             {
                 laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
             }
-
+            _rams = rams;
             body.fireLasers(_laserTexture, Game1.wallColor, false);
         }
         public void Update()
         {
-            if (laserElapsedTime >= laserCooldown)
+            if (_rams)
             {
-                if (aims)
+                MouseHitbox MH = Game1.mouseHitbox;
+                if (aims && Math.Abs(body._position.Y - MH._position.Y) < 250 && !Game1.pause)
                 {
-                    body.fireLasers(_laserTexture, Game1.wallColor, true);
+                    body._position.X += (MH._position.X - body._position.X) / 30;
+                    body._position.Y += (MH._position.Y - body._position.Y) / 30;
                 }
-                else
-                {
-                    shooting = true;
-                }
-
-                laserElapsedTime = TimeSpan.Zero;
             }
-            if (shooting)
+            else
             {
-                int times = 0;
-                body.fireLasers(_laserTexture, Game1.wallColor, false);
-                if (body.reloadCycle == 0 && body.slow == 0)
+                if (laserElapsedTime >= laserCooldown)
                 {
-                    times++;
+                    if (aims)
+                    {
+                        body.fireLasers(_laserTexture, Game1.wallColor, true);
+                    }
+                    else
+                    {
+                        shooting = true;
+                    }
+
+                    laserElapsedTime = TimeSpan.Zero;
                 }
-                laserElapsedTime = TimeSpan.Zero;
-                if (times == 1)
+                if (shooting)
                 {
-                    shooting = false;
+                    int times = 0;
+                    body.fireLasers(_laserTexture, Game1.wallColor, false);
+                    if (body.reloadCycle == 0 && body.slow == 0)
+                    {
+                        times++;
+                    }
+                    laserElapsedTime = TimeSpan.Zero;
+                    if (times == 1)
+                    {
+                        shooting = false;
+                    }
+                }
+                for (int i = 0; i < body.lasers.Count; i++)
+                {
+                    Laser laser = body.lasers[i];
+                    body.lasers[i].Update();
+                    if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
+                    {
+                        body.lasers.Remove(body.lasers[i]);
+                    }
+                    if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
+                    {
+                        body.lasers.Clear();
+                        Game1.isLoading = true;
+                    }
                 }
             }
             body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
-            for (int i = 0; i < body.lasers.Count; i++)
-            {
-                Laser laser = body.lasers[i];
-                body.lasers[i].Update();
-                if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
-                {
-                    body.lasers.Remove(body.lasers[i]);
-                }
-                if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
-                {
-                    body.lasers.Clear();
-                    Game1.isLoading = true;
-                }
-            }
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {
