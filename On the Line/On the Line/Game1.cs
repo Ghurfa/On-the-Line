@@ -64,7 +64,7 @@ namespace On_the_Line
         List<int> levels = new List<int>();
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
-        public int[] difficulty = {0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60};
+        public int[] difficulty = {0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100};
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -125,7 +125,7 @@ namespace On_the_Line
         {
             lose = false;
             canShootLaser = true;
-            score = 0;
+            score = 5000;
             loadObstacle(1000, "LowerStartingObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
@@ -137,7 +137,7 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 24);
+            int randomNumber = random.Next(1, 25);
             if (difficulty[randomNumber - 1] > score/50)
             {
                 newObstacle(yOffset);
@@ -147,6 +147,10 @@ namespace On_the_Line
                 if (randomNumber == 8 || randomNumber == 15)
                 {
                     yOffset -= 500;
+                }
+                if (randomNumber == 24)
+                {
+                    yOffset -= 1000;
                 }
                 loadObstacle(yOffset, string.Format("Obstacle{0}", randomNumber));
             }
@@ -514,12 +518,7 @@ namespace On_the_Line
                     if (isLoading)
                     {
                         lose = true;
-                        int loadHeight = highestObstacle;
-                        while (loadHeight < 0)
-                        {
-                            loadHeight += 25;
-                        }
-                        loadObstacle(500 + loadHeight, "Loading");
+                        loadObstacle(513, "Loading");
                         isLoading = false;
                         mouseHitbox.lasers.Clear();
                     }
@@ -758,22 +757,19 @@ namespace On_the_Line
             }
             else if (screen == 1)//gameplay
             {
+                int laserCount = mouseHitbox.lasers.Count;
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.Draw(spriteBatch);
+                    laserCount += enemy.body.lasers.Count();
+                }
                 for (int i = 0; i < obstacles.Count; i++)
                 {
                     obstacles[i].Draw(spriteBatch);
                 }
                 mouseHitbox.Draw(spriteBatch);
-                foreach (Enemy enemy in enemies)
-                {
-                    enemy.Draw(spriteBatch);
-                }
                 spriteBatch.DrawString(font, string.Format("{0}", obstacles.Count), new Vector2(0, 950), textColor);
                 spriteBatch.DrawString(font, string.Format("Score: {0}", score / 50), new Vector2(380, 950), textColor);
-                int laserCount = mouseHitbox.lasers.Count;
-                foreach (Enemy enemy in enemies)
-                {
-                    laserCount += enemy.body.lasers.Count();
-                }
                 spriteBatch.DrawString(font, string.Format("{0}", laserCount), new Vector2(240, 950), textColor);
             }
             else if (screen == 2)

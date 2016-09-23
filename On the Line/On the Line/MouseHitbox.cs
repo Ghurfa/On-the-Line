@@ -48,7 +48,7 @@ namespace On_the_Line
             }
             else if (_shootStyle == 2)
             {
-                Game1.laserCooldown = new TimeSpan(0, 0, 0, 4, 0);
+                Game1.laserCooldown = new TimeSpan(0, 0, 0, 3, 500);
             }
             else if (_shootStyle == 3)
             {
