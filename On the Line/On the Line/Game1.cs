@@ -64,7 +64,7 @@ namespace On_the_Line
         List<int> levels = new List<int>();
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
-
+        public int[] difficulty = {0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60};
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -126,7 +126,7 @@ namespace On_the_Line
             lose = false;
             canShootLaser = true;
             score = 0;
-            loadObstacle(1000, "blankObstacle");
+            loadObstacle(1000, "LowerStartingObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
             mouseHitbox._position = new Vector2(238, 250);
@@ -137,12 +137,19 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 22);
-            if (randomNumber == 8 || randomNumber == 15)
+            int randomNumber = random.Next(1, 24);
+            if (difficulty[randomNumber - 1] > score/50)
             {
-                yOffset -= 500;
+                newObstacle(yOffset);
             }
-            loadObstacle(yOffset, string.Format("Obstacle{0}", randomNumber));
+            else
+            {
+                if (randomNumber == 8 || randomNumber == 15)
+                {
+                    yOffset -= 500;
+                }
+                loadObstacle(yOffset, string.Format("Obstacle{0}", randomNumber));
+            }
         }
         /// <summary>
         /// Loads an obstacle
@@ -165,42 +172,50 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, false, 31)); //Outside Background
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, false, 31)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, false, 0, 0, 0, false, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), textColor, false, 0, 0, 0, false, false, 31));
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false, false, 31));
                     }
                     else if (currentPixel == Color.Orange)
                     {
-                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), 0, 0, true));
+                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Empty"), Content.Load<Texture2D>("Laser"), 0, 0, true, false));
+                    }
+                    else if (currentPixel == Color.Aqua)
+                    {
+                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Empty"), Content.Load<Texture2D>("Laser"), 0, 0, true, true));
                     }
                     else if (currentPixel == Color.Black)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true, false, 31));
+                    }
+                    else if (currentPixel == Color.Blue)
+                    {
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, true, 31));
                     }
                     else if (currentPixel.R == 254)
                     {
-                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B, false));
+                        enemies.Add(new Enemy(new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Empty"), Content.Load<Texture2D>("Laser"), currentPixel.G, currentPixel.B, false, false));
                     }
                     else if (currentPixel != Color.White)
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, 31));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false, 31));
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, 31));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false, 31));
                         }
                     }
                 }
@@ -284,7 +299,6 @@ namespace On_the_Line
                         }
                         else if (ks.IsKeyDown(Keys.Down))
                         {
-                            int highestObstacle = 10;
                             for (int i = 0; i < obstacles.Count; i++)
                             {
                                 Obstacles obstacle = obstacles[i];
@@ -304,10 +318,6 @@ namespace On_the_Line
                                 {
                                     highestObstacle = obstacle.hitbox.Y;
                                 }
-                            }
-                            if (highestObstacle >= 0)
-                            {
-                                newObstacle(highestObstacle);
                             }
                             for (int i = 0; i < enemies.Count; i++)
                             {
@@ -554,7 +564,7 @@ namespace On_the_Line
                         {
                             obstacle.Update();
                         }
-                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !pause)
+                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !pause && !obstacle._gateway)
                         {
                             isLoading = true;
                         }
@@ -580,9 +590,16 @@ namespace On_the_Line
                                 }
                             }
                         }
-                        if (obstacle.hitbox.Y > 2000)
+                        if (obstacle.hitbox.Y > 1000)
                         {
-                            obstacles.Remove(obstacle);
+                            if (obstacle._moveX == 0 && obstacle._moveY == 0)
+                            {
+                                obstacles.Remove(obstacle);
+                            }
+                            else if(obstacle.hitbox.Y > 2000)
+                            {
+                                obstacles.Remove(obstacle);
+                            }
                             i--;
                         }
                     }
@@ -598,6 +615,17 @@ namespace On_the_Line
                         {
                             enemy.Update();
                         }
+                        if (enemy._rams && enemy.body._hitbox.Intersects(mouseHitbox._hitbox))
+                        {
+                            isLoading = true;
+                        }
+                        foreach (Obstacles obstacle in obstacles)
+                        {
+                            if (obstacle.hitbox.Intersects(enemy.body._hitbox) && obstacle._gateway)
+                            {
+                                enemies.Remove(enemy);
+                            }
+                        }
                         for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                         {
                             Laser laser = mouseHitbox.lasers[x];
@@ -610,7 +638,7 @@ namespace On_the_Line
                         for (int y = 0; y < enemies.Count; y++)
                         {
                             Enemy targetedEnemy = enemies[y];
-                            if (enemy != targetedEnemy)
+                            if (enemy != targetedEnemy && !targetedEnemy._rams)
                             {
                                 for (int x = 0; x < enemy.body.lasers.Count; x++)
                                 {
@@ -730,11 +758,11 @@ namespace On_the_Line
             }
             else if (screen == 1)//gameplay
             {
-                mouseHitbox.Draw(spriteBatch);
                 for (int i = 0; i < obstacles.Count; i++)
                 {
                     obstacles[i].Draw(spriteBatch);
                 }
+                mouseHitbox.Draw(spriteBatch);
                 foreach (Enemy enemy in enemies)
                 {
                     enemy.Draw(spriteBatch);
