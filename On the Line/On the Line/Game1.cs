@@ -29,6 +29,7 @@ namespace On_the_Line
         TimeSpan laserElapsedTime;
 
         SpriteFont font;
+        SpriteFont smallText;
         public static bool lose = false;
         public static bool pause = false;
         List<Obstacles> obstacles = new List<Obstacles>();
@@ -64,7 +65,7 @@ namespace On_the_Line
         List<int> levels = new List<int>();
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
-        public int[] difficulty = {0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100};
+        public int[] difficulty = {0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100, 60};
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -95,6 +96,7 @@ namespace On_the_Line
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("Font");
+            smallText = Content.Load<SpriteFont>("SmallText");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(new Color[] { Color.White });
             startButton = new Button(125, 250, Content.Load<Texture2D>("StartButton"));
@@ -105,7 +107,7 @@ namespace On_the_Line
             gamemodeButton = new Button(125, 300, Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
             shootStyleButton = new Button(125, 500, Content.Load<Texture2D>("EmptyButton"));
 
-            backButton = new Button(125, 700, Content.Load<Texture2D>("BackButton"));
+            backButton = new Button(125, 900, Content.Load<Texture2D>("BackButton"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -125,7 +127,7 @@ namespace On_the_Line
         {
             lose = false;
             canShootLaser = true;
-            score = 5000;
+            score = 3000;
             loadObstacle(1000, "LowerStartingObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), false);
@@ -137,8 +139,8 @@ namespace On_the_Line
         /// <param name="yOffset"></param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 25);
-            if (difficulty[randomNumber - 1] > score/50)
+            int randomNumber = random.Next(23, 26);
+            if (difficulty[randomNumber - 1] > score / 50)
             {
                 newObstacle(yOffset);
             }
@@ -225,11 +227,7 @@ namespace On_the_Line
                 }
             }
         }
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    
         public void keyboardStuff()
         {
             KeyboardState ks = Keyboard.GetState();
@@ -397,14 +395,14 @@ namespace On_the_Line
                 laserColor = new Color(255, 150, 0);
                 if (gamemode == "darkmode" || gamemode == "spotlight")
                 {
-                    wallColor = new Color(0, 240, 220);
-                    outerWallColor = new Color(0, 240, 220);
+                    wallColor = new Color(30, 250, 230);
+                    outerWallColor = new Color(30, 250, 230);
                     backgroundColor = new Color(13, 13, 13);
                 }
                 else
                 {
-                    wallColor = new Color(0, 240, 220);
-                    outerWallColor = new Color(0, 240, 220);
+                    wallColor = new Color(30, 250, 230);
+                    outerWallColor = new Color(30, 250, 230);
                     backgroundColor = new Color(13, 13, 13);
                 }
             }
@@ -426,7 +424,7 @@ namespace On_the_Line
                     backgroundColor = new Color(240, 210, 150);
                 }
             }
-            else if (colorScheme == "Chocolate")
+            else if (colorScheme == "Gingerbread")
             {
                 ballColor = new Color(50, 20, 0);
                 textColor = new Color(50, 20, 0);
@@ -444,7 +442,7 @@ namespace On_the_Line
                     backgroundColor = new Color(80, 50, 20);
                 }
             }
-            else if(colorScheme == "School")
+            else if (colorScheme == "School")
             {
                 ballColor = Color.Black;
                 textColor = Color.Black;
@@ -463,6 +461,11 @@ namespace On_the_Line
                 }
             }
         }
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             elapsedTime += gameTime.ElapsedGameTime;
@@ -551,6 +554,23 @@ namespace On_the_Line
                     {
                         score++;
                     }
+                    MouseState ms = Mouse.GetState();
+                    if (ms.Y < 0)
+                    {
+                        Mouse.SetPosition(ms.X, 0);
+                    }
+                    else if (ms.Y > 1000)
+                    {
+                        Mouse.SetPosition(ms.X, 1000);
+                    }
+                    if (ms.X < 0)
+                    {
+                        Mouse.SetPosition(0, ms.Y);
+                    }
+                    else if (ms.X > 500)
+                    {
+                        Mouse.SetPosition(500, ms.Y);
+                    }
                 }
                 if (!isLoading && !lose)
                 {
@@ -589,16 +609,9 @@ namespace On_the_Line
                                 }
                             }
                         }
-                        if (obstacle.hitbox.Y > 1000)
+                        if (obstacle.hitbox.Y > 2000)
                         {
-                            if (obstacle._moveX == 0 && obstacle._moveY == 0)
-                            {
-                                obstacles.Remove(obstacle);
-                            }
-                            else if(obstacle.hitbox.Y > 2000)
-                            {
-                                obstacles.Remove(obstacle);
-                            }
+                            obstacles.Remove(obstacle);
                             i--;
                         }
                     }
@@ -662,29 +675,25 @@ namespace On_the_Line
                 {
                     if (colorScheme == "Default")
                     {
-                        colorButton._texture = Content.Load<Texture2D>("IceButton");
                         colorScheme = "Ice";
                     }
                     else if (colorScheme == "Ice")
                     {
-                        colorButton._texture = Content.Load<Texture2D>("BeachButton");
                         colorScheme = "Beach";
                     }
                     else if (colorScheme == "Beach")
                     {
-                        colorButton._texture = Content.Load<Texture2D>("ChocolateButton");
-                        colorScheme = "Chocolate";
+                        colorScheme = "Gingerbread";
                     }
-                    else if (colorScheme == "Chocolate")
+                    else if (colorScheme == "Gingerbread")
                     {
-                        colorButton._texture = Content.Load<Texture2D>("SchoolButton");
                         colorScheme = "School";
                     }
                     else if (colorScheme == "School")
                     {
-                        colorButton._texture = Content.Load<Texture2D>("DefaultButton");
                         colorScheme = "Default";
                     }
+                    colorButton._texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
                 gamemodeButton.Update();
                 if (gamemodeButton.clicked)
@@ -778,11 +787,16 @@ namespace On_the_Line
                 gamemodeButton.Draw(spriteBatch);
                 shootStyleButton.Draw(spriteBatch);
                 Vector2 superLongLineOfText = new Vector2(shootStyleButton.rectangle.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, shootStyleButton.rectangle.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
-                //spriteBatch.Draw(Content.Load<Texture2D>("Ball"), superLongLineOfText, ballColor);
                 mouseHitbox._color = ballColor;
                 mouseHitbox._position = superLongLineOfText;
                 backButton.Draw(spriteBatch);
                 mouseHitbox.Draw(spriteBatch);
+                spriteBatch.DrawString(smallText, string.Format("Num of Bullets: {0}", mouseHitbox.numOfBullets), new Vector2(125, 580), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Bullet Penetration: {0}", mouseHitbox.BulletPen), new Vector2(125, 595), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Bullet Speed: {0}", mouseHitbox.bulletSpeed), new Vector2(125, 610), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", laserCooldown.Seconds + (float)laserCooldown.Milliseconds/1000f), new Vector2(125, 625), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.pros), new Vector2(125, 640), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.cons), new Vector2(125, 655), textColor);
             }
             spriteBatch.End();
             frames++;
