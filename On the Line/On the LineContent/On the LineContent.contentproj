@@ -185,8 +185,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChocolateButton.png">
-      <Name>ChocolateButton</Name>
+    <Compile Include="GingerbreadButton.png">
+      <Name>GingerbreadButton</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
