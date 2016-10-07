@@ -33,6 +33,10 @@ namespace On_the_Line
         public bool _gateway;
         int slow = 0;
         public int _slideSpeed;
+        float growAmount = -0.5f;
+        public bool didKill = false;
+        float rotation = 0;
+        int growTimes;
         /// <summary>
         /// Loads an obstacle
         /// </summary>
@@ -195,13 +199,27 @@ namespace On_the_Line
         }
         public void Draw(SpriteBatch spriteBatch)
         {
+            if (didKill)
+            {
+                _color = Game1.endGameColor;
+                _size += new Vector2(growAmount, growAmount);
+                growTimes++;
+                if (growTimes == 30)
+                {
+                    growAmount *= -1;
+                }
+                else if(growTimes > 30)
+                {
+                    growAmount += 0.4f;
+                }
+            }
             if (_slideSpeed < 30)
             {
                 if(((position.Y > 930) && _color != Game1.textColor && _maxMove == 0)||_gateway)
                 {
                     _color = Game1.backgroundColor;
                 }
-                spriteBatch.Draw(_texture, hitbox, _color);
+                spriteBatch.Draw(_texture, new Vector2(hitbox.X + 12.5f, hitbox.Y + 12.5f), null, _color, rotation, new Vector2(0.5f, 0.5f), _size, SpriteEffects.None, 0);
             }
 
         }

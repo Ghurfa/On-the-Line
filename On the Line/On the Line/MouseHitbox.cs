@@ -103,7 +103,7 @@ namespace On_the_Line
                 }
             }
             mouseState = Mouse.GetState();
-            if (Game1.screen != 2)
+            if (Game1.screen != 2 && !Game1.lose)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y))
                 {
