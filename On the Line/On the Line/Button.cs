@@ -15,15 +15,13 @@ namespace On_the_Line
         MouseState lastMS;
         public bool clicked;
         Color _color = Color.White;
-        public Button(int X, int Y, Texture2D texture)
+        public Button(Vector2 position, Texture2D texture)
         {
-            rectangle = new Rectangle(X, Y, texture.Width, texture.Height);
+            rectangle = new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
             _texture = texture;
         }
 
-        /// <summary>
-        /// This is the ball's update
-        /// </summary>
+
         public void Update()
         {
             MouseState MS = Mouse.GetState();

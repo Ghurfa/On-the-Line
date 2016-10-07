@@ -56,6 +56,8 @@ namespace On_the_Line
         Button colorButton;
         Button backButton;
         Button gamemodeButton;
+        Checkbox dotModeButton;
+
         public static Button shootStyleButton;
 
         public static bool isLoading = false;
@@ -67,6 +69,8 @@ namespace On_the_Line
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
         public int[] difficulty = { 0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100, 60 };
+
+        int obstacleSize = 25;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -100,15 +104,16 @@ namespace On_the_Line
             smallText = Content.Load<SpriteFont>("SmallText");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(new Color[] { Color.White });
-            startButton = new Button(125, 250, Content.Load<Texture2D>("StartButton"));
-            optionsButton = new Button(125, 400, Content.Load<Texture2D>("OptionsButton"));
+            startButton = new Button(new Vector2(125, 250), Content.Load<Texture2D>("StartButton"));
+            optionsButton = new Button(new Vector2(125, 400), Content.Load<Texture2D>("OptionsButton"));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
 
-            colorButton = new Button(125, 100, Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
-            gamemodeButton = new Button(125, 300, Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
-            shootStyleButton = new Button(125, 500, Content.Load<Texture2D>("EmptyButton"));
+            colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
+            gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
+            shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
+            dotModeButton = new Checkbox(new Vector2(400, 300), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
 
-            backButton = new Button(125, 900, Content.Load<Texture2D>("BackButton"));
+            backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -598,6 +603,7 @@ namespace On_the_Line
                         Mouse.SetPosition(500, ms.Y);
                     }
                 }
+                #region Updates Obstacles
                 if (!isLoading && !lose)
                 {
                     highestObstacle = 10;
@@ -605,6 +611,7 @@ namespace On_the_Line
                     {
                         Obstacles obstacle = obstacles[i];
                         obstacle.Update();
+                        obstacle._size = new Vector2(obstacleSize, obstacleSize);
                         if (gamemode == "fastmode")
                         {
                             obstacle.Update();
@@ -646,6 +653,8 @@ namespace On_the_Line
                     {
                         newObstacle(highestObstacle);
                     }
+                    #endregion
+                    #region Update Enemies
                     for (int i = 0; i < enemies.Count; i++)
                     {
                         Enemy enemy = enemies[i];
@@ -691,12 +700,14 @@ namespace On_the_Line
                             }
                         }
                     }
+                    #endregion
                 }
                 keyboardStuff();
             }
             else if (screen == 2)//settings
             {
                 mouseHitbox.Update();
+                #region Checks Color Button
                 colorButton.Update();
                 if (colorButton.clicked)
                 {
@@ -726,6 +737,8 @@ namespace On_the_Line
                     }
                     colorButton._texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
+                #endregion
+                #region Checks Gamemode Button
                 gamemodeButton.Update();
                 if (gamemodeButton.clicked)
                 {
@@ -750,6 +763,8 @@ namespace On_the_Line
                         gamemode = "regular";
                     }
                 }
+                #endregion
+                #region Checks Shootstyle Button
                 shootStyleButton.Update();
                 if (shootStyleButton.clicked)
                 {
@@ -773,6 +788,16 @@ namespace On_the_Line
                             times++;
                         }
                     } while (times != 2);
+                }
+                #endregion
+                dotModeButton.Update();
+                if (dotModeButton.isChecked)
+                {
+                    obstacleSize = 4;
+                }
+                else
+                {
+                    obstacleSize = 25;
                 }
                 backButton.Update();
                 if (backButton.clicked)
@@ -828,6 +853,7 @@ namespace On_the_Line
                 spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", laserCooldown.Seconds + (float)laserCooldown.Milliseconds / 1000f), new Vector2(125, 625), textColor);
                 spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.pros), new Vector2(125, 640), textColor);
                 spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.cons), new Vector2(125, 655), textColor);
+                dotModeButton.Draw(spriteBatch);
             }
             spriteBatch.End();
             frames++;
