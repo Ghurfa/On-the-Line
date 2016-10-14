@@ -381,8 +381,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SmallText.spritefont">
-      <Name>SmallText</Name>
+    <Compile Include="StatsText.spritefont">
+      <Name>StatsText</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
@@ -413,6 +413,29 @@
       <Name>Checkbox_Off</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="YouLose.png">
+      <Name>YouLose</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LargeText.spritefont">
+      <SubType>Designer</SubType>
+      <Name>LargeText</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExtraLargeText.spritefont">
+      <SubType>Designer</SubType>
+      <Name>ExtraLargeText</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

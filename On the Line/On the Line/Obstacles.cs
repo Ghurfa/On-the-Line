@@ -70,17 +70,17 @@ namespace On_the_Line
         {
             if (_slideSpeed > 0)
             {
-                    if (_slideSpeed == 31)//random number
-                    {
-                        Position += new Vector2(496, 0);
-                    }
-                    Position -= new Vector2(_slideSpeed, 0);
-                
+                if (_slideSpeed == 31)//random number
+                {
+                    Position += new Vector2(496, 0);
+                }
+                Position -= new Vector2(_slideSpeed, 0);
+
                 _slideSpeed--;
             }
             else
             {
-                if (_color != Game1.textColor)
+                if (_color.A == 230)
                 {
                     if (Game1.gamemode == "darkmode")
                     {
@@ -126,7 +126,7 @@ namespace On_the_Line
                     }
                     else
                     {
-                        if(_moveX != 0 || _moveY != 0)
+                        if (_moveX != 0 || _moveY != 0)
                         {
                             _color = Game1.outerWallColor;
                         }
@@ -179,6 +179,23 @@ namespace On_the_Line
                     }
                 }
             }
+            if (didKill)
+            {
+                growTimes++;
+                if (growTimes < 100)
+                {
+                    if (growTimes % 20 == 0)
+                    {
+                        _color = reverseColor(_color);
+                    }
+                }
+                else
+                {
+                    _size += new Vector2(growAmount, growAmount);
+                    growAmount += 0.4f;
+
+                }
+            }
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {
@@ -187,7 +204,7 @@ namespace On_the_Line
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
-                this.position.Y--;
+                this.position.Y --;
                 _startPosition.Y--;
             }
             else if (!Game1.pause && !Game1.lose)
@@ -195,27 +212,17 @@ namespace On_the_Line
                 this.position.Y++;
                 _startPosition.Y++;
             }
-            hitbox = new Rectangle((int)this.position.X, (int)this.position.Y, (int)(_texture.Width * _size.X), (int)(_texture.Height * _size.Y));
+            hitbox = new Rectangle((int)this.position.X, (int)this.position.Y, (int)(_texture.Width * 25), (int)(_texture.Height * 25));
+        }
+        Color reverseColor(Color color)
+        {
+            return new Color(255 - color.R, 255 - color.G, 255 - color.B);
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (didKill)
-            {
-                _color = Game1.endGameColor;
-                _size += new Vector2(growAmount, growAmount);
-                growTimes++;
-                if (growTimes == 30)
-                {
-                    growAmount *= -1;
-                }
-                else if(growTimes > 30)
-                {
-                    growAmount += 0.4f;
-                }
-            }
             if (_slideSpeed < 30)
             {
-                if(((position.Y > 930) && _color != Game1.textColor && _maxMove == 0)||_gateway)
+                if (((position.Y > 930) && _color != Game1.textColor && _maxMove == 0) || _gateway)
                 {
                     _color = Game1.backgroundColor;
                 }
