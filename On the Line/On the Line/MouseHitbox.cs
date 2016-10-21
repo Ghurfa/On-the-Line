@@ -61,11 +61,11 @@ namespace On_the_Line
             }
             else if (_shootStyle == 4)
             {
-                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 500), 20, 1, "Zero", "Zero movement on screen", "Slower reload, Low penetration");
+                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 500), 25, 1, "Zero", "Zero movement on screen", "Slower reload, Low penetration");
             }
             else if (_shootStyle == 5)
             {
-                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 20, 10, "Fast", "Fast Bullets", "High penetration, Focused");
+                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
             }
             _spotlight = new Rectangle((int)_position.X + _texture.Width / 2 - 100, (int)_position.Y + _texture.Height / 2 - 100, 200, 200);
             for (int i = 0; i < lasers.Count; i++)

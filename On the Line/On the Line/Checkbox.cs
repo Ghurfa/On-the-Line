@@ -9,7 +9,7 @@ namespace On_the_Line
 {
     class Checkbox
     {
-        Button checkBox;
+        public Button checkBox;
         public bool isChecked;
         Texture2D _onTexture;
         Texture2D _offTexture;

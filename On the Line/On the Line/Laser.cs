@@ -27,7 +27,7 @@ namespace On_the_Line
         }
         public void Update()
         {
-            if (!Game1.pause)
+            if ((Game1.screen == 1 && !Game1.pause)||Game1.screen == 2)
             {
                 _rect.X += _moveX;
                 _rect.Y += _moveY;

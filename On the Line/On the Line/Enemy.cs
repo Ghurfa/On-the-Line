@@ -18,6 +18,7 @@ namespace On_the_Line
         bool aims;
         public bool _rams;
         bool shooting = false;
+        int _slideSpeed;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
         {
             body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, shootstyle, direction);
@@ -50,63 +51,73 @@ namespace On_the_Line
             }
             _rams = rams;
             body.fireLasers(_laserTexture, Game1.wallColor, false);
+            _slideSpeed = 31;
+            body._position += new Vector2(496, 0);
         }
         public void Update()
         {
-            if (_rams)
+            if (_slideSpeed > 0)
             {
-                MouseHitbox MH = Game1.mouseHitbox;
-                if (aims && Math.Abs(body._position.Y - MH._position.Y) < 250 && !Game1.pause)
-                {
-                    body._position.X += (MH._position.X - body._position.X) / 30;
-                    body._position.Y += (MH._position.Y - body._position.Y) / 30;
-                }
+                body._position -= new Vector2(_slideSpeed, 0);
+                _slideSpeed--;
             }
             else
             {
-                if (laserElapsedTime >= laserCooldown)
+                if (_rams)
                 {
-                    if (aims)
+                    MouseHitbox MH = Game1.mouseHitbox;
+                    if (aims && Math.Abs(body._position.Y - MH._position.Y) < 250 && !Game1.pause)
                     {
-                        body.fireLasers(_laserTexture, Game1.wallColor, true);
+                        body._position.X += (MH._position.X - body._position.X) / 30;
+                        body._position.Y += (MH._position.Y - body._position.Y) / 30;
                     }
-                    else
+                }
+                else
+                {
+                    if (laserElapsedTime >= laserCooldown)
                     {
-                        shooting = true;
-                    }
+                        if (aims)
+                        {
+                            body.fireLasers(_laserTexture, Game1.wallColor, true);
+                        }
+                        else
+                        {
+                            shooting = true;
+                        }
 
-                    laserElapsedTime = TimeSpan.Zero;
+                        laserElapsedTime = TimeSpan.Zero;
+                    }
+                    if (shooting)
+                    {
+                        int times = 0;
+                        body.fireLasers(_laserTexture, Game1.wallColor, false);
+                        if (body.reloadCycle == 0 && body.slow == 0)
+                        {
+                            times++;
+                        }
+                        laserElapsedTime = TimeSpan.Zero;
+                        if (times == 1)
+                        {
+                            shooting = false;
+                        }
+                    }
+                    for (int i = 0; i < body.lasers.Count; i++)
+                    {
+                        Laser laser = body.lasers[i];
+                        body.lasers[i].Update();
+                        if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
+                        {
+                            body.lasers.Remove(body.lasers[i]);
+                        }
+                        if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
+                        {
+                            body.lasers.Clear();
+                            Game1.isLoading = true;
+                        }
+                    }
                 }
-                if (shooting)
-                {
-                    int times = 0;
-                    body.fireLasers(_laserTexture, Game1.wallColor, false);
-                    if (body.reloadCycle == 0 && body.slow == 0)
-                    {
-                        times++;
-                    }
-                    laserElapsedTime = TimeSpan.Zero;
-                    if (times == 1)
-                    {
-                        shooting = false;
-                    }
-                }
-                for (int i = 0; i < body.lasers.Count; i++)
-                {
-                    Laser laser = body.lasers[i];
-                    body.lasers[i].Update();
-                    if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
-                    {
-                        body.lasers.Remove(body.lasers[i]);
-                    }
-                    if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
-                    {
-                        body.lasers.Clear();
-                        Game1.isLoading = true;
-                    }
-                }
+                body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
             }
-            body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {

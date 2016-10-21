@@ -59,7 +59,7 @@ namespace On_the_Line
         Button colorButton;
         Button backButton;
         Button gamemodeButton;
-        Checkbox dotModeButton;
+        Checkbox dotModeCheckbox;
 
         public static Button shootStyleButton;
 
@@ -116,7 +116,7 @@ namespace On_the_Line
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
             gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
-            dotModeButton = new Checkbox(new Vector2(400, 300), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
+            dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
 
             backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
 
@@ -193,20 +193,20 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, false)); //Outside Background
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, false, 31)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, false)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), new Color(textColor.R, textColor.G, textColor.B, 230), false, 0, 0, 0, false, false, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), new Color(textColor.R, textColor.G, textColor.B, 230), false, 0, 0, 0, false, false));
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false, false, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, true, 0, 0, 0, false, false));
                     }
                     else if (currentPixel == Color.Orange)
                     {
@@ -218,11 +218,11 @@ namespace On_the_Line
                     }
                     else if (currentPixel == Color.Black)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true, false, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, 0, 0, 0, true, false));
                     }
                     else if (currentPixel == Color.Blue)
                     {
-                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, true, 31));
+                        obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, true));
                     }
                     else if (currentPixel.R == 254)
                     {
@@ -232,14 +232,35 @@ namespace On_the_Line
                     {
                         if (gamemode == "darkmode")
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false, 31));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false, 31));
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), wallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
                         }
                     }
                 }
+            }
+        }
+        public void setScreen(int screenToSetTo)
+        {
+            screen = screenToSetTo;
+            if (screen == 0)
+            {
+                startButton = new Button(startButton.EndPosition, startButton._texture);
+                optionsButton = new Button(optionsButton.EndPosition, optionsButton._texture);
+            }
+            else if (screen == 1)
+            {
+                startNewGame();
+            }
+            else
+            {
+                colorButton = new Button(colorButton.EndPosition, colorButton._texture);
+                gamemodeButton = new Button(gamemodeButton.EndPosition, gamemodeButton._texture);
+                shootStyleButton = new Button(shootStyleButton.EndPosition, shootStyleButton._texture);
+                dotModeCheckbox.checkBox = new Button(dotModeCheckbox.checkBox.EndPosition, dotModeCheckbox.checkBox._texture);
+                backButton = new Button(backButton.EndPosition, backButton._texture);
             }
         }
         public void keyboardStuff()
@@ -255,7 +276,7 @@ namespace On_the_Line
                 }
                 if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
                 {
-                    screen = 0;
+                    setScreen(0);
                 }
                 if (!lose)
                 {
@@ -534,12 +555,11 @@ namespace On_the_Line
                 optionsButton.Update();
                 if (startButton.clicked)
                 {
-                    screen = 1;
-                    startNewGame();
+                    setScreen(1);
                 }
                 if (optionsButton.clicked)
                 {
-                    screen = 2;
+                    setScreen(2);
                 }
             }
             else if (screen == 1)//gameplay
@@ -563,10 +583,24 @@ namespace On_the_Line
                         loadObstacle(525, "YouLose");
                         isLoading = false;
                         mouseHitbox.lasers.Clear();
+                        //version 1 - to work on
+                        /*
+                        for (int obstacleToRemove = 0; obstacleToRemove < obstacles.Count; obstacleToRemove++)
+                        {
+                            if (!obstacles[obstacleToRemove].didKill && obstacles[obstacleToRemove]._color != textColor)
+                            {
+                                obstacles.RemoveAt(obstacleToRemove+1);
+                            }
+                        }
+
+                        enemies.Clear();
+                        */
                     }
                     else
                     {
-                        if (obstacles.Count > 132)
+                        //version 2
+                        
+                        if (obstacles.Count > 134)
                         {
                             for (int obstacleToRemove = 0; obstacleToRemove < obstacles.Count; obstacleToRemove++)
                             {
@@ -800,8 +834,8 @@ namespace On_the_Line
                     } while (times != 2);
                 }
                 #endregion
-                dotModeButton.Update();
-                if (dotModeButton.isChecked)
+                dotModeCheckbox.Update();
+                if (dotModeCheckbox.isChecked)
                 {
                     obstacleSize = 4;
                 }
@@ -812,7 +846,7 @@ namespace On_the_Line
                 backButton.Update();
                 if (backButton.clicked)
                 {
-                    screen = 0;
+                    setScreen(0);
                 }
             }
             base.Update(gameTime);
@@ -868,13 +902,14 @@ namespace On_the_Line
                 mouseHitbox._position = superLongLineOfText;
                 backButton.Draw(spriteBatch);
                 mouseHitbox.Draw(spriteBatch);
-                spriteBatch.DrawString(smallText, string.Format("Num of Bullets: {0}", mouseHitbox.stats.Item2), new Vector2(125, 580), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Bullet Penetration: {0}", mouseHitbox.stats.Item3), new Vector2(125, 595), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Bullet Speed: {0}", mouseHitbox.stats.Item4), new Vector2(125, 610), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000f), new Vector2(125, 625), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.stats.Item5), new Vector2(125, 640), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.stats.Item6), new Vector2(125, 655), textColor);
-                dotModeButton.Draw(spriteBatch);
+                int s = shootStyleButton.rectangle.Y; //make the line look less intimidating
+                spriteBatch.DrawString(smallText, string.Format("Num of Bullets: {0}", mouseHitbox.stats.Item2), new Vector2(125, s+80), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Bullet Penetration: {0}", mouseHitbox.stats.Item3), new Vector2(125, s + 95), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Bullet Speed: {0}", mouseHitbox.stats.Item4), new Vector2(125, s + 110), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000f), new Vector2(125, s + 125), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.stats.Item5), new Vector2(125, s + 140), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.stats.Item6), new Vector2(125, s + 165), textColor);
+                dotModeCheckbox.Draw(spriteBatch);
 
             }
             spriteBatch.End();

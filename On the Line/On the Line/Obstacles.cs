@@ -49,7 +49,7 @@ namespace On_the_Line
         /// <param name="moveY">How much the obstacle moves in the Y axis</param>
         /// <param name="maxmove">The maximum amount of times the obstacle moves</param>
         /// <param name="indescructable">Whether or not the obstacle absorbs a laser</param>
-        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway, int slideSpeed)
+        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway)
         {
             _startPosition = position;
             Position = _startPosition;
@@ -62,7 +62,7 @@ namespace On_the_Line
             _maxMove = maxmove;
             _breaks = breaks;
             _indestrucable = indescructable;
-            _slideSpeed = slideSpeed;
+            _slideSpeed = 31;
             _gateway = gateway;
         }
 
@@ -70,17 +70,21 @@ namespace On_the_Line
         {
             if (_slideSpeed > 0)
             {
-                if (_slideSpeed == 31)//random number
+                if (_slideSpeed == 31)
                 {
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(_slideSpeed, 0);
-
+                if ((Game1.gamemode == "spotlight" && hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.gamemode == "darkmode")
+                {
+                    _color = Game1.backgroundColor;
+                }
                 _slideSpeed--;
             }
             else
             {
-                if (_color.A == 230)
+
+                if (_color.A != 230)
                 {
                     if (Game1.gamemode == "darkmode")
                     {
@@ -204,7 +208,7 @@ namespace On_the_Line
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
-                this.position.Y --;
+                this.position.Y--;
                 _startPosition.Y--;
             }
             else if (!Game1.pause && !Game1.lose)
