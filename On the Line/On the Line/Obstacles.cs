@@ -226,7 +226,7 @@ namespace On_the_Line
         {
             if (_slideSpeed < 30)
             {
-                if (((position.Y > 930) && _color != Game1.textColor && _maxMove == 0) || _gateway)
+                if ((Game1.screen == 1 && (position.Y > 930 && _color != Game1.textColor && _maxMove == 0)) || _gateway)
                 {
                     _color = Game1.backgroundColor;
                 }

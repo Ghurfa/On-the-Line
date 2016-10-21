@@ -14,6 +14,7 @@ namespace On_the_Line
         public Texture2D _texture;
         MouseState lastMS;
         public bool clicked;
+        public bool released;
         Color _color = Color.White;
         int YSpeed;
         public Vector2 EndPosition;
@@ -54,6 +55,14 @@ namespace On_the_Line
             else
             {
                 clicked = false;
+            }
+            if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed && rectangle.Contains(MS.X, MS.Y))
+            {
+                released = true;
+            }
+            else
+            {
+                released = false;
             }
             lastMS = MS;
         }

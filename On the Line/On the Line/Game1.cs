@@ -109,8 +109,8 @@ namespace On_the_Line
             extraLargeText = Content.Load<SpriteFont>("ExtraLargeText");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(new Color[] { Color.White });
-            startButton = new Button(new Vector2(125, 250), Content.Load<Texture2D>("StartButton"));
-            optionsButton = new Button(new Vector2(125, 400), Content.Load<Texture2D>("OptionsButton"));
+            startButton = new Button(new Vector2(125, 450), Content.Load<Texture2D>("StartButton"));
+            optionsButton = new Button(new Vector2(125, 600), Content.Load<Texture2D>("OptionsButton"));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
 
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
@@ -138,11 +138,7 @@ namespace On_the_Line
         {
             destroyedObstacles = 0;
             enemiesKilled = 0;
-            lose = false;
             mouseHitbox.canShoot = true;
-            score = 0;
-            obstacles.Clear();
-            enemies.Clear();
             loadObstacle(1000, "LowerStartingObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
@@ -244,7 +240,13 @@ namespace On_the_Line
         }
         public void setScreen(int screenToSetTo)
         {
+            obstacles.Clear();
+            enemies.Clear();
+            lose = false;
+            mouseHitbox.lasers.Clear();
             screen = screenToSetTo;
+            pause = false;
+            score = 0;
             if (screen == 0)
             {
                 startButton = new Button(startButton.EndPosition, startButton._texture);
@@ -557,10 +559,66 @@ namespace On_the_Line
                 {
                     setScreen(1);
                 }
-                if (optionsButton.clicked)
+                if (optionsButton.released)
                 {
                     setScreen(2);
                 }
+                if (obstacles.Count == 0)
+                {
+                    loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                    loadObstacle(1000, "LowerStartingObstacle");
+                }
+                score++;
+                if (gamemode == "fastmode")
+                {
+                    score++;
+                }
+                #region Updates Obstacles
+
+                highestObstacle = 10;
+                for (int i = 0; i < obstacles.Count; i++)
+                {
+                    Obstacles obstacle = obstacles[i];
+                    obstacle.Update();
+                    obstacle._size = new Vector2(obstacleSize, obstacleSize);
+                    if (gamemode == "fastmode")
+                    {
+                        obstacle.Update();
+                    }
+                    if (obstacle.hitbox.Y < highestObstacle)
+                    {
+                        highestObstacle = obstacle.hitbox.Y;
+                    }
+                    if (obstacle._breaks)
+                    {
+                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                        {
+                            Laser laser = mouseHitbox.lasers[x];
+                            if (laser._rect.Intersects(obstacle.hitbox))
+                            {
+                                obstacles.Remove(obstacle);
+                                destroyedObstacles++;
+                                score += 10;
+                                i--;
+                                laser._lives--;
+                                if (laser._lives <= 0)
+                                {
+                                    Game1.mouseHitbox.lasers.Remove(laser);
+                                }
+                            }
+                        }
+                    }
+                    if (obstacle.hitbox.Y > 2000)
+                    {
+                        obstacles.Remove(obstacle);
+                        i--;
+                    }
+                }
+                if (highestObstacle >= 0 && obstacles.Count < 2000)
+                {
+                    newObstacle(highestObstacle);
+                }
+                #endregion
             }
             else if (screen == 1)//gameplay
             {
@@ -642,9 +700,10 @@ namespace On_the_Line
                         Mouse.SetPosition(500, ms.Y);
                     }
                 }
-                #region Updates Obstacles
+               
                 if (!isLoading && !lose)
                 {
+                    #region Updates Obstacles
                     highestObstacle = 10;
                     for (int i = 0; i < obstacles.Count; i++)
                     {
@@ -861,8 +920,13 @@ namespace On_the_Line
             spriteBatch.Begin();
             if (screen == 0)//main menu
             {
+                foreach (Obstacles obtsacle in obstacles)
+                {
+                    obtsacle.Draw(spriteBatch);
+                }
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
+                
             }
             else if (screen == 1)//gameplay
             {
@@ -872,9 +936,9 @@ namespace On_the_Line
                     enemy.Draw(spriteBatch);
                     laserCount += enemy.body.lasers.Count();
                 }
-                for (int i = 0; i < obstacles.Count; i++)
+                foreach (Obstacles obtsacle in obstacles)
                 {
-                    obstacles[i].Draw(spriteBatch);
+                    obtsacle.Draw(spriteBatch);
                 }
                 mouseHitbox.Draw(spriteBatch);
                 if (lose)
