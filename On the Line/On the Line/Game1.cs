@@ -272,9 +272,7 @@ namespace On_the_Line
             {
                 if (ks.IsKeyDown(Keys.R) && !lastKs.IsKeyDown(Keys.R))
                 {
-                    obstacles.Clear();
-                    enemies.Clear();
-                    startNewGame();
+                    setScreen(1);
                 }
                 if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
                 {

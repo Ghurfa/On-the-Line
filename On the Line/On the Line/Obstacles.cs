@@ -83,7 +83,6 @@ namespace On_the_Line
             }
             else
             {
-
                 if (_color.A != 230)
                 {
                     if (Game1.gamemode == "darkmode")
