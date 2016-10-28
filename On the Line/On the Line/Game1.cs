@@ -26,7 +26,7 @@ namespace On_the_Line
         TimeSpan elapsedTime;
 
         TimeSpan laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
-
+        int times = 0;
         SpriteFont font;
         SpriteFont smallText;
         SpriteFont endGameFont;
@@ -72,6 +72,7 @@ namespace On_the_Line
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
         public int[] difficulty = { 0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100, 60 };
+        public static int[] reloadCycles = { 1, 2, 1, 1, 1, 1 };
 
         int obstacleSize = 25;
         public Game1()
@@ -242,15 +243,14 @@ namespace On_the_Line
         {
             lose = false;
             mouseHitbox.lasers.Clear();
-            screen = screenToSetTo;
             pause = false;
             score = 0;
-            if (screen == 0)
+            if (screenToSetTo == 0)
             {
                 startButton = new Button(startButton.EndPosition, startButton._texture);
                 optionsButton = new Button(optionsButton.EndPosition, optionsButton._texture);
             }
-            else if (screen == 1)
+            else if (screenToSetTo == 1)
             {
                 obstacles.Clear();
                 enemies.Clear();
@@ -264,141 +264,130 @@ namespace On_the_Line
                 dotModeCheckbox.checkBox = new Button(dotModeCheckbox.checkBox.EndPosition, dotModeCheckbox.checkBox._texture);
                 backButton = new Button(backButton.EndPosition, backButton._texture);
             }
+            if (screen == 1)
+            {
+                obstacles.Clear();
+                enemies.Clear();
+            }
+            screen = screenToSetTo;
         }
         public void keyboardStuff()
         {
             KeyboardState ks = Keyboard.GetState();
-            if (screen == 1)
+
+            if (ks.IsKeyDown(Keys.R) && !lastKs.IsKeyDown(Keys.R) && screen == 1)
             {
-                if (ks.IsKeyDown(Keys.R) && !lastKs.IsKeyDown(Keys.R))
+                setScreen(1);
+            }
+            if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
+            {
+                setScreen(0);
+            }
+            if (!lose)
+            {
+                if (ks.IsKeyDown(Keys.Up))
                 {
-                    setScreen(1);
-                }
-                if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
-                {
-                    setScreen(0);
-                }
-                if (!lose)
-                {
-                    if (ks.IsKeyDown(Keys.Up))
+                    int highestObstacle = 10;
+                    for (int i = 0; i < obstacles.Count; i++)
                     {
-                        int highestObstacle = 10;
-                        for (int i = 0; i < obstacles.Count; i++)
+                        Obstacles obstacle = obstacles[i];
+                        obstacle.Update();
+                        for (int x = 0; x < Game1.mouseHitbox.lasers.Count; x++)
                         {
-                            Obstacles obstacle = obstacles[i];
-                            obstacle.Update();
-                            for (int x = 0; x < Game1.mouseHitbox.lasers.Count; x++)
+                            if (obstacle.hitbox.Intersects(Game1.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
                             {
-                                if (obstacle.hitbox.Intersects(Game1.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
+                                Game1.mouseHitbox.lasers[x]._lives -= 2;
+                                if (Game1.mouseHitbox.lasers[x]._lives <= 0)
                                 {
-                                    Game1.mouseHitbox.lasers[x]._lives -= 2;
-                                    if (Game1.mouseHitbox.lasers[x]._lives <= 0)
-                                    {
-                                        Game1.mouseHitbox.lasers.Remove(Game1.mouseHitbox.lasers[x]);
-                                    }
-                                    obstacles.Remove(obstacle);
+                                    Game1.mouseHitbox.lasers.Remove(Game1.mouseHitbox.lasers[x]);
                                 }
+                                obstacles.Remove(obstacle);
                             }
-                            if (ks.IsKeyDown(Keys.RightControl))
+                        }
+                        if (ks.IsKeyDown(Keys.RightControl))
+                        {
+                            obstacle.Update();
+                        }
+                        if (ks.IsKeyDown(Keys.LeftControl))
+                        {
+                            for (int d = 0; d < 6; d++)
                             {
                                 obstacle.Update();
                             }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
-                                {
-                                    obstacle.Update();
-                                }
-                            }
-                            if (obstacle.hitbox.Y < highestObstacle)
-                            {
-                                highestObstacle = obstacle.hitbox.Y;
-                            }
                         }
-                        if (highestObstacle >= 0)
+                        if (obstacle.hitbox.Y < highestObstacle)
                         {
-                            newObstacle(highestObstacle);
+                            highestObstacle = obstacle.hitbox.Y;
                         }
-                        for (int i = 0; i < enemies.Count; i++)
+                    }
+                    if (highestObstacle >= 0)
+                    {
+                        newObstacle(highestObstacle);
+                    }
+                    for (int i = 0; i < enemies.Count; i++)
+                    {
+                        Enemy enemy = enemies[i];
+                        enemy.Update();
+                        if (ks.IsKeyDown(Keys.RightControl))
                         {
-                            Enemy enemy = enemies[i];
                             enemy.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                        }
+                        if (ks.IsKeyDown(Keys.LeftControl))
+                        {
+                            for (int d = 0; d < 6; d++)
                             {
                                 enemy.Update();
                             }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
-                                {
-                                    enemy.Update();
-                                }
-                            }
                         }
                     }
-                    else if (ks.IsKeyDown(Keys.Down))
+                }
+                else if (ks.IsKeyDown(Keys.Down))
+                {
+                    for (int i = 0; i < obstacles.Count; i++)
                     {
-                        for (int i = 0; i < obstacles.Count; i++)
+                        Obstacles obstacle = obstacles[i];
+                        obstacle.Update();
+                        if (ks.IsKeyDown(Keys.RightControl))
                         {
-                            Obstacles obstacle = obstacles[i];
                             obstacle.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                        }
+                        if (ks.IsKeyDown(Keys.LeftControl))
+                        {
+                            for (int d = 0; d < 6; d++)
                             {
                                 obstacle.Update();
                             }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
-                                {
-                                    obstacle.Update();
-                                }
-                            }
-                            if (obstacle.hitbox.Y < highestObstacle)
-                            {
-                                highestObstacle = obstacle.hitbox.Y;
-                            }
                         }
-                        for (int i = 0; i < enemies.Count; i++)
+                        if (obstacle.hitbox.Y < highestObstacle)
                         {
-                            Enemy enemy = enemies[i];
+                            highestObstacle = obstacle.hitbox.Y;
+                        }
+                    }
+                    for (int i = 0; i < enemies.Count; i++)
+                    {
+                        Enemy enemy = enemies[i];
+                        enemy.Update();
+                        if (ks.IsKeyDown(Keys.RightControl))
+                        {
                             enemy.Update();
-                            if (ks.IsKeyDown(Keys.RightControl))
+                        }
+                        if (ks.IsKeyDown(Keys.LeftControl))
+                        {
+                            for (int d = 0; d < 6; d++)
                             {
                                 enemy.Update();
                             }
-                            if (ks.IsKeyDown(Keys.LeftControl))
-                            {
-                                for (int d = 0; d < 6; d++)
-                                {
-                                    enemy.Update();
-                                }
-                            }
                         }
-                    }
-                }
-                if (ks.IsKeyDown(Keys.Space) && mouseHitbox.canShoot)
-                {
-                    shootingLaser = true;
-                    mouseHitbox.laserElapsedTime = TimeSpan.Zero;
-                }
-                if (shootingLaser)
-                {
-                    int times = 0;
-                    //do
-                    //{
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
-                    if (mouseHitbox.reloadCycle == 0 && mouseHitbox.slow == 0)
-                    {
-                        times++;
-                    }
-                    //} while (times != 2);
-                    if (times == 1)
-                    {
-                        mouseHitbox.canShoot = false;
-                        shootingLaser = false;
                     }
                 }
             }
+            if (ks.IsKeyDown(Keys.Space) && mouseHitbox.canShoot)
+            {
+                mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+                mouseHitbox.laserElapsedTime = TimeSpan.Zero;
+                mouseHitbox.canShoot = false;
+            }
+
 
             lastKs = ks;
         }
@@ -526,9 +515,6 @@ namespace On_the_Line
         protected override void Update(GameTime gameTime)
         {
             elapsedTime += gameTime.ElapsedGameTime;
-            TimeSpan laserElapsedTime = mouseHitbox.laserElapsedTime;
-            TimeSpan laserCooldown = mouseHitbox.stats.Item1;
-
             if (elapsedTime >= timeToWait)
             {
                 elapsedTime = TimeSpan.Zero;
@@ -537,19 +523,14 @@ namespace On_the_Line
             }
             if (!pause)
             {
-                mouseHitbox.laserElapsedTime += gameTime.ElapsedGameTime;
                 foreach (Enemy enemy in enemies)
                 {
                     enemy.laserElapsedTime += gameTime.ElapsedGameTime;
                 }
             }
-            if (laserElapsedTime >= laserCooldown)
-            {
-                laserElapsedTime = TimeSpan.Zero;
-                mouseHitbox.canShoot = true;
-            }
             checkColorScheme();
-            if (screen == 0)//main menu
+            #region Screen 0 Main Menu
+            if (screen == 0)
             {
                 startButton.Update();
                 optionsButton.Update();
@@ -618,6 +599,8 @@ namespace On_the_Line
                 }
                 #endregion
             }
+            #endregion
+            #region Screen 1
             else if (screen == 1)//gameplay
             {
                 KeyboardState ks = Keyboard.GetState();
@@ -655,7 +638,7 @@ namespace On_the_Line
                     else
                     {
                         //version 2
-                        
+
                         if (obstacles.Count > 134)
                         {
                             for (int obstacleToRemove = 0; obstacleToRemove < obstacles.Count; obstacleToRemove++)
@@ -698,7 +681,7 @@ namespace On_the_Line
                         Mouse.SetPosition(500, ms.Y);
                     }
                 }
-               
+
                 if (!isLoading && !lose)
                 {
                     #region Updates Obstacles
@@ -805,7 +788,9 @@ namespace On_the_Line
                 }
                 keyboardStuff();
             }
-            else if (screen == 2)//settings
+            #endregion
+            #region Screen 2 Settings
+            else if (screen == 2)
             {
                 score++;
                 if (gamemode == "fastmode")
@@ -894,6 +879,10 @@ namespace On_the_Line
                 gamemodeButton.Update();
                 if (gamemodeButton.Clicked)
                 {
+                    foreach (Obstacles obstacle in obstacles)
+                    {
+                        obstacle.Show = false;
+                    }
                     if (gamemode == "regular")
                     {
                         gamemodeButton._texture = Content.Load<Texture2D>("DarkmodeButton");
@@ -931,15 +920,9 @@ namespace On_the_Line
                     }
                     mouseHitbox.canShoot = true;
                     mouseHitbox.Update(gameTime);
-                    int times = 0;
-                    do
-                    {
-                        mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
-                        if (mouseHitbox.reloadCycle != 0 && mouseHitbox.slow == 0)
-                        {
-                            times++;
-                        }
-                    } while (times != 2);
+
+                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), laserColor, false);
+
                 }
                 #endregion
                 dotModeCheckbox.Update();
@@ -956,7 +939,9 @@ namespace On_the_Line
                 {
                     setScreen(0);
                 }
+                keyboardStuff();
             }
+            #endregion
             base.Update(gameTime);
         }
         /// <summary>
@@ -972,10 +957,10 @@ namespace On_the_Line
                 obtsacle.Draw(spriteBatch);
             }
             if (screen == 0)//main menu
-            {               
+            {
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
-                
+
             }
             else if (screen == 1)//gameplay
             {
@@ -1016,12 +1001,14 @@ namespace On_the_Line
                 backButton.Draw(spriteBatch);
                 mouseHitbox.Draw(spriteBatch);
                 int s = shootStyleButton.rectangle.Y; //make the line look less intimidating
-                spriteBatch.DrawString(smallText, string.Format("Num of Bullets: {0}", mouseHitbox.stats.Item2), new Vector2(125, s+80), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Bullet Penetration: {0}", mouseHitbox.stats.Item3), new Vector2(125, s + 95), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Bullet Speed: {0}", mouseHitbox.stats.Item4), new Vector2(125, s + 110), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000f), new Vector2(125, s + 125), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.stats.Item5), new Vector2(125, s + 140), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.stats.Item6), new Vector2(125, s + 155), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), new Vector2(125, s + 80), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Bullet Penetration: { mouseHitbox.stats.Item3}"), new Vector2(125, s + 95), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), new Vector2(125, s + 110), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), new Vector2(125, s + 125), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), new Vector2(125, s + 140), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), new Vector2(125, s + 155), textColor);
+                KeyboardState ks = Keyboard.GetState();
+                spriteBatch.DrawString(smallText, string.Format($"{shootingLaser}"), new Vector2(125, s + 170), textColor);
                 dotModeCheckbox.Draw(spriteBatch);
 
             }

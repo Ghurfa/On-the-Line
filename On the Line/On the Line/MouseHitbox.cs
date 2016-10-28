@@ -44,6 +44,12 @@ namespace On_the_Line
         }
         public void Update(GameTime gameTime)
         {
+            laserElapsedTime += gameTime.ElapsedGameTime;
+            if (laserElapsedTime >= stats.Item1)
+            {
+                laserElapsedTime = TimeSpan.Zero;
+                canShoot = true;
+            }
             if (Counting)
             {
                 CountingElapsedTime += gameTime.ElapsedGameTime;
@@ -89,7 +95,7 @@ namespace On_the_Line
                 if (Counting)
                 {
                     CountingSecond = 3 - CountingElapsedTime.Seconds;
-                    if(CountingSecond == 0)
+                    if (CountingSecond == 0)
                     {
                         isclicked = true;
                         Game1.pause = false;
@@ -99,7 +105,7 @@ namespace On_the_Line
                 if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y) && lastMouseState.LeftButton == ButtonState.Released)
                 {
                     Counting = true;
-                    CountingElapsedTime = TimeSpan.Zero;                
+                    CountingElapsedTime = TimeSpan.Zero;
                 }
                 if (mouseState.LeftButton == ButtonState.Released)
                 {
@@ -136,7 +142,7 @@ namespace On_the_Line
         /// <param name="aims">Whether or not it aims (for enemies)</param>
         public void fireLasers(Texture2D texture, Color laserColor, bool aims)
         {
-            Vector2 startPos = new Vector2(_position.X + _texture.Width / 2, _position.Y + _texture.Height / 2);
+            Vector2 startPos = new Vector2(_position.X + _texture.Width / 2 - 2, _position.Y + _texture.Height / 2 - 2);
             int laserCount = Game1.mouseHitbox.lasers.Count;
             foreach (Enemy enemy in Game1.enemies)
             {
@@ -152,307 +158,266 @@ namespace On_the_Line
                 }
                 else
                 {
-                    if (slow == 10)
+                    reloadCycle++;
+                    if (laserCount < 500)
                     {
-                        slow = 0;
-                        reloadCycle++;
-                        if (laserCount < 500)
+
+                        #region Shoot Style 0
+                        if (_shootStyle == 0)
                         {
-
-                            #region Shoot Style 0
-                            if (_shootStyle == 0)
+                            #region Direction 0
+                            if (direction == 0)
                             {
-                                #region Direction 0
-                                if (direction == 0)
-                                {
-                                    lasers.Add(new Laser(startPos, 0, -2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, 2, -2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, -2, -2, texture, stats.Item3, laserColor));
-                                }
-                                #endregion
-                                #region Direction 1
-                                else if (direction == 1)
-                                {
-                                    lasers.Add(new Laser(startPos, -2, 0, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, -2, 2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, -2, -2, texture, stats.Item3, laserColor));
-                                }
-                                #endregion
-                                #region Direction 2
-                                else if (direction == 2)
-                                {
-                                    lasers.Add(new Laser(startPos, 0, 2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, 2, 2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, -2, 2, texture, stats.Item3, laserColor));
-                                }
-                                #endregion
-                                #region Direction 3
-                                else if (direction == 3)
-                                {
-                                    lasers.Add(new Laser(startPos, 2, 0, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, 2, 2, texture, stats.Item3, laserColor));
-                                    lasers.Add(new Laser(startPos, 2, -2, texture, stats.Item3, laserColor));
-                                }
-                                #endregion
-                                if (reloadCycle == 1)
-                                {
-                                    reloadCycle = 0;
-                                }
+                                lasers.Add(new Laser(startPos, 0, -2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, 2, -2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, -2, -2, texture, stats.Item3, laserColor));
                             }
                             #endregion
-
-                            #region Shoot Style 1
-                            else if (_shootStyle == 1)
+                            #region Direction 1
+                            else if (direction == 1)
                             {
-                                if (direction == 0)
-                                {
-                                    if (reloadCycle == 1)
-                                    {
-                                        lasers.Add(new Laser(startPos, 0, 2, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, 2, 0, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, 0, -2, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, -2, 0, texture, stats.Item3, laserColor));
-                                    }
-                                    else
-                                    {
-                                        lasers.Add(new Laser(startPos, 2, 2, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, 2, -2, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, -2, -2, texture, stats.Item3, laserColor));
-                                        lasers.Add(new Laser(startPos, -2, 2, texture, stats.Item3, laserColor));
-                                    }
-                                    if (reloadCycle == 2)
-                                    {
-                                        reloadCycle = 0;
-                                    }
-                                }
-                                else if (direction == 1)
-                                {
-                                    int xSpeed = 2;
-                                    int ySpeed = 2;
-                                    int startX = (int)startPos.X + 50;
-                                    int startY;
-                                    for (int x = 0; x < 2; x++)
-                                    {
-                                        startY = (int)startPos.Y + 50;
-                                        for (int y = 0; y < 2; y++)
-                                        {
-                                            lasers.Add(new Laser(new Vector2(startX, startY), xSpeed, ySpeed, texture, stats.Item3, laserColor));
-                                            ySpeed *= -1;
-                                            startY -= 100;
-                                        }
-                                        xSpeed *= -1;
-                                        startX -= 100;
-                                    }
-                                    if (reloadCycle == 1)
-                                    {
-                                        reloadCycle = 0;
-                                    }
-                                }
+                                lasers.Add(new Laser(startPos, -2, 0, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, -2, 2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, -2, -2, texture, stats.Item3, laserColor));
                             }
                             #endregion
-
-                            #region Shoot Style 2
-                            else if (_shootStyle == 2)
+                            #region Direction 2
+                            else if (direction == 2)
                             {
-                                if (direction == 0)
-                                {
-                                    for (int a = 1; a < 4; a++)
-                                    {
-                                        for (int b = 0; b < 3; b += 2)
-                                        {
-                                            for (int c = 1; c < 5; c++)
-                                            {
-                                                lasers.Add(new Laser(startPos, a * (b - 1), -c, texture, stats.Item3, laserColor));
-                                            }
-                                        }
-                                    }
-                                    lasers.Add(new Laser(startPos, 0, -1, texture, stats.Item3, laserColor));
-                                }
-                                else if (direction == 1)
-                                {
-                                    for (int a = 1; a < 4; a++)
-                                    {
-                                        for (int b = 0; b < 3; b += 2)
-                                        {
-                                            for (int c = 1; c < 5; c++)
-                                            {
-                                                lasers.Add(new Laser(startPos, -c, a * (b - 1), texture, stats.Item3, laserColor));
-                                            }
-                                        }
-                                    }
-                                    lasers.Add(new Laser(startPos, -1, 0, texture, stats.Item3, laserColor));
-                                }
-                                else if (direction == 2)
-                                {
-                                    for (int a = 1; a < 4; a++)
-                                    {
-                                        for (int b = 0; b < 3; b += 2)
-                                        {
-                                            for (int c = 1; c < 5; c++)
-                                            {
-                                                lasers.Add(new Laser(startPos, a * (b - 1), c, texture, stats.Item3, laserColor));
-                                            }
-                                        }
-                                    }
-                                    lasers.Add(new Laser(startPos, 0, 1, texture, stats.Item3, laserColor));
-                                }
-                                else if (direction == 3)
-                                {
-                                    for (int a = 1; a < 4; a++)
-                                    {
-                                        for (int b = 0; b < 3; b += 2)
-                                        {
-                                            for (int c = 1; c < 5; c++)
-                                            {
-                                                lasers.Add(new Laser(startPos, c, a * (b - 1), texture, stats.Item3, laserColor));
-                                            }
-                                        }
-                                    }
-                                    lasers.Add(new Laser(startPos, 1, 0, texture, stats.Item3, laserColor));
-                                }
-                                if (reloadCycle == 1)
-                                {
-                                    reloadCycle = 0;
-                                }
+                                lasers.Add(new Laser(startPos, 0, 2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, 2, 2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, -2, 2, texture, stats.Item3, laserColor));
                             }
                             #endregion
-
-                            #region Shoot Style 3
-                            else if (_shootStyle == 3)
+                            #region Direction 3
+                            else if (direction == 3)
                             {
-                                startPos.X = _position.X - 590;
-                                for (int d = 0; d < 20; d++)
-                                {
-                                    lasers.Add(new Laser(startPos, 0, -5, texture, stats.Item3, laserColor));
-                                    startPos.X += 50;
-                                }
-                                if (reloadCycle == 1)
-                                {
-                                    reloadCycle = 0;
-                                }
-                            }
-                            #endregion
-
-                            #region Shoot Style 4
-                            else if (_shootStyle == 4)
-                            {
-                                startPos.Y = _position.Y - 38;
-                                if (direction == 0)
-                                {
-                                    for (int i = 0; i < 5; i++)
-                                    {
-                                        startPos.X = _position.X - 38;
-                                        for (int d = 0; d < 5; d++)
-                                        {
-                                            lasers.Add(new Laser(startPos, 0, 0, texture, stats.Item3, laserColor));
-                                            startPos.X += 25;
-                                        }
-                                        startPos.Y += 25;
-                                    }
-                                }
-                                else if (direction == 1)
-                                {
-                                    for (int i = 0; i < 5; i++)
-                                    {
-                                        startPos.X = _position.X - 38;
-                                        for (int d = 0; d < 5; d++)
-                                        {
-                                            lasers.Add(new Laser(startPos, 0, 1, texture, stats.Item3, laserColor));
-                                            startPos.X += 25;
-                                        }
-                                        startPos.Y += 25;
-                                    }
-                                }
-                                if (reloadCycle == 1)
-                                {
-                                    reloadCycle = 0;
-                                }
-                            }
-                            #endregion
-
-                            #region Shoot Style 5
-                            else if (_shootStyle == 5)
-                            {
-                                if (direction == 0)
-                                {
-                                    startPos.X -= 25;
-                                    startPos.Y -= 25;
-                                    for (int a = 1; a > -2; a -= 2)
-                                    {
-                                        for (int i = 0; i < 3; i++)
-                                        {
-                                            lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, -10, texture, stats.Item3, laserColor));
-                                            startPos.X += 12;
-                                            startPos.Y -= 12 * a;
-                                        }
-                                        startPos.X -= 12;
-                                        startPos.Y += 12;
-                                    }
-                                }
-                                else if (direction == 1)
-                                {
-                                    startPos.X += 25;
-                                    startPos.Y -= 25;
-                                    for (int a = 1; a > -2; a -= 2)
-                                    {
-                                        for (int i = 0; i < 3; i++)
-                                        {
-                                            lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 10, 0, texture, stats.Item3, laserColor));
-                                            startPos.Y += 12;
-                                            startPos.X += 12 * a;
-                                        }
-                                        startPos.Y -= 12;
-                                        startPos.X -= 12;
-                                    }
-                                }
-                                else if (direction == 2)
-                                {
-                                    startPos.X -= 25;
-                                    startPos.Y += 25;
-                                    for (int a = 1; a > -2; a -= 2)
-                                    {
-                                        for (int i = 0; i < 3; i++)
-                                        {
-                                            lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, 10, texture, stats.Item3, laserColor));
-                                            startPos.X += 12;
-                                            startPos.Y += 12 * a;
-                                        }
-                                        startPos.X -= 12;
-                                        startPos.Y -= 12;
-                                    }
-                                }
-                                else if (direction == 3)
-                                {
-                                    startPos.X -= 25;
-                                    startPos.Y -= 25;
-                                    for (int a = 1; a > -2; a -= 2)
-                                    {
-                                        for (int i = 0; i < 3; i++)
-                                        {
-                                            lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), -10, 0, texture, stats.Item3, laserColor));
-                                            startPos.Y += 12;
-                                            startPos.X -= 12 * a;
-                                        }
-                                        startPos.Y -= 12;
-                                        startPos.X += 12;
-                                    }
-                                }
-                                if (reloadCycle == 1)
-                                {
-                                    reloadCycle = 0;
-                                }
+                                lasers.Add(new Laser(startPos, 2, 0, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, 2, 2, texture, stats.Item3, laserColor));
+                                lasers.Add(new Laser(startPos, 2, -2, texture, stats.Item3, laserColor));
                             }
                             #endregion
                         }
-                    }
+                        #endregion
 
-                    else
-                    {
-                        slow++;
+                        #region Shoot Style 1
+                        else if (_shootStyle == 1)
+                        {
+                            if (direction == 0)
+                            {
+                                for(int x = -2; x < 3; x+=2)
+                                {
+                                    for(int y = -2; y < 3; y+=2)
+                                    {
+                                        if(x != 0 || y != 0)
+                                        lasers.Add(new Laser(startPos, x, y, texture, stats.Item3, laserColor));
+                                    }
+                                }
+                                
+                            }
+                            else if (direction == 1)
+                            {
+                                int xSpeed = 2;
+                                int ySpeed = 2;
+                                int startX = (int)startPos.X + 50;
+                                int startY;
+                                for (int x = 0; x < 2; x++)
+                                {
+                                    startY = (int)startPos.Y + 50;
+                                    for (int y = 0; y < 2; y++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startX, startY), xSpeed, ySpeed, texture, stats.Item3, laserColor));
+                                        ySpeed *= -1;
+                                        startY -= 100;
+                                    }
+                                    xSpeed *= -1;
+                                    startX -= 100;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        #region Shoot Style 2
+                        else if (_shootStyle == 2)
+                        {
+                            if (direction == 0)
+                            {
+                                for (int a = 1; a < 4; a++)
+                                {
+                                    for (int b = 0; b < 3; b += 2)
+                                    {
+                                        for (int c = 1; c < 5; c++)
+                                        {
+                                            lasers.Add(new Laser(startPos, a * (b - 1), -c, texture, stats.Item3, laserColor));
+                                        }
+                                    }
+                                }
+                                lasers.Add(new Laser(startPos, 0, -1, texture, stats.Item3, laserColor));
+                            }
+                            else if (direction == 1)
+                            {
+                                for (int a = 1; a < 4; a++)
+                                {
+                                    for (int b = 0; b < 3; b += 2)
+                                    {
+                                        for (int c = 1; c < 5; c++)
+                                        {
+                                            lasers.Add(new Laser(startPos, -c, a * (b - 1), texture, stats.Item3, laserColor));
+                                        }
+                                    }
+                                }
+                                lasers.Add(new Laser(startPos, -1, 0, texture, stats.Item3, laserColor));
+                            }
+                            else if (direction == 2)
+                            {
+                                for (int a = 1; a < 4; a++)
+                                {
+                                    for (int b = 0; b < 3; b += 2)
+                                    {
+                                        for (int c = 1; c < 5; c++)
+                                        {
+                                            lasers.Add(new Laser(startPos, a * (b - 1), c, texture, stats.Item3, laserColor));
+                                        }
+                                    }
+                                }
+                                lasers.Add(new Laser(startPos, 0, 1, texture, stats.Item3, laserColor));
+                            }
+                            else if (direction == 3)
+                            {
+                                for (int a = 1; a < 4; a++)
+                                {
+                                    for (int b = 0; b < 3; b += 2)
+                                    {
+                                        for (int c = 1; c < 5; c++)
+                                        {
+                                            lasers.Add(new Laser(startPos, c, a * (b - 1), texture, stats.Item3, laserColor));
+                                        }
+                                    }
+                                }
+                                lasers.Add(new Laser(startPos, 1, 0, texture, stats.Item3, laserColor));
+                            }
+                        }
+                        #endregion
+
+                        #region Shoot Style 3
+                        else if (_shootStyle == 3)
+                        {
+                            startPos.X = _position.X - 590;
+                            for (int d = 0; d < 20; d++)
+                            {
+                                lasers.Add(new Laser(startPos, 0, -5, texture, stats.Item3, laserColor));
+                                startPos.X += 50;
+                            }
+                        }
+                        #endregion
+
+                        #region Shoot Style 4
+                        else if (_shootStyle == 4)
+                        {
+                            startPos.Y = _position.Y - 38;
+                            if (direction == 0)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    startPos.X = _position.X - 38;
+                                    for (int d = 0; d < 5; d++)
+                                    {
+                                        lasers.Add(new Laser(startPos, 0, 0, texture, stats.Item3, laserColor));
+                                        startPos.X += 25;
+                                    }
+                                    startPos.Y += 25;
+                                }
+                            }
+                            else if (direction == 1)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    startPos.X = _position.X - 38;
+                                    for (int d = 0; d < 5; d++)
+                                    {
+                                        lasers.Add(new Laser(startPos, 0, 1, texture, stats.Item3, laserColor));
+                                        startPos.X += 25;
+                                    }
+                                    startPos.Y += 25;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        #region Shoot Style 5
+                        else if (_shootStyle == 5)
+                        {
+                            if (direction == 0)
+                            {
+                                startPos.X -= 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, -10, texture, stats.Item3, laserColor));
+                                        startPos.X += 12;
+                                        startPos.Y -= 12 * a;
+                                    }
+                                    startPos.X -= 12;
+                                    startPos.Y += 12;
+                                }
+                            }
+                            else if (direction == 1)
+                            {
+                                startPos.X += 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 10, 0, texture, stats.Item3, laserColor));
+                                        startPos.Y += 12;
+                                        startPos.X += 12 * a;
+                                    }
+                                    startPos.Y -= 12;
+                                    startPos.X -= 12;
+                                }
+                            }
+                            else if (direction == 2)
+                            {
+                                startPos.X -= 25;
+                                startPos.Y += 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), 0, 10, texture, stats.Item3, laserColor));
+                                        startPos.X += 12;
+                                        startPos.Y += 12 * a;
+                                    }
+                                    startPos.X -= 12;
+                                    startPos.Y -= 12;
+                                }
+                            }
+                            else if (direction == 3)
+                            {
+                                startPos.X -= 25;
+                                startPos.Y -= 25;
+                                for (int a = 1; a > -2; a -= 2)
+                                {
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        lasers.Add(new Laser(new Vector2(startPos.X, startPos.Y), -10, 0, texture, stats.Item3, laserColor));
+                                        startPos.Y += 12;
+                                        startPos.X -= 12 * a;
+                                    }
+                                    startPos.Y -= 12;
+                                    startPos.X += 12;
+                                }
+                            }
+                        }
+                        #endregion
                     }
                 }
             }
         }
+
         /// <summary>
         /// This draws the body, its spotlight, and its lasers
         /// </summary>

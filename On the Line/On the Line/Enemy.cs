@@ -50,7 +50,6 @@ namespace On_the_Line
                 laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
             }
             _rams = rams;
-            body.fireLasers(_laserTexture, Game1.wallColor, false);
             _slideSpeed = 31;
             body._position += new Vector2(496, 0);
         }
@@ -79,28 +78,10 @@ namespace On_the_Line
                         if (aims)
                         {
                             body.fireLasers(_laserTexture, Game1.wallColor, true);
-                        }
-                        else
-                        {
-                            shooting = true;
-                        }
-
-                        laserElapsedTime = TimeSpan.Zero;
-                    }
-                    if (shooting)
-                    {
-                        int times = 0;
-                        body.fireLasers(_laserTexture, Game1.wallColor, false);
-                        if (body.reloadCycle == 0 && body.slow == 0)
-                        {
-                            times++;
+                            body.fireLasers(_laserTexture, Game1.wallColor, false);
                         }
                         laserElapsedTime = TimeSpan.Zero;
-                        if (times == 1)
-                        {
-                            shooting = false;
-                        }
-                    }
+                    }                    
                     for (int i = 0; i < body.lasers.Count; i++)
                     {
                         Laser laser = body.lasers[i];

@@ -37,6 +37,7 @@ namespace On_the_Line
         public bool didKill = false;
         float rotation = 0;
         int growTimes;
+        public bool Show = true;
         /// <summary>
         /// Loads an obstacle
         /// </summary>
@@ -68,6 +69,28 @@ namespace On_the_Line
 
         public void Update()
         {
+            if (_color.A != 230)
+            {
+                if (Show)
+                {
+                    _color = Game1.wallColor;
+                }
+                else
+                {
+                    _color = Game1.backgroundColor;
+                }
+            }
+            if (Game1.gamemode == "regular" || Game1.gamemode == "fastmode")
+            {
+                if (_moveX != 0 || _moveY != 0)
+                {
+                    _color = Game1.outerWallColor;
+                }
+                else
+                {
+                    Show = true;
+                }
+            }
             if (_slideSpeed > 0)
             {
                 if (_slideSpeed == 31)
@@ -75,73 +98,48 @@ namespace On_the_Line
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(_slideSpeed, 0);
-                if ((Game1.gamemode == "spotlight" && hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.gamemode == "darkmode")
+                if ((Game1.gamemode == "spotlight" && !hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.gamemode == "darkmode")
                 {
-                    _color = Game1.backgroundColor;
+                    Show = false;
                 }
                 _slideSpeed--;
             }
             else
             {
-                if (_color.A != 230)
+                if (Game1.lose)
                 {
-                    if (Game1.gamemode == "darkmode")
-                    {
-                        if (Game1.lose)
-                        {
-                            _color = Game1.wallColor;
-                        }
-                        for (int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
-                        {
-                            Laser laser = Game1.mouseHitbox.lasers[i];
-                            if (hitbox.Intersects(laser._rect) && _color != Game1.wallColor)
-                            {
-                                if (_indestrucable)
-                                {
-                                    Game1.mouseHitbox.lasers.Remove(laser);
-                                }
-                                Game1.mouseHitbox.lasers[i]._lives--;
-                                if (Game1.mouseHitbox.lasers[i]._lives <= 0)
-                                {
-                                    Game1.mouseHitbox.lasers.Remove(laser);
-                                }
-                                _color = Game1.wallColor;
-                            }
-                        }
-                    }
-                    else if (Game1.gamemode == "spotlight")
-                    {
-                        if (Game1.lose)
-                        {
-                            _color = Game1.wallColor;
-                        }
-                        else
-                        {
-                            if (hitbox.Intersects(Game1.mouseHitbox._spotlight))
-                            {
-                                _color = Game1.wallColor;
-                            }
-                            else
-                            {
-                                _color = Game1.backgroundColor;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (_moveX != 0 || _moveY != 0)
-                        {
-                            _color = Game1.outerWallColor;
-                        }
-                    }
+                    Show = true;
                 }
                 for (int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
                 {
                     Laser laser = Game1.mouseHitbox.lasers[i];
-                    if (laser._rect.Intersects(hitbox) && _indestrucable)
+                    if (laser._rect.Intersects(hitbox))
                     {
-                        Game1.mouseHitbox.lasers.Remove(laser);
+                        if (Game1.gamemode == "darkmode" && !Show)
+                        {
+                            Game1.mouseHitbox.lasers[i]._lives--;
+                            Show = true;
+                        }
+                        if (Game1.mouseHitbox.lasers[i]._lives <= 0 || _indestrucable)
+                        {
+                            Game1.mouseHitbox.lasers.Remove(laser);
+                        }
                     }
+                }
+                if (Game1.gamemode == "spotlight")
+                {
+                    if (hitbox.Intersects(Game1.mouseHitbox._spotlight))
+                    {
+                        Show = true;
+                    }
+                    else
+                    {
+                        Show = false;
+                    }
+                }
+                if ((Game1.screen == 1 && (position.Y > 930 && _color != Game1.textColor && _maxMove == 0)) || _gateway)
+                {
+                    Show = false;
                 }
                 slow++;
                 if (slow == 5)
@@ -225,10 +223,6 @@ namespace On_the_Line
         {
             if (_slideSpeed < 30)
             {
-                if ((Game1.screen == 1 && (position.Y > 930 && _color != Game1.textColor && _maxMove == 0)) || _gateway)
-                {
-                    _color = Game1.backgroundColor;
-                }
                 spriteBatch.Draw(_texture, new Vector2(hitbox.X + 12.5f, hitbox.Y + 12.5f), null, _color, rotation, new Vector2(0.5f, 0.5f), _size, SpriteEffects.None, 0);
             }
 
