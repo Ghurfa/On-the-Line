@@ -622,7 +622,7 @@ namespace On_the_Line
             {
                 KeyboardState ks = Keyboard.GetState();
 
-                mouseHitbox.Update();
+                mouseHitbox.Update(gameTime);
                 if (lose || isLoading)
                 {
                     foreach (Obstacles obstacle in obstacles)
@@ -858,7 +858,7 @@ namespace On_the_Line
                     newObstacle(highestObstacle);
                 }
                 #endregion
-                mouseHitbox.Update();
+                mouseHitbox.Update(gameTime);
                 #region Checks Color Button
                 colorButton.Update();
                 if (colorButton.Clicked)
@@ -930,7 +930,7 @@ namespace On_the_Line
                         shootStyle = 0;
                     }
                     mouseHitbox.canShoot = true;
-                    mouseHitbox.Update();
+                    mouseHitbox.Update(gameTime);
                     int times = 0;
                     do
                     {
@@ -986,6 +986,10 @@ namespace On_the_Line
                     laserCount += enemy.body.lasers.Count();
                 }
                 mouseHitbox.Draw(spriteBatch);
+                if (mouseHitbox.Counting)
+                {
+                    spriteBatch.DrawString(font, string.Format($"{mouseHitbox.CountingSecond}"), mouseHitbox._position + new Vector2(6, -40), textColor);
+                }
                 if (lose)
                 {
                     spriteBatch.DrawString(endGameFont, $"Score:{score / 50}", new Vector2(125, 500), textColor);

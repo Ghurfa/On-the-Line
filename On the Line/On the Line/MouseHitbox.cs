@@ -26,7 +26,9 @@ namespace On_the_Line
         public int reloadCycle = 0;
         public int slow = 0;
         public bool canShoot = true;
-
+        public bool Counting = false;
+        public int CountingSecond = 3;
+        public TimeSpan CountingElapsedTime;
         public TimeSpan laserElapsedTime;
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
 
@@ -40,8 +42,12 @@ namespace On_the_Line
             this.direction = direction;
             this.showWhenLose = showWhenLose;
         }
-        public void Update()
+        public void Update(GameTime gameTime)
         {
+            if (Counting)
+            {
+                CountingElapsedTime += gameTime.ElapsedGameTime;
+            }
             _shootStyle = Game1.shootStyle;
             if (_shootStyle == 0)
             {
@@ -80,15 +86,26 @@ namespace On_the_Line
             mouseState = Mouse.GetState();
             if (Game1.screen != 2 && !Game1.lose)
             {
-                if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y))
+                if (Counting)
                 {
-                    isclicked = true;
-                    Game1.pause = false;
+                    CountingSecond = 3 - CountingElapsedTime.Seconds;
+                    if(CountingSecond == 0)
+                    {
+                        isclicked = true;
+                        Game1.pause = false;
+                        Counting = false;
+                    }
+                }
+                if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y) && lastMouseState.LeftButton == ButtonState.Released)
+                {
+                    Counting = true;
+                    CountingElapsedTime = TimeSpan.Zero;                
                 }
                 if (mouseState.LeftButton == ButtonState.Released)
                 {
                     isclicked = false;
                     Game1.pause = true;
+                    Counting = false;
                 }
                 if (isclicked)
                 {
