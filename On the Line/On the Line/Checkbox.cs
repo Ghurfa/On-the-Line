@@ -24,7 +24,7 @@ namespace On_the_Line
         public void Update()
         {
             checkBox.Update();
-            if (checkBox.clicked)
+            if (checkBox.Clicked)
             {
                 if (isChecked)
                 {

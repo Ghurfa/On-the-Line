@@ -240,8 +240,6 @@ namespace On_the_Line
         }
         public void setScreen(int screenToSetTo)
         {
-            obstacles.Clear();
-            enemies.Clear();
             lose = false;
             mouseHitbox.lasers.Clear();
             screen = screenToSetTo;
@@ -254,6 +252,8 @@ namespace On_the_Line
             }
             else if (screen == 1)
             {
+                obstacles.Clear();
+                enemies.Clear();
                 startNewGame();
             }
             else
@@ -553,18 +553,18 @@ namespace On_the_Line
             {
                 startButton.Update();
                 optionsButton.Update();
-                if (startButton.clicked)
+                if (startButton.Clicked)
                 {
                     setScreen(1);
                 }
-                if (optionsButton.released)
+                if (optionsButton.Released)
                 {
                     setScreen(2);
                 }
                 if (obstacles.Count == 0)
                 {
-                    loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
-                    loadObstacle(1000, "LowerStartingObstacle");
+                    newObstacle(500);
+                    newObstacle(1000);
                 }
                 score++;
                 if (gamemode == "fastmode")
@@ -807,10 +807,61 @@ namespace On_the_Line
             }
             else if (screen == 2)//settings
             {
+                score++;
+                if (gamemode == "fastmode")
+                {
+                    score++;
+                }
+                #region Updates Obstacles
+
+                highestObstacle = 10;
+                for (int i = 0; i < obstacles.Count; i++)
+                {
+                    Obstacles obstacle = obstacles[i];
+                    obstacle.Update();
+                    obstacle._size = new Vector2(obstacleSize, obstacleSize);
+                    if (gamemode == "fastmode")
+                    {
+                        obstacle.Update();
+                    }
+                    if (obstacle.hitbox.Y < highestObstacle)
+                    {
+                        highestObstacle = obstacle.hitbox.Y;
+                    }
+                    if (obstacle._breaks)
+                    {
+                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                        {
+                            Laser laser = mouseHitbox.lasers[x];
+                            if (laser._rect.Intersects(obstacle.hitbox))
+                            {
+                                obstacles.Remove(obstacle);
+                                destroyedObstacles++;
+                                score += 10;
+                                i--;
+                                laser._lives--;
+                                if (laser._lives <= 0)
+                                {
+                                    Game1.mouseHitbox.lasers.Remove(laser);
+                                }
+                            }
+                        }
+                    }
+                    if (obstacle.hitbox.Y > 2000)
+                    {
+                        obstacles.Remove(obstacle);
+                        i--;
+                    }
+                }
+                if (highestObstacle >= 0 && obstacles.Count < 2000)
+                {
+                    newObstacle(highestObstacle);
+                }
+                #endregion
                 mouseHitbox.Update();
                 #region Checks Color Button
                 colorButton.Update();
-                if (colorButton.clicked)
+                if (colorButton.Clicked)
                 {
                     if (colorScheme == "Default")
                     {
@@ -841,7 +892,7 @@ namespace On_the_Line
                 #endregion
                 #region Checks Gamemode Button
                 gamemodeButton.Update();
-                if (gamemodeButton.clicked)
+                if (gamemodeButton.Clicked)
                 {
                     if (gamemode == "regular")
                     {
@@ -867,7 +918,7 @@ namespace On_the_Line
                 #endregion
                 #region Checks Shootstyle Button
                 shootStyleButton.Update();
-                if (shootStyleButton.clicked)
+                if (shootStyleButton.Clicked)
                 {
                     mouseHitbox.lasers.Clear();
                     if (shootStyle != 5)
@@ -901,7 +952,7 @@ namespace On_the_Line
                     obstacleSize = 25;
                 }
                 backButton.Update();
-                if (backButton.clicked)
+                if (backButton.Clicked)
                 {
                     setScreen(0);
                 }
@@ -916,12 +967,12 @@ namespace On_the_Line
         {
             GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
-            if (screen == 0)//main menu
+            foreach (Obstacles obtsacle in obstacles)
             {
-                foreach (Obstacles obtsacle in obstacles)
-                {
-                    obtsacle.Draw(spriteBatch);
-                }
+                obtsacle.Draw(spriteBatch);
+            }
+            if (screen == 0)//main menu
+            {               
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
                 
@@ -933,10 +984,6 @@ namespace On_the_Line
                 {
                     enemy.Draw(spriteBatch);
                     laserCount += enemy.body.lasers.Count();
-                }
-                foreach (Obstacles obtsacle in obstacles)
-                {
-                    obtsacle.Draw(spriteBatch);
                 }
                 mouseHitbox.Draw(spriteBatch);
                 if (lose)
@@ -970,7 +1017,7 @@ namespace On_the_Line
                 spriteBatch.DrawString(smallText, string.Format("Bullet Speed: {0}", mouseHitbox.stats.Item4), new Vector2(125, s + 110), textColor);
                 spriteBatch.DrawString(smallText, string.Format("Reload: {0} sec(s)", mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000f), new Vector2(125, s + 125), textColor);
                 spriteBatch.DrawString(smallText, string.Format("Pros: {0}", mouseHitbox.stats.Item5), new Vector2(125, s + 140), textColor);
-                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.stats.Item6), new Vector2(125, s + 165), textColor);
+                spriteBatch.DrawString(smallText, string.Format("Cons: {0}", mouseHitbox.stats.Item6), new Vector2(125, s + 155), textColor);
                 dotModeCheckbox.Draw(spriteBatch);
 
             }

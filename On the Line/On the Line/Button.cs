@@ -13,8 +13,9 @@ namespace On_the_Line
         public Rectangle rectangle;
         public Texture2D _texture;
         MouseState lastMS;
-        public bool clicked;
-        public bool released;
+        bool hovered;
+        public bool Clicked;
+        public bool Released;
         Color _color = Color.White;
         int YSpeed;
         public Vector2 EndPosition;
@@ -30,6 +31,7 @@ namespace On_the_Line
 
         public void Update()
         {
+            _color = Game1.textColor;
             if (Math.Abs(YSpeed) > 1)
             {
                 rectangle.Y += (YSpeed / 10);
@@ -48,27 +50,40 @@ namespace On_the_Line
 
             }
             MouseState MS = Mouse.GetState();
-            if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released && rectangle.Contains(MS.X, MS.Y))
+            hovered = rectangle.Contains(MS.X, MS.Y);
+            if (hovered)
             {
-                clicked = true;
+                _color.A = 128;
+                if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released)
+                {
+                    Clicked = true;
+                }
+                else
+                {
+                    Clicked = false;
+                }
+                if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed)
+                {
+                    Released = true;
+                }
+                else
+                {
+
+                    Released = false;
+                }
             }
             else
             {
-                clicked = false;
+                Clicked = false;
+                Released = false;
             }
-            if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed && rectangle.Contains(MS.X, MS.Y))
-            {
-                released = true;
-            }
-            else
-            {
-                released = false;
-            }
+            
+            
             lastMS = MS;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, rectangle, Game1.textColor);
+            spriteBatch.Draw(_texture, rectangle, _color);
         }
     }
 }
