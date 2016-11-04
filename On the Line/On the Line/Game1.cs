@@ -51,6 +51,9 @@ namespace On_the_Line
         public static int screen = 0;
         bool shootingLaser = false;
         public static int shootStyle = 0;
+        int secret = 0;
+        Sprite P;
+        Sprite B;
         //public static bool darkmode = true;
         public static string gamemode = "regular";
 
@@ -118,6 +121,9 @@ namespace On_the_Line
             gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
+
+            P = new Sprite(new Vector2(10, 10), Content.Load<Texture2D>("P"));
+            B = new Sprite(new Vector2(250, 500), Content.Load<Texture2D>("B"));
 
             backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
 
@@ -194,7 +200,7 @@ namespace On_the_Line
                         }
                         else
                         {
-                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, false)); //Outside Background
+                            obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), outerWallColor, false, 0, 0, 0, false, false, true)); //Outside Background
                         }
                     }
                     else if (currentPixel == Color.Green)
@@ -241,6 +247,11 @@ namespace On_the_Line
         }
         public void setScreen(int screenToSetTo)
         {
+            P.Hitbox.X = 10;
+            P.Hitbox.Y = 10;
+            B.XSpeed = 2;
+            B.YSpeed = 2;
+            secret = 0;
             lose = false;
             mouseHitbox.lasers.Clear();
             pause = false;
@@ -256,7 +267,7 @@ namespace On_the_Line
                 enemies.Clear();
                 startNewGame();
             }
-            else
+            else if(screenToSetTo == 2)
             {
                 colorButton = new Button(colorButton.EndPosition, colorButton._texture);
                 gamemodeButton = new Button(gamemodeButton.EndPosition, gamemodeButton._texture);
@@ -274,7 +285,18 @@ namespace On_the_Line
         public void keyboardStuff()
         {
             KeyboardState ks = Keyboard.GetState();
-
+            if (ks.IsKeyDown(Keys.Left))
+            {
+                P.Hitbox.Y -= 10;
+            }
+            if (ks.IsKeyDown(Keys.Right))
+            {
+                P.Hitbox.Y += 10;
+            }
+            if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
+            {
+                setScreen(0);
+            }
             if (ks.IsKeyDown(Keys.R) && !lastKs.IsKeyDown(Keys.R) && screen == 1)
             {
                 setScreen(1);
@@ -600,7 +622,7 @@ namespace On_the_Line
                 #endregion
             }
             #endregion
-            #region Screen 1
+            #region Screen 1 Gameplay
             else if (screen == 1)//gameplay
             {
                 KeyboardState ks = Keyboard.GetState();
@@ -684,7 +706,7 @@ namespace On_the_Line
 
                 if (!isLoading && !lose)
                 {
-                    #region Updates Obstacles
+#region Updates Obstacles
                     highestObstacle = 10;
                     for (int i = 0; i < obstacles.Count; i++)
                     {
@@ -789,7 +811,7 @@ namespace On_the_Line
                 keyboardStuff();
             }
             #endregion
-            #region Screen 2 Settings
+            #region Screen 2 Options
             else if (screen == 2)
             {
                 score++;
@@ -909,6 +931,7 @@ namespace On_the_Line
                 shootStyleButton.Update();
                 if (shootStyleButton.Clicked)
                 {
+                    secret++;
                     mouseHitbox.lasers.Clear();
                     if (shootStyle != 5)
                     {
@@ -940,8 +963,45 @@ namespace On_the_Line
                     setScreen(0);
                 }
                 keyboardStuff();
+                if(secret >= 20)
+                {
+                    setScreen(3);
+                }
             }
             #endregion
+            #region Screen 3 
+            else if (screen == 3)
+            {
+                keyboardStuff();
+                B.Hitbox.X += B.XSpeed;
+                B.Hitbox.Y += B.YSpeed;
+                if (B.Hitbox.Intersects(P.Hitbox))
+                {
+                    B.XSpeed = Math.Abs(B.XSpeed);
+                    score++;
+                    B.XSpeed++;
+                    B.YSpeed += B.YSpeed / Math.Abs(B.YSpeed);
+                    
+                }
+                if (B.Hitbox.X < 0)
+                {
+                    setScreen(3);
+                }
+                if (B.Hitbox.X + B.Texture.Width > 500)
+                {
+                    B.XSpeed = -Math.Abs(B.XSpeed);
+                }
+                if (B.Hitbox.Y < 0)
+                {
+                    B.YSpeed = Math.Abs(B.YSpeed);
+                }
+                if (B.Hitbox.Y + B.Texture.Height > 1000)
+                {
+                    B.YSpeed = -Math.Abs(B.YSpeed);
+                }
+            }
+            #endregion
+
             base.Update(gameTime);
         }
         /// <summary>
@@ -952,9 +1012,12 @@ namespace On_the_Line
         {
             GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
-            foreach (Obstacles obtsacle in obstacles)
+            if (screen != 3)
             {
-                obtsacle.Draw(spriteBatch);
+                foreach (Obstacles obtsacle in obstacles)
+                {
+                    obtsacle.Draw(spriteBatch);
+                }
             }
             if (screen == 0)//main menu
             {
@@ -973,7 +1036,7 @@ namespace On_the_Line
                 mouseHitbox.Draw(spriteBatch);
                 if (mouseHitbox.Counting)
                 {
-                    spriteBatch.DrawString(font, string.Format($"{mouseHitbox.CountingSecond}"), mouseHitbox._position + new Vector2(6, -40), textColor);
+                    spriteBatch.DrawString(font, string.Format($"0.{mouseHitbox.CountingCentisecond}"), mouseHitbox._position + new Vector2(-10, -40), textColor);
                 }
                 if (lose)
                 {
@@ -1011,6 +1074,12 @@ namespace On_the_Line
                 spriteBatch.DrawString(smallText, string.Format($"{shootingLaser}"), new Vector2(125, s + 170), textColor);
                 dotModeCheckbox.Draw(spriteBatch);
 
+            }
+            else if (screen == 3)
+            {
+                P.Draw(spriteBatch);
+                B.Draw(spriteBatch);
+                spriteBatch.DrawString(endGameFont, $"Score:{score}", new Vector2(0, 950), textColor);
             }
             spriteBatch.End();
             frames++;

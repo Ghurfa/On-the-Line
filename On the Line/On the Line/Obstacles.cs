@@ -38,6 +38,7 @@ namespace On_the_Line
         float rotation = 0;
         int growTimes;
         public bool Show = true;
+        bool isOuterWall;
         /// <summary>
         /// Loads an obstacle
         /// </summary>
@@ -50,7 +51,7 @@ namespace On_the_Line
         /// <param name="moveY">How much the obstacle moves in the Y axis</param>
         /// <param name="maxmove">The maximum amount of times the obstacle moves</param>
         /// <param name="indescructable">Whether or not the obstacle absorbs a laser</param>
-        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway)
+        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway, bool outerWall = false)
         {
             _startPosition = position;
             Position = _startPosition;
@@ -65,6 +66,7 @@ namespace On_the_Line
             _indestrucable = indescructable;
             _slideSpeed = 31;
             _gateway = gateway;
+            isOuterWall = outerWall;
         }
 
         public void Update()
@@ -73,7 +75,14 @@ namespace On_the_Line
             {
                 if (Show)
                 {
-                    _color = Game1.wallColor;
+                    if (isOuterWall)
+                    {
+                        _color = Game1.outerWallColor;
+                    }
+                    else
+                    {
+                        _color = Game1.wallColor;
+                    }                    
                 }
                 else
                 {

@@ -28,6 +28,7 @@ namespace On_the_Line
         public bool canShoot = true;
         public bool Counting = false;
         public int CountingSecond = 3;
+        public int CountingCentisecond = 0;
         public TimeSpan CountingElapsedTime;
         public TimeSpan laserElapsedTime;
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
@@ -94,11 +95,15 @@ namespace On_the_Line
             {
                 if (Counting)
                 {
-                    CountingSecond = 3 - CountingElapsedTime.Seconds;
-                    if (CountingSecond == 0)
+                    CountingCentisecond = 100 - (int)CountingElapsedTime.Milliseconds/10;
+                    if (CountingCentisecond <= 5)
                     {
                         isclicked = true;
                         Game1.pause = false;
+                        Counting = false;
+                    }
+                    if(!_hitbox.Contains(mouseState.X, mouseState.Y))
+                    {
                         Counting = false;
                     }
                 }
