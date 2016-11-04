@@ -14,10 +14,8 @@ namespace On_the_Line
         public static TimeSpan laserCooldown;
         public TimeSpan laserElapsedTime;
         Texture2D _laserTexture;
-        int slow = 0;
         bool aims;
         public bool _rams;
-        bool shooting = false;
         int _slideSpeed;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
         {

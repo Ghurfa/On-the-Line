@@ -26,7 +26,6 @@ namespace On_the_Line
         TimeSpan elapsedTime;
 
         TimeSpan laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
-        int times = 0;
         SpriteFont font;
         SpriteFont smallText;
         SpriteFont endGameFont;
@@ -54,6 +53,7 @@ namespace On_the_Line
         int secret = 0;
         Sprite P;
         Sprite B;
+        Sprite Title;
         //public static bool darkmode = true;
         public static string gamemode = "regular";
 
@@ -113,8 +113,8 @@ namespace On_the_Line
             extraLargeText = Content.Load<SpriteFont>("ExtraLargeText");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(new Color[] { Color.White });
-            startButton = new Button(new Vector2(125, 450), Content.Load<Texture2D>("StartButton"));
-            optionsButton = new Button(new Vector2(125, 600), Content.Load<Texture2D>("OptionsButton"));
+            startButton = new Button(new Vector2(125, 550), Content.Load<Texture2D>("StartButton"));
+            optionsButton = new Button(new Vector2(125, 700), Content.Load<Texture2D>("OptionsButton"));
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
 
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
@@ -122,8 +122,10 @@ namespace On_the_Line
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
 
-            P = new Sprite(new Vector2(10, 10), Content.Load<Texture2D>("P"));
-            B = new Sprite(new Vector2(250, 500), Content.Load<Texture2D>("B"));
+            P = new Sprite(new Vector2(10, 10), Content.Load<Texture2D>("P"), Color.White);
+            B = new Sprite(new Vector2(250, 500), Content.Load<Texture2D>("B"), Color.White);
+
+            Title = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Title"), Color.White);
 
             backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
 
@@ -564,6 +566,8 @@ namespace On_the_Line
                 {
                     setScreen(2);
                 }
+                Title.Hitbox.Y = (int)startButton.EndPosition.Y - 550;
+                Title.Color = textColor;
                 if (obstacles.Count == 0)
                 {
                     newObstacle(500);
@@ -1023,7 +1027,7 @@ namespace On_the_Line
             {
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
-
+                Title.Draw(spriteBatch);
             }
             else if (screen == 1)//gameplay
             {

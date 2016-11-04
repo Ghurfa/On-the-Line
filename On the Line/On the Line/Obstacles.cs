@@ -194,16 +194,16 @@ namespace On_the_Line
                 growTimes++;
                 if (growTimes < 100)
                 {
-                    if (growTimes % 20 == 0)
+                    if (growTimes % 20 >= 0 && growTimes % 20 <= 10)
                     {
-                        _color = reverseColor(_color);
+                        _color = reverseColor(Game1.wallColor);
                     }
                 }
                 else
                 {
                     _size += new Vector2(growAmount, growAmount);
                     growAmount += 0.4f;
-
+                    _color = Game1.endGameColor;
                 }
             }
             KeyboardState ks = Keyboard.GetState();
