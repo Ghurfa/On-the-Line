@@ -14,12 +14,17 @@ namespace On_the_Line
         public int XSpeed;
         public int YSpeed;
         public Color Color;
+        public Vector2 Position;
 
         public Sprite(Vector2 position, Texture2D texture, Color color)
         {
-            Hitbox = new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
+            Position = position;
             Texture = texture;
             Color = color;
+        }
+        public void Update()
+        {
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
         public void Draw(SpriteBatch spriteBatch)
         {

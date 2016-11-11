@@ -19,8 +19,8 @@ namespace On_the_Line
         int _slideSpeed;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
         {
-            body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, shootstyle, direction);
-            body._position = position;
+            body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, position, shootstyle, direction);
+            body.Position = position;
             _laserTexture = laserTexture;
             aims = doesAim;
             if (body._shootStyle == 0)
@@ -49,13 +49,13 @@ namespace On_the_Line
             }
             _rams = rams;
             _slideSpeed = 31;
-            body._position += new Vector2(496, 0);
+            body.Position += new Vector2(496, 0);
         }
         public void Update()
         {
             if (_slideSpeed > 0)
             {
-                body._position -= new Vector2(_slideSpeed, 0);
+                body.Position -= new Vector2(_slideSpeed, 0);
                 _slideSpeed--;
             }
             else
@@ -63,10 +63,10 @@ namespace On_the_Line
                 if (_rams)
                 {
                     MouseHitbox MH = Game1.mouseHitbox;
-                    if (aims && Math.Abs(body._position.Y - MH._position.Y) < 250 && !Game1.pause)
+                    if (aims && Math.Abs(body.Position.Y - MH.Position.Y) < 250 && !Game1.pause)
                     {
-                        body._position.X += (MH._position.X - body._position.X) / 30;
-                        body._position.Y += (MH._position.Y - body._position.Y) / 30;
+                        body.Position.X += (MH.Position.X - body.Position.X) / 30;
+                        body.Position.Y += (MH.Position.Y - body.Position.Y) / 30;
                     }
                 }
                 else
@@ -95,12 +95,12 @@ namespace On_the_Line
                         }
                     }
                 }
-                body._hitbox = new Rectangle((int)body._position.X + body._texture.Width / 4, (int)body._position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
+                body._hitbox = new Rectangle((int)body.Position.X + body._texture.Width / 4, (int)body.Position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
             }
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {
-                body._position.Y++;
+                body.Position.Y++;
                 foreach (Laser laser in body.lasers)
                 {
                     laser._rect.X += laser._moveX;
@@ -109,7 +109,7 @@ namespace On_the_Line
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
-                body._position.Y--;
+                body.Position.Y--;
                 foreach (Laser laser in body.lasers)
                 {
                     laser._rect.X -= laser._moveX;
@@ -118,7 +118,7 @@ namespace On_the_Line
             }
             else if (!Game1.pause && !Game1.lose)
             {
-                body._position.Y++;
+                body.Position.Y++;
             }
         }
         public void Draw(SpriteBatch spriteBatch)

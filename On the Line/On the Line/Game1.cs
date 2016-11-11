@@ -51,6 +51,10 @@ namespace On_the_Line
         bool shootingLaser = false;
         public static int shootStyle = 0;
         int secret = 0;
+
+        Sprite Screen0;
+        Sprite Screen2;
+
         Sprite P;
         Sprite B;
         Sprite Title;
@@ -76,6 +80,7 @@ namespace On_the_Line
         KeyboardState lastKs;
         public int[] difficulty = { 0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100, 60 };
         public static int[] reloadCycles = { 1, 2, 1, 1, 1, 1 };
+        int slidingSpeed = 0;
 
         int obstacleSize = 25;
         public Game1()
@@ -115,12 +120,15 @@ namespace On_the_Line
             pixel.SetData<Color>(new Color[] { Color.White });
             startButton = new Button(new Vector2(125, 550), Content.Load<Texture2D>("StartButton"));
             optionsButton = new Button(new Vector2(125, 700), Content.Load<Texture2D>("OptionsButton"));
-            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
+            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
 
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
             gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
+
+            Screen0 = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Screen"), Color.White);
+            Screen2 = new Sprite(new Vector2(500, 0), Content.Load<Texture2D>("Screen"), Color.White);
 
             P = new Sprite(new Vector2(10, 10), Content.Load<Texture2D>("P"), Color.White);
             B = new Sprite(new Vector2(250, 500), Content.Load<Texture2D>("B"), Color.White);
@@ -150,8 +158,7 @@ namespace On_the_Line
             mouseHitbox.canShoot = true;
             loadObstacle(1000, "LowerStartingObstacle");
             loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
-            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true);
-            mouseHitbox._position = new Vector2(238, 250);
+            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
         }
         /// <summary>
         /// Chooses a random obstacle to load
@@ -260,8 +267,12 @@ namespace On_the_Line
             score = 0;
             if (screenToSetTo == 0)
             {
-                startButton = new Button(startButton.EndPosition, startButton._texture);
-                optionsButton = new Button(optionsButton.EndPosition, optionsButton._texture);
+                Screen0.Position = new Vector2(528, 0);
+                slidingSpeed = 32;
+                if(screen == 1)
+                {
+                    Screen2.Position = new Vector2(1000, 0);
+                }
             }
             else if (screenToSetTo == 1)
             {
@@ -269,13 +280,10 @@ namespace On_the_Line
                 enemies.Clear();
                 startNewGame();
             }
-            else if(screenToSetTo == 2)
+            else if (screenToSetTo == 2)
             {
-                colorButton = new Button(colorButton.EndPosition, colorButton._texture);
-                gamemodeButton = new Button(gamemodeButton.EndPosition, gamemodeButton._texture);
-                shootStyleButton = new Button(shootStyleButton.EndPosition, shootStyleButton._texture);
-                dotModeCheckbox.checkBox = new Button(dotModeCheckbox.checkBox.EndPosition, dotModeCheckbox.checkBox._texture);
-                backButton = new Button(backButton.EndPosition, backButton._texture);
+                Screen2.Position = new Vector2(528, 0);
+                slidingSpeed = 32;
             }
             if (screen == 1)
             {
@@ -552,7 +560,26 @@ namespace On_the_Line
                     enemy.laserElapsedTime += gameTime.ElapsedGameTime;
                 }
             }
+            Screen0.Update();
+            Screen2.Update();
             checkColorScheme();
+            if (slidingSpeed != 0)
+            {
+                Screen0.Position.X -= slidingSpeed;
+                Screen2.Position.X -= slidingSpeed;
+                slidingSpeed--;
+            }
+            //Screen 0
+            startButton.Position = Screen0.Position + new Vector2(125, 550);
+            optionsButton.Position = Screen0.Position + new Vector2(125, 700);
+            Title.Position = Screen0.Position + new Vector2(0, 50);
+            Title.Color = textColor;
+            //Screen 2
+            colorButton.Position = Screen2.Position + new Vector2(125, 100);
+            gamemodeButton.Position = Screen2.Position + new Vector2(125, 300);
+            shootStyleButton.Position = Screen2.Position + new Vector2(125, 500);
+            dotModeCheckbox.checkBox.Position = Screen2.Position + new Vector2(400, 315);
+            backButton.Position = Screen2.Position + new Vector2(125, 900);
             #region Screen 0 Main Menu
             if (screen == 0)
             {
@@ -566,8 +593,6 @@ namespace On_the_Line
                 {
                     setScreen(2);
                 }
-                Title.Hitbox.Y = (int)startButton.EndPosition.Y - 550;
-                Title.Color = textColor;
                 if (obstacles.Count == 0)
                 {
                     newObstacle(500);
@@ -710,7 +735,7 @@ namespace On_the_Line
 
                 if (!isLoading && !lose)
                 {
-#region Updates Obstacles
+                    #region Updates Obstacles
                     highestObstacle = 10;
                     for (int i = 0; i < obstacles.Count; i++)
                     {
@@ -967,7 +992,7 @@ namespace On_the_Line
                     setScreen(0);
                 }
                 keyboardStuff();
-                if(secret >= 20)
+                if (secret >= 20)
                 {
                     setScreen(3);
                 }
@@ -985,7 +1010,7 @@ namespace On_the_Line
                     score++;
                     B.XSpeed++;
                     B.YSpeed += B.YSpeed / Math.Abs(B.YSpeed);
-                    
+
                 }
                 if (B.Hitbox.X < 0)
                 {
@@ -1006,6 +1031,7 @@ namespace On_the_Line
             }
             #endregion
 
+
             base.Update(gameTime);
         }
         /// <summary>
@@ -1016,20 +1042,36 @@ namespace On_the_Line
         {
             GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
-            if (screen != 3)
+            foreach (Obstacles obtsacle in obstacles)
             {
-                foreach (Obstacles obtsacle in obstacles)
-                {
-                    obtsacle.Draw(spriteBatch);
-                }
+                obtsacle.Draw(spriteBatch);
             }
-            if (screen == 0)//main menu
+            if (screen != 1)
             {
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
                 Title.Draw(spriteBatch);
+                // Screen 2
+                colorButton.Draw(spriteBatch);
+                gamemodeButton.Draw(spriteBatch);
+                shootStyleButton.Draw(spriteBatch);
+                Vector2 superLongLineOfText = new Vector2((int)shootStyleButton.Position.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int) shootStyleButton.Position.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
+                mouseHitbox._color = ballColor;
+                mouseHitbox.Position = superLongLineOfText;
+                backButton.Draw(spriteBatch);
+                mouseHitbox.Draw(spriteBatch);
+                int s = (int)shootStyleButton.Position.Y; //make the line look less intimidating
+                spriteBatch.DrawString(smallText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), Screen2.Position + new Vector2(125, s + 80), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Bullet Penetration: { mouseHitbox.stats.Item3}"), Screen2.Position + new Vector2(125, s + 95), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), Screen2.Position + new Vector2(125, s + 110), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), Screen2.Position + new Vector2(125, s + 125), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), Screen2.Position + new Vector2(125, s + 140), textColor);
+                spriteBatch.DrawString(smallText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), Screen2.Position + new Vector2(125, s + 155), textColor);
+                KeyboardState ks = Keyboard.GetState();
+                spriteBatch.DrawString(smallText, string.Format($"{shootingLaser}"), Screen2.Position + new Vector2(125, s + 170), textColor);
+                dotModeCheckbox.Draw(spriteBatch);
             }
-            else if (screen == 1)//gameplay
+            if (screen == 1)//gameplay
             {
                 int laserCount = mouseHitbox.lasers.Count;
                 foreach (Enemy enemy in enemies)
@@ -1040,7 +1082,7 @@ namespace On_the_Line
                 mouseHitbox.Draw(spriteBatch);
                 if (mouseHitbox.Counting)
                 {
-                    spriteBatch.DrawString(font, string.Format($"0.{mouseHitbox.CountingCentisecond}"), mouseHitbox._position + new Vector2(-10, -40), textColor);
+                    spriteBatch.DrawString(font, string.Format($"0.{mouseHitbox.CountingCentisecond}"), mouseHitbox.Position + new Vector2(-10, -40), textColor);
                 }
                 if (lose)
                 {
@@ -1057,34 +1099,17 @@ namespace On_the_Line
                     spriteBatch.DrawString(font, string.Format("{0}", laserCount), new Vector2(240, 950), textColor);
                 }
             }
-            else if (screen == 2)
-            {
-                colorButton.Draw(spriteBatch);
-                gamemodeButton.Draw(spriteBatch);
-                shootStyleButton.Draw(spriteBatch);
-                Vector2 superLongLineOfText = new Vector2(shootStyleButton.rectangle.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, shootStyleButton.rectangle.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
-                mouseHitbox._color = ballColor;
-                mouseHitbox._position = superLongLineOfText;
-                backButton.Draw(spriteBatch);
-                mouseHitbox.Draw(spriteBatch);
-                int s = shootStyleButton.rectangle.Y; //make the line look less intimidating
-                spriteBatch.DrawString(smallText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), new Vector2(125, s + 80), textColor);
-                spriteBatch.DrawString(smallText, string.Format($"Bullet Penetration: { mouseHitbox.stats.Item3}"), new Vector2(125, s + 95), textColor);
-                spriteBatch.DrawString(smallText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), new Vector2(125, s + 110), textColor);
-                spriteBatch.DrawString(smallText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), new Vector2(125, s + 125), textColor);
-                spriteBatch.DrawString(smallText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), new Vector2(125, s + 140), textColor);
-                spriteBatch.DrawString(smallText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), new Vector2(125, s + 155), textColor);
-                KeyboardState ks = Keyboard.GetState();
-                spriteBatch.DrawString(smallText, string.Format($"{shootingLaser}"), new Vector2(125, s + 170), textColor);
-                dotModeCheckbox.Draw(spriteBatch);
+                
 
-            }
+            
             else if (screen == 3)
             {
                 P.Draw(spriteBatch);
                 B.Draw(spriteBatch);
                 spriteBatch.DrawString(endGameFont, $"Score:{score}", new Vector2(0, 950), textColor);
             }
+            Screen0.Draw(spriteBatch);
+            Screen2.Draw(spriteBatch);
             spriteBatch.End();
             frames++;
             // TODO: Add your drawing code here

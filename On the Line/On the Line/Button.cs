@@ -17,14 +17,11 @@ namespace On_the_Line
         public bool Clicked;
         public bool Released;
         Color _color = Color.White;
-        int YSpeed;
-        public Vector2 EndPosition;
+        public Vector2 Position;
 
-        public Button(Vector2 endPosition, Texture2D texture)
+        public Button(Vector2 Position, Texture2D texture)
         {
-            YSpeed = 200;
-            this.EndPosition = endPosition;
-            rectangle = new Rectangle((int)endPosition.X, (int)endPosition.Y - 300, texture.Width, texture.Height);
+            this.Position = Position;
             _texture = texture;
         }
 
@@ -32,25 +29,9 @@ namespace On_the_Line
         public void Update()
         {
             _color = Game1.textColor;
-            if (Math.Abs(YSpeed) > 1)
-            {
-                rectangle.Y += (YSpeed / 10);
-                if (rectangle.Y < EndPosition.Y)
-                {
-                    YSpeed = YSpeed * 20 / 21;
-                }
-                else
-                {
-                    YSpeed--;
-                }
-                if (rectangle.Y >= EndPosition.Y)
-                {
-                    YSpeed *= -1;
-                }
-
-            }
             MouseState MS = Mouse.GetState();
             hovered = rectangle.Contains(MS.X, MS.Y);
+            rectangle = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
             if (hovered)
             {
                 _color.A = 128;
@@ -77,13 +58,11 @@ namespace On_the_Line
                 Clicked = false;
                 Released = false;
             }
-            
-            
             lastMS = MS;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, rectangle, _color);
+            spriteBatch.Draw(_texture, Position, _color);
         }
     }
 }

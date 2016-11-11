@@ -10,7 +10,8 @@ namespace On_the_Line
 {
     public class MouseHitbox
     {
-        public Vector2 _position;
+        public Vector2 Position;
+        public Vector2 RelativePosition;
         public Color _color;
         MouseState mouseState;
         MouseState lastMouseState;
@@ -33,11 +34,13 @@ namespace On_the_Line
         public TimeSpan laserElapsedTime;
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
 
-        public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, int shootStyle = 0, int direction = 0)
+        public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
         {
             _color = color;
             _texture = texture;
-            _hitbox = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
+            Position = position;
+            RelativePosition = Position;
+            _hitbox = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
             _spotlightTexture = spotlightTexure;
             _shootStyle = shootStyle;
             this.direction = direction;
@@ -45,6 +48,7 @@ namespace On_the_Line
         }
         public void Update(GameTime gameTime)
         {
+            _hitbox = new Rectangle((int)Position.X + _texture.Width / 4, (int)Position.Y + _texture.Height / 4, _texture.Width / 2, _texture.Height / 2);
             laserElapsedTime += gameTime.ElapsedGameTime;
             if (laserElapsedTime >= stats.Item1)
             {
@@ -80,7 +84,7 @@ namespace On_the_Line
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
             }
-            _spotlight = new Rectangle((int)_position.X + _texture.Width / 2 - 100, (int)_position.Y + _texture.Height / 2 - 100, 200, 200);
+            _spotlight = new Rectangle((int)Position.X + _texture.Width / 2 - 100, (int)Position.Y + _texture.Height / 2 - 100, 200, 200);
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
@@ -123,20 +127,19 @@ namespace On_the_Line
                     KeyboardState ks = Keyboard.GetState();
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
-                        _position.Y++;
+                        Position.Y++;
                         if (Game1.gamemode == "fastmode")
                         {
-                            _position.Y++;
+                            Position.Y++;
                         }
                     }
                     else
                     {
-                        _position.Y = mouseState.Y - (_texture.Height / 2);
-                        _position.X = mouseState.X - (_texture.Width / 2);
+                        Position.Y = mouseState.Y - (_texture.Height / 2);
+                        Position.X = mouseState.X - (_texture.Width / 2);
                     }
                 }
             }
-            _hitbox = new Rectangle((int)_position.X + _texture.Width / 4, (int)_position.Y + _texture.Height / 4, _texture.Width / 2, _texture.Height / 2);
             lastMouseState = mouseState;
         }
         /// <summary>
@@ -147,7 +150,7 @@ namespace On_the_Line
         /// <param name="aims">Whether or not it aims (for enemies)</param>
         public void fireLasers(Texture2D texture, Color laserColor, bool aims)
         {
-            Vector2 startPos = new Vector2(_position.X + _texture.Width / 2 - 2, _position.Y + _texture.Height / 2 - 2);
+            Vector2 startPos = new Vector2(Position.X + _texture.Width / 2 - 2, Position.Y + _texture.Height / 2 - 2);
             int laserCount = Game1.mouseHitbox.lasers.Count;
             foreach (Enemy enemy in Game1.enemies)
             {
@@ -307,7 +310,7 @@ namespace On_the_Line
                         #region Shoot Style 3
                         else if (_shootStyle == 3)
                         {
-                            startPos.X = _position.X - 590;
+                            startPos.X = Position.X - 590;
                             for (int d = 0; d < 20; d++)
                             {
                                 lasers.Add(new Laser(startPos, 0, -5, texture, stats.Item3, laserColor));
@@ -319,12 +322,12 @@ namespace On_the_Line
                         #region Shoot Style 4
                         else if (_shootStyle == 4)
                         {
-                            startPos.Y = _position.Y - 38;
+                            startPos.Y = Position.Y - 38;
                             if (direction == 0)
                             {
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    startPos.X = _position.X - 38;
+                                    startPos.X = Position.X - 38;
                                     for (int d = 0; d < 5; d++)
                                     {
                                         lasers.Add(new Laser(startPos, 0, 0, texture, stats.Item3, laserColor));
@@ -337,7 +340,7 @@ namespace On_the_Line
                             {
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    startPos.X = _position.X - 38;
+                                    startPos.X = Position.X - 38;
                                     for (int d = 0; d < 5; d++)
                                     {
                                         lasers.Add(new Laser(startPos, 0, 1, texture, stats.Item3, laserColor));
@@ -435,7 +438,7 @@ namespace On_the_Line
             }
             if (!Game1.lose || Game1.lose && showWhenLose)
             {
-                spriteBatch.Draw(_texture, _position, _color);
+                spriteBatch.Draw(_texture, Position, _color);
                 if (Game1.gamemode == "spotlight")
                 {
                     spriteBatch.Draw(_spotlightTexture, new Vector2(_spotlight.X, _spotlight.Y), Game1.textColor);
