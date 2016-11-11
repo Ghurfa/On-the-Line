@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="Button.cs" />
     <Compile Include="Checkbox.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Laser.cs" />
     <Compile Include="MouseHitbox.cs" />

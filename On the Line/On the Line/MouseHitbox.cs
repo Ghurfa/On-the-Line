@@ -49,7 +49,10 @@ namespace On_the_Line
         public void Update(GameTime gameTime)
         {
             _hitbox = new Rectangle((int)Position.X + _texture.Width / 4, (int)Position.Y + _texture.Height / 4, _texture.Width / 2, _texture.Height / 2);
-            laserElapsedTime += gameTime.ElapsedGameTime;
+            if (!Game1.pause)
+            {
+                laserElapsedTime += gameTime.ElapsedGameTime;
+            }
             if (laserElapsedTime >= stats.Item1)
             {
                 laserElapsedTime = TimeSpan.Zero;
