@@ -423,17 +423,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LargeText.spritefont">
+    <Compile Include="EndGameFont.spritefont">
       <SubType>Designer</SubType>
-      <Name>LargeText</Name>
+      <Name>EndGameFont</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtraLargeText.spritefont">
+    <Compile Include="LargeText.spritefont">
       <SubType>Designer</SubType>
-      <Name>ExtraLargeText</Name>
+      <Name>LargeText</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>

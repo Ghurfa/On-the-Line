@@ -78,7 +78,7 @@ namespace On_the_Line
         List<int> levels = new List<int>();
         public static List<Enemy> enemies = new List<Enemy>();
         KeyboardState lastKs;
-        public int[] difficulty = { 0, 0, 0, 0, 20, 20, 30, 30, 40, 30, 40, 40, 50, 60, 50, 50, 60, 50, 60, 50, 60, 60, 60, 100, 60 };
+        public int[] difficulty = { 0, 0, 0, 0, 40, 40, 60, 60, 80, 60, 80, 80, 100, 120, 100, 100, 120, 100, 120, 100, 120, 120, 120, 200, 120 };
         public static int[] reloadCycles = { 1, 2, 1, 1, 1, 1 };
         int slidingSpeed = 0;
 
@@ -114,8 +114,8 @@ namespace On_the_Line
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("Font");
             smallText = Content.Load<SpriteFont>("StatsText");
-            endGameFont = Content.Load<SpriteFont>("LargeText");
-            extraLargeText = Content.Load<SpriteFont>("ExtraLargeText");
+            endGameFont = Content.Load<SpriteFont>("EndGameFont");
+            extraLargeText = Content.Load<SpriteFont>("LargeText");
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(new Color[] { Color.White });
             startButton = new Button(new Vector2(125, 550), Content.Load<Texture2D>("StartButton"));
@@ -147,18 +147,6 @@ namespace On_the_Line
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
-        }
-        /// <summary>
-        /// Sets up everything for a new game
-        /// </summary>
-        void startNewGame()
-        {
-            destroyedObstacles = 0;
-            enemiesKilled = 0;
-            mouseHitbox.canShoot = true;
-            loadObstacle(1000, "LowerStartingObstacle");
-            loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
-            mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
         }
         /// <summary>
         /// Chooses a random obstacle to load
@@ -264,26 +252,39 @@ namespace On_the_Line
             lose = false;
             mouseHitbox.lasers.Clear();
             pause = false;
-            score = 0;
+            
             if (screenToSetTo == 0)
             {
                 Screen0.Position = new Vector2(528, 0);
                 slidingSpeed = 32;
-                if(screen == 1)
+                if (screen != 2)
                 {
                     Screen2.Position = new Vector2(1000, 0);
+                    score = 0;
                 }
             }
             else if (screenToSetTo == 1)
             {
+                score = 0;
                 obstacles.Clear();
                 enemies.Clear();
-                startNewGame();
+                destroyedObstacles = 0;
+                enemiesKilled = 0;
+                loadObstacle(1000, "LowerStartingObstacle");
+                loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                mouseHitbox.canShoot = true;
+                mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
             }
             else if (screenToSetTo == 2)
             {
                 Screen2.Position = new Vector2(528, 0);
                 slidingSpeed = 32;
+            }
+            else
+            {
+                score = 0;
+                P = new Sprite(new Vector2(10, 10), Content.Load<Texture2D>("P"), Color.White);
+                B = new Sprite(new Vector2(250, 500), Content.Load<Texture2D>("B"), Color.White);
             }
             if (screen == 1)
             {
@@ -292,8 +293,163 @@ namespace On_the_Line
             }
             screen = screenToSetTo;
         }
-        public void keyboardStuff()
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update(GameTime gameTime)
         {
+            elapsedTime += gameTime.ElapsedGameTime;
+            if (elapsedTime >= timeToWait)
+            {
+                elapsedTime = TimeSpan.Zero;
+                fps = frames;
+                frames = 0;
+            }
+            Screen0.Update();
+            Screen2.Update();
+            if(obstacles.Count == 0)
+            {
+                if (screen == 0)
+                {
+                    newObstacle(500);
+                    newObstacle(1000);
+                }
+                else if(screen == 1)
+                {
+                    loadObstacle(1000, "LowerStartingObstacle");
+                    loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                }
+            }
+            if (slidingSpeed != 0)
+            {
+                Screen0.Position.X -= slidingSpeed;
+                Screen2.Position.X -= slidingSpeed;
+                slidingSpeed--;
+            }
+            mouseHitbox._color = ballColor;
+            //Screen 0
+            startButton.Position = Screen0.Position + new Vector2(125, 550);
+            optionsButton.Position = Screen0.Position + new Vector2(125, 700);
+            Title.Position = Screen0.Position + new Vector2(0, 50);
+            Title.Color = textColor;
+            //Screen 2
+            colorButton.Position = Screen2.Position + new Vector2(125, 100);
+            gamemodeButton.Position = Screen2.Position + new Vector2(125, 300);
+            shootStyleButton.Position = Screen2.Position + new Vector2(125, 500);
+            dotModeCheckbox.checkBox.Position = Screen2.Position + new Vector2(400, 315);
+            backButton.Position = Screen2.Position + new Vector2(125, 900);
+            if (!lose && !isLoading)
+            {
+                #region Updates Obstacles
+                highestObstacle = 10;
+                for (int i = 0; i < obstacles.Count; i++)
+                {
+                    Obstacles obstacle = obstacles[i];
+                    obstacle.Update();
+                    obstacle._size = new Vector2(obstacleSize, obstacleSize);
+                    if (gamemode == "fastmode")
+                    {
+                        obstacle.Update();
+                    }
+                    if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !pause && !obstacle._gateway && screen == 1)
+                    {
+                        isLoading = true;
+                        obstacle.didKill = true;
+                        obstacle._color = endGameColor;
+                    }
+                    if (obstacle.hitbox.Y < highestObstacle)
+                    {
+                        highestObstacle = obstacle.hitbox.Y;
+                    }
+                    if (obstacle._breaks)
+                    {
+                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                        {
+                            Laser laser = mouseHitbox.lasers[x];
+                            if (laser._rect.Intersects(obstacle.hitbox))
+                            {
+                                obstacles.Remove(obstacle);
+                                destroyedObstacles++;
+                                score += 10;
+                                i--;
+                                laser._lives--;
+                                if (laser._lives <= 0)
+                                {
+                                    Game1.mouseHitbox.lasers.Remove(laser);
+                                }
+                            }
+                        }
+                    }
+                    if (obstacle.hitbox.Y > 2000)
+                    {
+                        obstacles.Remove(obstacle);
+                        i--;
+                    }
+                }
+                if (highestObstacle >= 0 && obstacles.Count < 2000)
+                {
+                    newObstacle(highestObstacle);
+                }
+                #endregion
+                #region Update Enemies
+                for (int i = 0; i < enemies.Count; i++)
+                {
+                    Enemy enemy = enemies[i];
+                    enemy.Update();
+                    if (gamemode == "fastmode")
+                    {
+                        enemy.Update();
+                    }
+                    foreach (Obstacles obstacle in obstacles)
+                    {
+                        if (obstacle.hitbox.Intersects(enemy.body._hitbox) && obstacle._gateway)
+                        {
+                            enemies.Remove(enemy);
+                            enemiesKilled++;
+                        }
+                    }
+                    for (int x = 0; x < mouseHitbox.lasers.Count; x++)
+                    {
+                        Laser laser = mouseHitbox.lasers[x];
+                        if (enemy.body._hitbox.Intersects(laser._rect))
+                        {
+                            enemies.Remove(enemy);
+                            enemiesKilled++;
+                            mouseHitbox.lasers.Remove(laser);
+                        }
+                    }
+                    for (int y = 0; y < enemies.Count; y++)
+                    {
+                        Enemy targetedEnemy = enemies[y];
+                        if (enemy != targetedEnemy && !targetedEnemy._rams)
+                        {
+                            for (int x = 0; x < enemy.body.lasers.Count; x++)
+                            {
+                                Laser laser = enemy.body.lasers[x];
+                                if (targetedEnemy.body._hitbox.Intersects(laser._rect))
+                                {
+                                    enemies.Remove(targetedEnemy);
+                                    enemiesKilled++;
+                                    enemy.body.lasers.Remove(laser);
+                                }
+                            }
+                        }
+                    }
+                }
+                #endregion
+                if (screen != 3 && !pause)
+                {
+                    score++;
+                    if (gamemode == "fastmode")
+                    {
+                        score++;
+                    }
+                }
+            }
+            
+            #region Check Keyboard
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Left))
             {
@@ -419,15 +575,9 @@ namespace On_the_Line
                 mouseHitbox.laserElapsedTime = TimeSpan.Zero;
                 mouseHitbox.canShoot = false;
             }
-
-
             lastKs = ks;
-        }
-        /// <summary>
-        /// This checks the color scheme and chooses the color
-        /// </summary>
-        void checkColorScheme()
-        {
+            #endregion
+            #region Check color scheme
             endGameColor = Color.White;
             if (colorScheme == "Default")
             {
@@ -538,48 +688,7 @@ namespace On_the_Line
                     backgroundColor = Color.Black;
                 }
             }
-        }
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
-            elapsedTime += gameTime.ElapsedGameTime;
-            if (elapsedTime >= timeToWait)
-            {
-                elapsedTime = TimeSpan.Zero;
-                fps = frames;
-                frames = 0;
-            }
-            if (!pause)
-            {
-                foreach (Enemy enemy in enemies)
-                {
-                    enemy.laserElapsedTime += gameTime.ElapsedGameTime;
-                }
-            }
-            Screen0.Update();
-            Screen2.Update();
-            checkColorScheme();
-            if (slidingSpeed != 0)
-            {
-                Screen0.Position.X -= slidingSpeed;
-                Screen2.Position.X -= slidingSpeed;
-                slidingSpeed--;
-            }
-            //Screen 0
-            startButton.Position = Screen0.Position + new Vector2(125, 550);
-            optionsButton.Position = Screen0.Position + new Vector2(125, 700);
-            Title.Position = Screen0.Position + new Vector2(0, 50);
-            Title.Color = textColor;
-            //Screen 2
-            colorButton.Position = Screen2.Position + new Vector2(125, 100);
-            gamemodeButton.Position = Screen2.Position + new Vector2(125, 300);
-            shootStyleButton.Position = Screen2.Position + new Vector2(125, 500);
-            dotModeCheckbox.checkBox.Position = Screen2.Position + new Vector2(400, 315);
-            backButton.Position = Screen2.Position + new Vector2(125, 900);
+            #endregion
             #region Screen 0 Main Menu
             if (screen == 0)
             {
@@ -598,64 +707,11 @@ namespace On_the_Line
                     newObstacle(500);
                     newObstacle(1000);
                 }
-                score++;
-                if (gamemode == "fastmode")
-                {
-                    score++;
-                }
-                #region Updates Obstacles
-
-                highestObstacle = 10;
-                for (int i = 0; i < obstacles.Count; i++)
-                {
-                    Obstacles obstacle = obstacles[i];
-                    obstacle.Update();
-                    obstacle._size = new Vector2(obstacleSize, obstacleSize);
-                    if (gamemode == "fastmode")
-                    {
-                        obstacle.Update();
-                    }
-                    if (obstacle.hitbox.Y < highestObstacle)
-                    {
-                        highestObstacle = obstacle.hitbox.Y;
-                    }
-                    if (obstacle._breaks)
-                    {
-                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
-                        {
-                            Laser laser = mouseHitbox.lasers[x];
-                            if (laser._rect.Intersects(obstacle.hitbox))
-                            {
-                                obstacles.Remove(obstacle);
-                                destroyedObstacles++;
-                                score += 10;
-                                i--;
-                                laser._lives--;
-                                if (laser._lives <= 0)
-                                {
-                                    Game1.mouseHitbox.lasers.Remove(laser);
-                                }
-                            }
-                        }
-                    }
-                    if (obstacle.hitbox.Y > 2000)
-                    {
-                        obstacles.Remove(obstacle);
-                        i--;
-                    }
-                }
-                if (highestObstacle >= 0 && obstacles.Count < 2000)
-                {
-                    newObstacle(highestObstacle);
-                }
-                #endregion
             }
             #endregion
             #region Screen 1 Gameplay
             else if (screen == 1)//gameplay
             {
-                KeyboardState ks = Keyboard.GetState();
-
                 mouseHitbox.Update(gameTime);
                 if (lose || isLoading)
                 {
@@ -673,47 +729,10 @@ namespace On_the_Line
                         loadObstacle(525, "YouLose");
                         isLoading = false;
                         mouseHitbox.lasers.Clear();
-                        //version 1 - to work on
-                        /*
-                        for (int obstacleToRemove = 0; obstacleToRemove < obstacles.Count; obstacleToRemove++)
-                        {
-                            if (!obstacles[obstacleToRemove].didKill && obstacles[obstacleToRemove]._color != textColor)
-                            {
-                                obstacles.RemoveAt(obstacleToRemove+1);
-                            }
-                        }
-
-                        enemies.Clear();
-                        */
-                    }
-                    else
-                    {
-                        //version 2
-
-                        if (obstacles.Count > 134)
-                        {
-                            for (int obstacleToRemove = 0; obstacleToRemove < obstacles.Count; obstacleToRemove++)
-                            {
-                                if (!obstacles[obstacleToRemove].didKill && obstacles[obstacleToRemove]._color != textColor)
-                                {
-                                    obstacles.RemoveAt(obstacleToRemove);
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            enemies.Clear();
-                        }
                     }
                 }
                 else if (!lose && !pause)
                 {
-                    score++;
-                    if (gamemode == "fastmode")
-                    {
-                        score++;
-                    }
                     MouseState ms = Mouse.GetState();
                     if (ms.Y < 0)
                     {
@@ -732,168 +751,11 @@ namespace On_the_Line
                         Mouse.SetPosition(500, ms.Y);
                     }
                 }
-
-                if (!isLoading && !lose)
-                {
-                    #region Updates Obstacles
-                    highestObstacle = 10;
-                    for (int i = 0; i < obstacles.Count; i++)
-                    {
-                        Obstacles obstacle = obstacles[i];
-                        obstacle.Update();
-                        obstacle._size = new Vector2(obstacleSize, obstacleSize);
-                        if (gamemode == "fastmode")
-                        {
-                            obstacle.Update();
-                        }
-                        if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !pause && !obstacle._gateway)
-                        {
-                            isLoading = true;
-                            obstacle.didKill = true;
-                            obstacle._color = endGameColor;
-                        }
-                        if (obstacle.hitbox.Y < highestObstacle)
-                        {
-                            highestObstacle = obstacle.hitbox.Y;
-                        }
-                        if (obstacle._breaks)
-                        {
-                            for (int x = 0; x < mouseHitbox.lasers.Count; x++)
-                            {
-                                Laser laser = mouseHitbox.lasers[x];
-                                if (laser._rect.Intersects(obstacle.hitbox))
-                                {
-                                    obstacles.Remove(obstacle);
-                                    destroyedObstacles++;
-                                    score += 10;
-                                    i--;
-                                    laser._lives--;
-                                    if (laser._lives <= 0)
-                                    {
-                                        Game1.mouseHitbox.lasers.Remove(laser);
-                                    }
-                                }
-                            }
-                        }
-                        if (obstacle.hitbox.Y > 2000)
-                        {
-                            obstacles.Remove(obstacle);
-                            i--;
-                        }
-                    }
-                    if (highestObstacle >= 0 && obstacles.Count < 2000)
-                    {
-                        newObstacle(highestObstacle);
-                    }
-                    #endregion
-                    #region Update Enemies
-                    for (int i = 0; i < enemies.Count; i++)
-                    {
-                        Enemy enemy = enemies[i];
-                        enemy.Update();
-                        if (gamemode == "fastmode")
-                        {
-                            enemy.Update();
-                        }
-                        if (enemy._rams && enemy.body._hitbox.Intersects(mouseHitbox._hitbox))
-                        {
-                            isLoading = true;
-                        }
-                        foreach (Obstacles obstacle in obstacles)
-                        {
-                            if (obstacle.hitbox.Intersects(enemy.body._hitbox) && obstacle._gateway)
-                            {
-                                enemies.Remove(enemy);
-                                enemiesKilled++;
-                            }
-                        }
-                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
-                        {
-                            Laser laser = mouseHitbox.lasers[x];
-                            if (enemy.body._hitbox.Intersects(laser._rect))
-                            {
-                                enemies.Remove(enemy);
-                                enemiesKilled++;
-                                mouseHitbox.lasers.Remove(laser);
-                            }
-                        }
-                        for (int y = 0; y < enemies.Count; y++)
-                        {
-                            Enemy targetedEnemy = enemies[y];
-                            if (enemy != targetedEnemy && !targetedEnemy._rams)
-                            {
-                                for (int x = 0; x < enemy.body.lasers.Count; x++)
-                                {
-                                    Laser laser = enemy.body.lasers[x];
-                                    if (targetedEnemy.body._hitbox.Intersects(laser._rect))
-                                    {
-                                        enemies.Remove(targetedEnemy);
-                                        enemiesKilled++;
-                                        enemy.body.lasers.Remove(laser);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    #endregion
-                }
-                keyboardStuff();
             }
             #endregion
             #region Screen 2 Options
             else if (screen == 2)
             {
-                score++;
-                if (gamemode == "fastmode")
-                {
-                    score++;
-                }
-                #region Updates Obstacles
-
-                highestObstacle = 10;
-                for (int i = 0; i < obstacles.Count; i++)
-                {
-                    Obstacles obstacle = obstacles[i];
-                    obstacle.Update();
-                    obstacle._size = new Vector2(obstacleSize, obstacleSize);
-                    if (gamemode == "fastmode")
-                    {
-                        obstacle.Update();
-                    }
-                    if (obstacle.hitbox.Y < highestObstacle)
-                    {
-                        highestObstacle = obstacle.hitbox.Y;
-                    }
-                    if (obstacle._breaks)
-                    {
-                        for (int x = 0; x < mouseHitbox.lasers.Count; x++)
-                        {
-                            Laser laser = mouseHitbox.lasers[x];
-                            if (laser._rect.Intersects(obstacle.hitbox))
-                            {
-                                obstacles.Remove(obstacle);
-                                destroyedObstacles++;
-                                score += 10;
-                                i--;
-                                laser._lives--;
-                                if (laser._lives <= 0)
-                                {
-                                    Game1.mouseHitbox.lasers.Remove(laser);
-                                }
-                            }
-                        }
-                    }
-                    if (obstacle.hitbox.Y > 2000)
-                    {
-                        obstacles.Remove(obstacle);
-                        i--;
-                    }
-                }
-                if (highestObstacle >= 0 && obstacles.Count < 2000)
-                {
-                    newObstacle(highestObstacle);
-                }
-                #endregion
                 mouseHitbox.Update(gameTime);
                 #region Checks Color Button
                 colorButton.Update();
@@ -991,7 +853,6 @@ namespace On_the_Line
                 {
                     setScreen(0);
                 }
-                keyboardStuff();
                 if (secret >= 20)
                 {
                     setScreen(3);
@@ -1001,9 +862,10 @@ namespace On_the_Line
             #region Screen 3 
             else if (screen == 3)
             {
-                keyboardStuff();
-                B.Hitbox.X += B.XSpeed;
-                B.Hitbox.Y += B.YSpeed;
+                P.Color = wallColor;
+                B.Color = outerWallColor;
+                B.Position.X += B.XSpeed;
+                B.Position.Y += B.YSpeed;
                 if (B.Hitbox.Intersects(P.Hitbox))
                 {
                     B.XSpeed = Math.Abs(B.XSpeed);
@@ -1042,11 +904,32 @@ namespace On_the_Line
         {
             GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
-            foreach (Obstacles obtsacle in obstacles)
+            if (screen != 3)
             {
-                obtsacle.Draw(spriteBatch);
+                foreach (Obstacles obtsacle in obstacles) //Layer 0 - Regular obstacles
+                {
+                    obtsacle.Draw(spriteBatch);
+                }
+                foreach (Obstacles obtstacle in obstacles) //Layer 1 - Obstacle that killed you
+                {
+                    if (obtstacle.didKill)
+                    {
+                        obtstacle.Draw(spriteBatch);
+                    }
+                }
+                foreach (Obstacles obtstacle in obstacles) //Layer 2 - "You Lose"
+                {
+                    if (obtstacle._color.A == 230)
+                    {
+                        obtstacle.Draw(spriteBatch);
+                    }
+                }
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.Draw(spriteBatch);
+                }
             }
-            if (screen != 1)
+            if (screen == 0 || screen == 2)
             {
                 startButton.Draw(spriteBatch);
                 optionsButton.Draw(spriteBatch);
@@ -1055,9 +938,7 @@ namespace On_the_Line
                 colorButton.Draw(spriteBatch);
                 gamemodeButton.Draw(spriteBatch);
                 shootStyleButton.Draw(spriteBatch);
-                Vector2 superLongLineOfText = new Vector2((int)shootStyleButton.Position.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int) shootStyleButton.Position.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
-                mouseHitbox._color = ballColor;
-                mouseHitbox.Position = superLongLineOfText;
+                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
                 backButton.Draw(spriteBatch);
                 mouseHitbox.Draw(spriteBatch);
                 int s = (int)shootStyleButton.Position.Y; //make the line look less intimidating
@@ -1074,11 +955,6 @@ namespace On_the_Line
             if (screen == 1)//gameplay
             {
                 int laserCount = mouseHitbox.lasers.Count;
-                foreach (Enemy enemy in enemies)
-                {
-                    enemy.Draw(spriteBatch);
-                    laserCount += enemy.body.lasers.Count();
-                }
                 mouseHitbox.Draw(spriteBatch);
                 if (mouseHitbox.Counting)
                 {
@@ -1086,9 +962,18 @@ namespace On_the_Line
                 }
                 if (lose)
                 {
-                    spriteBatch.DrawString(endGameFont, $"Score:{score / 50}", new Vector2(125, 500), textColor);
-                    spriteBatch.DrawString(endGameFont, $"Obstacles Destroyed:{destroyedObstacles}", new Vector2(125, 600), textColor);
-                    spriteBatch.DrawString(endGameFont, $"Enemies Killed:{enemiesKilled}", new Vector2(125, 700), textColor);
+                    spriteBatch.DrawString(endGameFont, $"Score:{score / 50}", new Vector2(100, 450), textColor);
+                    spriteBatch.DrawString(endGameFont, $"Obstacles Destroyed:{destroyedObstacles}", new Vector2(100, 500), textColor);
+                    spriteBatch.DrawString(endGameFont, $"Enemies Killed:{enemiesKilled}", new Vector2(100, 550), textColor);
+                    spriteBatch.DrawString(extraLargeText, "Verdict:", new Vector2(160, 650), textColor);
+                    if (score < 10)
+                    {
+                        spriteBatch.DrawString(extraLargeText, "You're a noob", new Vector2(100, 700), textColor);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(extraLargeText, "You're a pro", new Vector2(110, 700), textColor);
+                    }
                     spriteBatch.DrawString(extraLargeText, "Press R to Restart", new Vector2(30, 800), textColor);
                     spriteBatch.DrawString(extraLargeText, "Press M to go to Menu", new Vector2(0, 850), textColor);
                 }
@@ -1099,9 +984,6 @@ namespace On_the_Line
                     spriteBatch.DrawString(font, string.Format("{0}", laserCount), new Vector2(240, 950), textColor);
                 }
             }
-                
-
-            
             else if (screen == 3)
             {
                 P.Draw(spriteBatch);
