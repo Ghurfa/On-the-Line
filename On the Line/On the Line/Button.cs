@@ -8,33 +8,26 @@ using Microsoft.Xna.Framework.Input;
 
 namespace On_the_Line
 {
-    public class Button
+    public class Button : Sprite
     {
-        public Rectangle rectangle;
-        public Texture2D _texture;
         MouseState lastMS;
         bool hovered;
         public bool Clicked;
         public bool Released;
-        Color _color = Color.White;
-        public Vector2 Position;
 
         public Button(Vector2 Position, Texture2D texture)
+            : base(Position, texture, Color.White)
         {
-            this.Position = Position;
-            _texture = texture;
         }
-
-
-        public void Update()
+        public new void Update()
         {
-            _color = Game1.textColor;
+            Color = Game1.textColor;
             MouseState MS = Mouse.GetState();
-            hovered = rectangle.Contains(MS.X, MS.Y);
-            rectangle = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
+            hovered = Hitbox.Contains(MS.X, MS.Y);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             if (hovered)
             {
-                _color.A = 128;
+                Color.A = 128;
                 if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released)
                 {
                     Clicked = true;
@@ -59,10 +52,6 @@ namespace On_the_Line
                 Released = false;
             }
             lastMS = MS;
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(_texture, Position, _color);
         }
     }
 }

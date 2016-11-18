@@ -67,6 +67,7 @@ namespace On_the_Line
             _slideSpeed = 31;
             _gateway = gateway;
             isOuterWall = outerWall;
+            Show = false;
         }
 
         public void Update()
@@ -89,7 +90,7 @@ namespace On_the_Line
                     _color = Game1.backgroundColor;
                 }
             }
-            if (Game1.gamemode == "regular" || Game1.gamemode == "fastmode")
+            if (Game1.GameMode == "Regular" || Game1.GameMode == "Fastmode")
             {
                 if (_moveX != 0 || _moveY != 0)
                 {
@@ -107,7 +108,7 @@ namespace On_the_Line
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(_slideSpeed, 0);
-                if ((Game1.gamemode == "spotlight" && !hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.gamemode == "darkmode")
+                if ((Game1.GameMode == "Spotlight" && !hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.GameMode == "'")
                 {
                     Show = false;
                 }
@@ -124,7 +125,7 @@ namespace On_the_Line
                     Laser laser = Game1.mouseHitbox.lasers[i];
                     if (laser._rect.Intersects(hitbox))
                     {
-                        if (Game1.gamemode == "darkmode" && !Show)
+                        if (Game1.GameMode == "Darkmode" && !Show)
                         {
                             Game1.mouseHitbox.lasers[i]._lives--;
                             Show = true;
@@ -135,9 +136,9 @@ namespace On_the_Line
                         }
                     }
                 }
-                if (Game1.gamemode == "spotlight")
+                if (Game1.GameMode == "Spotlight")
                 {
-                    if (hitbox.Intersects(Game1.mouseHitbox._spotlight))
+                    if (hitbox.Intersects(Game1.mouseHitbox.Spotlight))
                     {
                         Show = true;
                     }

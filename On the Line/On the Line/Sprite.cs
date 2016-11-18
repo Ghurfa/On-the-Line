@@ -7,7 +7,7 @@ using System.Text;
 
 namespace On_the_Line
 {
-    class Sprite
+    public class Sprite
     {
         public Rectangle Hitbox;
         public Texture2D Texture;

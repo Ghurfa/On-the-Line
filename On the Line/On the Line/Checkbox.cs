@@ -29,12 +29,12 @@ namespace On_the_Line
                 if (isChecked)
                 {
                     isChecked = false;
-                    checkBox._texture = _offTexture;
+                    checkBox.Texture = _offTexture;
                 }
                 else
                 {
                     isChecked = true;
-                    checkBox._texture = _onTexture;
+                    checkBox.Texture = _onTexture;
                 }
             }
         }

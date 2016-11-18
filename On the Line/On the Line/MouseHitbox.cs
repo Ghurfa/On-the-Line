@@ -16,9 +16,9 @@ namespace On_the_Line
         MouseState mouseState;
         MouseState lastMouseState;
         public Texture2D _texture;
-        Texture2D _spotlightTexture;
+        Texture2D spotlightTexture;
         public Rectangle _hitbox;
-        public Rectangle _spotlight;
+        public Rectangle Spotlight;
         int direction = 0;
         public int _shootStyle;
         bool isclicked = false;
@@ -41,7 +41,7 @@ namespace On_the_Line
             Position = position;
             RelativePosition = Position;
             _hitbox = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
-            _spotlightTexture = spotlightTexure;
+            spotlightTexture = spotlightTexure;
             _shootStyle = shootStyle;
             this.direction = direction;
             this.showWhenLose = showWhenLose;
@@ -87,7 +87,7 @@ namespace On_the_Line
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
             }
-            _spotlight = new Rectangle((int)Position.X + _texture.Width / 2 - 100, (int)Position.Y + _texture.Height / 2 - 100, 200, 200);
+            Spotlight = new Rectangle((int)Position.X + _texture.Width / 2 - 100, (int)Position.Y + _texture.Height / 2 - 100, 200, 200);
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
@@ -102,7 +102,7 @@ namespace On_the_Line
             {
                 if (Counting)
                 {
-                    CountingCentisecond = 100 - (int)CountingElapsedTime.Milliseconds/10;
+                    CountingCentisecond = 50 - (int)CountingElapsedTime.Milliseconds/10;
                     if (CountingCentisecond <= 5)
                     {
                         isclicked = true;
@@ -131,7 +131,7 @@ namespace On_the_Line
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
                         Position.Y++;
-                        if (Game1.gamemode == "fastmode")
+                        if (Game1.GameMode == "Fastmode")
                         {
                             Position.Y++;
                         }
@@ -442,9 +442,9 @@ namespace On_the_Line
             if (!Game1.lose || Game1.lose && showWhenLose)
             {
                 spriteBatch.Draw(_texture, Position, _color);
-                if (Game1.gamemode == "spotlight")
+                if (Game1.GameMode == "Spotlight")
                 {
-                    spriteBatch.Draw(_spotlightTexture, new Vector2(_spotlight.X, _spotlight.Y), Game1.textColor);
+                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X, Spotlight.Y), Game1.textColor);
                 }
             }
         }

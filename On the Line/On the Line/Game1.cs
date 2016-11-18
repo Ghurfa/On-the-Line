@@ -58,8 +58,7 @@ namespace On_the_Line
         Sprite P;
         Sprite B;
         Sprite Title;
-        //public static bool darkmode = true;
-        public static string gamemode = "regular";
+        public static string GameMode = "Regular";
 
         Button startButton;
         Button optionsButton;
@@ -123,7 +122,7 @@ namespace On_the_Line
             mouseHitbox = new MouseHitbox(ballColor, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
 
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
-            gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gamemode)));
+            gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", GameMode)));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
 
@@ -191,7 +190,7 @@ namespace On_the_Line
                     Color currentPixel = pixels[x + (y * obstacleTexture.Width)];
                     if (currentPixel == Color.Red)
                     {
-                        if (gamemode == "darkmode")
+                        if (GameMode == "Darkmode")
                         {
                             obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, 0, 0, 0, false, false)); //Outside Background
                         }
@@ -230,7 +229,7 @@ namespace On_the_Line
                     }
                     else if (currentPixel != Color.White)
                     {
-                        if (gamemode == "darkmode")
+                        if (GameMode == "Darkmode")
                         {
                             obstacles.Add(new Obstacles(pixel, new Vector2(x * 25 + xOffset, (y * 25) - 500 + yOffset), new Vector2(25, 25), backgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
                         }
@@ -252,7 +251,7 @@ namespace On_the_Line
             lose = false;
             mouseHitbox.lasers.Clear();
             pause = false;
-            
+
             if (screenToSetTo == 0)
             {
                 Screen0.Position = new Vector2(528, 0);
@@ -309,14 +308,14 @@ namespace On_the_Line
             }
             Screen0.Update();
             Screen2.Update();
-            if(obstacles.Count == 0)
+            if (obstacles.Count == 0)
             {
                 if (screen == 0)
                 {
                     newObstacle(500);
                     newObstacle(1000);
                 }
-                else if(screen == 1)
+                else if (screen == 1)
                 {
                     loadObstacle(1000, "LowerStartingObstacle");
                     loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
@@ -330,11 +329,18 @@ namespace On_the_Line
             }
             mouseHitbox._color = ballColor;
             //Screen 0
+            startButton.Update();
+            optionsButton.Update();
             startButton.Position = Screen0.Position + new Vector2(125, 550);
             optionsButton.Position = Screen0.Position + new Vector2(125, 700);
             Title.Position = Screen0.Position + new Vector2(0, 50);
             Title.Color = textColor;
             //Screen 2
+            colorButton.Update();
+            gamemodeButton.Update();
+            shootStyleButton.Update();
+            dotModeCheckbox.Update();
+            backButton.Update();
             colorButton.Position = Screen2.Position + new Vector2(125, 100);
             gamemodeButton.Position = Screen2.Position + new Vector2(125, 300);
             shootStyleButton.Position = Screen2.Position + new Vector2(125, 500);
@@ -349,7 +355,7 @@ namespace On_the_Line
                     Obstacles obstacle = obstacles[i];
                     obstacle.Update();
                     obstacle._size = new Vector2(obstacleSize, obstacleSize);
-                    if (gamemode == "fastmode")
+                    if (GameMode == "Fastmode")
                     {
                         obstacle.Update();
                     }
@@ -398,7 +404,7 @@ namespace On_the_Line
                 {
                     Enemy enemy = enemies[i];
                     enemy.Update();
-                    if (gamemode == "fastmode")
+                    if (GameMode == "Fastmode")
                     {
                         enemy.Update();
                     }
@@ -442,13 +448,13 @@ namespace On_the_Line
                 if (screen != 3 && !pause)
                 {
                     score++;
-                    if (gamemode == "fastmode")
+                    if (GameMode == "Fastmode")
                     {
                         score++;
                     }
                 }
             }
-            
+
             #region Check Keyboard
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Left))
@@ -577,14 +583,67 @@ namespace On_the_Line
             }
             lastKs = ks;
             #endregion
-            #region Check color scheme
+            #region Check Color Scheme
             endGameColor = Color.White;
+            if (colorScheme == "Ice")
+            {
+                ballColor = new Color(255, 150, 0);
+                textColor = new Color(255, 150, 0);
+                laserColor = new Color(255, 150, 0);
+                wallColor = new Color(30, 250, 230);
+                outerWallColor = new Color(30, 250, 230);
+                backgroundColor = new Color(13, 13, 13);
+
+            }
+            else if (colorScheme == "Beach")
+            {
+                ballColor = new Color(45, 105, 174);
+                textColor = new Color(0, 183, 45);
+                laserColor = new Color(45, 105, 174);
+                wallColor = new Color(45, 105, 174);
+                outerWallColor = new Color(30, 44, 96);
+                backgroundColor = new Color(240, 210, 150);
+
+            }
+            else if (colorScheme == "Gingerbread")
+            {
+                ballColor = new Color(50, 20, 0);
+                textColor = new Color(50, 20, 0);
+                laserColor = new Color(50, 20, 0);
+                wallColor = Color.White;
+                outerWallColor = new Color(40, 10, 0);
+                backgroundColor = new Color(80, 50, 20);
+
+            }
+            else if (colorScheme == "School")
+            {
+                ballColor = Color.Black;
+                textColor = Color.Black;
+                laserColor = Color.Black;
+                wallColor = new Color(10, 10, 10);
+                outerWallColor = new Color(10, 10, 10);
+                backgroundColor = new Color(20, 20, 20);
+
+            }
+            else if (colorScheme == "Colorful")
+            {
+                ballColor = Color.White;
+                textColor = Color.White;
+                laserColor = Color.White;
+                wallColor = Color.Black;
+                outerWallColor = Color.Black;
+                backgroundColor = Color.Black;
+                if (GameMode == "Darkmode" || GameMode == "Spotlight")
+                {
+                    outerWallColor = Color.White;
+                }
+            }
             if (colorScheme == "Default")
             {
                 ballColor = Color.LightGray;
                 textColor = Color.Red;
                 laserColor = Color.Red;
-                if (gamemode == "darkmode" || gamemode == "spotlight")
+                if (GameMode == "Darkmode" || GameMode == "Spotlight")
                 {
                     wallColor = Color.White;
                     outerWallColor = Color.White;
@@ -598,102 +657,14 @@ namespace On_the_Line
                 }
                 endGameColor = wallColor;
             }
-            else if (colorScheme == "Ice")
+            else if (GameMode == "Darkmode" || GameMode == "Spotlight")
             {
-                ballColor = new Color(255, 150, 0);
-                textColor = new Color(255, 150, 0);
-                laserColor = new Color(255, 150, 0);
-                if (gamemode == "darkmode" || gamemode == "spotlight")
-                {
-                    wallColor = new Color(30, 250, 230);
-                    outerWallColor = new Color(30, 250, 230);
-                    backgroundColor = new Color(13, 13, 13);
-                }
-                else
-                {
-                    wallColor = new Color(30, 250, 230);
-                    outerWallColor = new Color(30, 250, 230);
-                    backgroundColor = new Color(13, 13, 13);
-                }
-            }
-            else if (colorScheme == "Beach")
-            {
-                ballColor = new Color(45, 105, 174);
-                textColor = new Color(0, 183, 45);
-                laserColor = new Color(45, 105, 174);
-                if (gamemode == "darkmode" || gamemode == "spotlight")
-                {
-                    wallColor = new Color(30, 44, 96);
-                    outerWallColor = new Color(30, 44, 96);
-                    backgroundColor = new Color(240, 210, 150);
-                }
-                else
-                {
-                    wallColor = new Color(45, 105, 174);
-                    outerWallColor = new Color(30, 44, 96);
-                    backgroundColor = new Color(240, 210, 150);
-                }
-            }
-            else if (colorScheme == "Gingerbread")
-            {
-                ballColor = new Color(50, 20, 0);
-                textColor = new Color(50, 20, 0);
-                laserColor = new Color(50, 20, 0);
-                if (gamemode == "darkmode" || gamemode == "spotlight")
-                {
-                    wallColor = new Color(40, 10, 0);
-                    outerWallColor = new Color(40, 10, 0);
-                    backgroundColor = new Color(80, 50, 20);
-                }
-                else
-                {
-                    wallColor = Color.White;
-                    outerWallColor = new Color(40, 10, 0);
-                    backgroundColor = new Color(80, 50, 20);
-                }
-            }
-            else if (colorScheme == "School")
-            {
-                ballColor = Color.Black;
-                textColor = Color.Black;
-                laserColor = Color.Black;
-                if (gamemode == "darkmode" || gamemode == "spotlight")
-                {
-                    wallColor = new Color(10, 10, 10);
-                    outerWallColor = new Color(10, 10, 10);
-                    backgroundColor = new Color(20, 20, 20);
-                }
-                else
-                {
-                    wallColor = new Color(10, 10, 10);
-                    outerWallColor = new Color(10, 10, 10);
-                    backgroundColor = new Color(20, 20, 20);
-                }
-            }
-            else if (colorScheme == "Colorful")
-            {
-                ballColor = Color.White;
-                textColor = Color.White;
-                laserColor = Color.White;
-                if (gamemode == "darkmode" || gamemode == "spotlight")
-                {
-                    wallColor = Color.White;
-                    outerWallColor = Color.White;
-                    backgroundColor = Color.Black;
-                }
-                else
-                {
-                    wallColor = Color.Black;
-                    outerWallColor = Color.Black;
-                    backgroundColor = Color.Black;
-                }
+                wallColor = outerWallColor;
             }
             #endregion
             #region Screen 0 Main Menu
             if (screen == 0)
             {
-                startButton.Update();
-                optionsButton.Update();
                 if (startButton.Clicked)
                 {
                     setScreen(1);
@@ -718,7 +689,7 @@ namespace On_the_Line
                     foreach (Obstacles obstacle in obstacles)
                     {
                         obstacle.Update();
-                        if (gamemode == "fastmode")
+                        if (GameMode == "Fastmode")
                         {
                             obstacle.Update();
                         }
@@ -758,7 +729,6 @@ namespace On_the_Line
             {
                 mouseHitbox.Update(gameTime);
                 #region Checks Color Button
-                colorButton.Update();
                 if (colorButton.Clicked)
                 {
                     if (colorScheme == "Default")
@@ -785,41 +755,39 @@ namespace On_the_Line
                     {
                         colorScheme = "Default";
                     }
-                    colorButton._texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
+                    colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
                 #endregion
                 #region Checks Gamemode Button
-                gamemodeButton.Update();
                 if (gamemodeButton.Clicked)
                 {
                     foreach (Obstacles obstacle in obstacles)
                     {
                         obstacle.Show = false;
                     }
-                    if (gamemode == "regular")
+                    if (GameMode == "Regular")
                     {
-                        gamemodeButton._texture = Content.Load<Texture2D>("DarkmodeButton");
-                        gamemode = "darkmode";
+                        gamemodeButton.Texture = Content.Load<Texture2D>("DarkmodeButton");
+                        GameMode = "Darkmode";
                     }
-                    else if (gamemode == "darkmode")
+                    else if (GameMode == "Darkmode")
                     {
-                        gamemodeButton._texture = Content.Load<Texture2D>("SpotlightButton");
-                        gamemode = "spotlight";
+                        gamemodeButton.Texture = Content.Load<Texture2D>("SpotlightButton");
+                        GameMode = "Spotlight";
                     }
-                    else if (gamemode == "spotlight")
+                    else if (GameMode == "Spotlight")
                     {
-                        gamemodeButton._texture = Content.Load<Texture2D>("FastmodeButton");
-                        gamemode = "fastmode";
+                        gamemodeButton.Texture = Content.Load<Texture2D>("FastmodeButton");
+                        GameMode = "Fastmode";
                     }
-                    else if (gamemode == "fastmode")
+                    else if (GameMode == "Fastmode")
                     {
-                        gamemodeButton._texture = Content.Load<Texture2D>("Regularbutton");
-                        gamemode = "regular";
+                        gamemodeButton.Texture = Content.Load<Texture2D>("Regularbutton");
+                        GameMode = "Regular";
                     }
                 }
                 #endregion
                 #region Checks Shootstyle Button
-                shootStyleButton.Update();
                 if (shootStyleButton.Clicked)
                 {
                     secret++;
@@ -839,7 +807,6 @@ namespace On_the_Line
 
                 }
                 #endregion
-                dotModeCheckbox.Update();
                 if (dotModeCheckbox.isChecked)
                 {
                     obstacleSize = 4;
@@ -848,7 +815,6 @@ namespace On_the_Line
                 {
                     obstacleSize = 25;
                 }
-                backButton.Update();
                 if (backButton.Clicked)
                 {
                     setScreen(0);
@@ -892,8 +858,6 @@ namespace On_the_Line
                 }
             }
             #endregion
-
-
             base.Update(gameTime);
         }
         /// <summary>
@@ -938,7 +902,7 @@ namespace On_the_Line
                 colorButton.Draw(spriteBatch);
                 gamemodeButton.Draw(spriteBatch);
                 shootStyleButton.Draw(spriteBatch);
-                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton._texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton._texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
+                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
                 backButton.Draw(spriteBatch);
                 mouseHitbox.Draw(spriteBatch);
                 int s = (int)shootStyleButton.Position.Y; //make the line look less intimidating
@@ -966,7 +930,7 @@ namespace On_the_Line
                     spriteBatch.DrawString(endGameFont, $"Obstacles Destroyed:{destroyedObstacles}", new Vector2(100, 500), textColor);
                     spriteBatch.DrawString(endGameFont, $"Enemies Killed:{enemiesKilled}", new Vector2(100, 550), textColor);
                     spriteBatch.DrawString(extraLargeText, "Verdict:", new Vector2(160, 650), textColor);
-                    if (score < 10)
+                    if (score < 5000)
                     {
                         spriteBatch.DrawString(extraLargeText, "You're a noob", new Vector2(100, 700), textColor);
                     }
