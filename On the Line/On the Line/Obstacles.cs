@@ -78,23 +78,23 @@ namespace On_the_Line
                 {
                     if (isOuterWall)
                     {
-                        _color = Game1.outerWallColor;
+                        _color = OnTheLine.OuterWallColor;
                     }
                     else
                     {
-                        _color = Game1.wallColor;
+                        _color = OnTheLine.WallColor;
                     }                    
                 }
                 else
                 {
-                    _color = Game1.backgroundColor;
+                    _color = OnTheLine.BackgroundColor;
                 }
             }
-            if (Game1.GameMode == "Regular" || Game1.GameMode == "Fastmode")
+            if (OnTheLine.GameMode == "Regular" || OnTheLine.GameMode == "Fastmode")
             {
                 if (_moveX != 0 || _moveY != 0)
                 {
-                    _color = Game1.outerWallColor;
+                    _color = OnTheLine.OuterWallColor;
                 }
                 else
                 {
@@ -108,7 +108,7 @@ namespace On_the_Line
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(_slideSpeed, 0);
-                if ((Game1.GameMode == "Spotlight" && !hitbox.Intersects(Game1.mouseHitbox._hitbox)) || Game1.GameMode == "'")
+                if ((OnTheLine.GameMode == "Spotlight" && !hitbox.Intersects(OnTheLine.mouseHitbox._hitbox)) || OnTheLine.GameMode == "'")
                 {
                     Show = false;
                 }
@@ -116,29 +116,29 @@ namespace On_the_Line
             }
             else
             {
-                if (Game1.lose)
+                if (OnTheLine.hasLost)
                 {
                     Show = true;
                 }
-                for (int i = 0; i < Game1.mouseHitbox.lasers.Count; i++)
+                for (int i = 0; i < OnTheLine.mouseHitbox.lasers.Count; i++)
                 {
-                    Laser laser = Game1.mouseHitbox.lasers[i];
+                    Laser laser = OnTheLine.mouseHitbox.lasers[i];
                     if (laser._rect.Intersects(hitbox))
                     {
-                        if (Game1.GameMode == "Darkmode" && !Show)
+                        if (OnTheLine.GameMode == "Darkmode" && !Show)
                         {
-                            Game1.mouseHitbox.lasers[i]._lives--;
+                            OnTheLine.mouseHitbox.lasers[i]._lives--;
                             Show = true;
                         }
-                        if (Game1.mouseHitbox.lasers[i]._lives <= 0 || _indestrucable)
+                        if (OnTheLine.mouseHitbox.lasers[i]._lives <= 0 || _indestrucable)
                         {
-                            Game1.mouseHitbox.lasers.Remove(laser);
+                            OnTheLine.mouseHitbox.lasers.Remove(laser);
                         }
                     }
                 }
-                if (Game1.GameMode == "Spotlight")
+                if (OnTheLine.GameMode == "Spotlight")
                 {
-                    if (hitbox.Intersects(Game1.mouseHitbox.Spotlight))
+                    if (hitbox.Intersects(OnTheLine.mouseHitbox.Spotlight))
                     {
                         Show = true;
                     }
@@ -147,7 +147,7 @@ namespace On_the_Line
                         Show = false;
                     }
                 }
-                if ((Game1.screen == 1 && (position.Y > 930 && _color != Game1.textColor && _maxMove == 0)) || _gateway)
+                if ((OnTheLine.screen == (int)Screen.GameScreen && (position.Y > 930 && _color != OnTheLine.TextColor && _maxMove == 0)) || _gateway)
                 {
                     Show = false;
                 }
@@ -156,7 +156,7 @@ namespace On_the_Line
                 {
                     slow = 0;
                 }
-                if ((slow == 0 && !Game1.pause) || (slow == 0 && Game1.lose == true))
+                if ((slow == 0 && !OnTheLine.isPaused) || (slow == 0 && OnTheLine.hasLost == true))
                 {
                     this.position.Y += _moveY * move;
                     this.position.X += _moveX * move;
@@ -197,14 +197,14 @@ namespace On_the_Line
                 {
                     if (growTimes % 20 >= 0 && growTimes % 20 <= 10)
                     {
-                        _color = reverseColor(Game1.wallColor);
+                        _color = reverseColor(OnTheLine.WallColor);
                     }
                 }
                 else
                 {
                     _size += new Vector2(growAmount, growAmount);
                     growAmount += 0.4f;
-                    _color = Game1.endGameColor;
+                    _color = OnTheLine.EndGameColor;
                 }
             }
             KeyboardState ks = Keyboard.GetState();
@@ -218,7 +218,7 @@ namespace On_the_Line
                 this.position.Y--;
                 _startPosition.Y--;
             }
-            else if (!Game1.pause && !Game1.lose)
+            else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
                 this.position.Y++;
                 _startPosition.Y++;

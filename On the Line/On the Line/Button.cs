@@ -21,7 +21,7 @@ namespace On_the_Line
         }
         public new void Update()
         {
-            Color = Game1.textColor;
+            Color = OnTheLine.TextColor;
             MouseState MS = Mouse.GetState();
             hovered = Hitbox.Contains(MS.X, MS.Y);
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);

@@ -12,7 +12,7 @@ namespace On_the_Line
     {
         public Vector2 Position;
         public Vector2 RelativePosition;
-        public Color _color;
+        public Color Color;
         MouseState mouseState;
         MouseState lastMouseState;
         public Texture2D _texture;
@@ -36,7 +36,7 @@ namespace On_the_Line
 
         public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
         {
-            _color = color;
+            Color = color;
             _texture = texture;
             Position = position;
             RelativePosition = Position;
@@ -49,7 +49,7 @@ namespace On_the_Line
         public void Update(GameTime gameTime)
         {
             _hitbox = new Rectangle((int)Position.X + _texture.Width / 4, (int)Position.Y + _texture.Height / 4, _texture.Width / 2, _texture.Height / 2);
-            if (!Game1.pause)
+            if (!OnTheLine.isPaused)
             {
                 laserElapsedTime += gameTime.ElapsedGameTime;
             }
@@ -62,7 +62,7 @@ namespace On_the_Line
             {
                 CountingElapsedTime += gameTime.ElapsedGameTime;
             }
-            _shootStyle = Game1.shootStyle;
+            _shootStyle = OnTheLine.shootStyle;
             if (_shootStyle == 0)
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 3, 7, "Normal", "Good penetration, Forward spread", "No back shooting");
@@ -91,14 +91,14 @@ namespace On_the_Line
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
-                if (Game1.screen == 1 && (lasers[i]._rect.X > 500 || lasers[i]._rect.X < 0 || lasers[i]._rect.Y < 0 || lasers[i]._rect.Y > 1000) || Game1.lose)
+                if (OnTheLine.screen == (int)Screen.GameScreen && (lasers[i]._rect.X > 500 || lasers[i]._rect.X < 0 || lasers[i]._rect.Y < 0 || lasers[i]._rect.Y > 1000) || OnTheLine.hasLost)
                 {
                     lasers.Remove(lasers[i]);
                     i--;
                 }
             }
             mouseState = Mouse.GetState();
-            if (Game1.screen != 2 && !Game1.lose)
+            if (OnTheLine.screen != 2 && !OnTheLine.hasLost)
             {
                 if (Counting)
                 {
@@ -106,7 +106,7 @@ namespace On_the_Line
                     if (CountingCentisecond <= 5)
                     {
                         isclicked = true;
-                        Game1.pause = false;
+                        OnTheLine.isPaused = false;
                         Counting = false;
                     }
                     if(!_hitbox.Contains(mouseState.X, mouseState.Y))
@@ -119,10 +119,10 @@ namespace On_the_Line
                     Counting = true;
                     CountingElapsedTime = TimeSpan.Zero;
                 }
-                if (mouseState.LeftButton == ButtonState.Released)
+                if (mouseState.LeftButton == ButtonState.Released && OnTheLine.screen == (int)Screen.GameScreen)
                 {
                     isclicked = false;
-                    Game1.pause = true;
+                    OnTheLine.isPaused = true;
                     Counting = false;
                 }
                 if (isclicked)
@@ -131,7 +131,7 @@ namespace On_the_Line
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
                         Position.Y++;
-                        if (Game1.GameMode == "Fastmode")
+                        if (OnTheLine.GameMode == "Fastmode")
                         {
                             Position.Y++;
                         }
@@ -154,8 +154,8 @@ namespace On_the_Line
         public void fireLasers(Texture2D texture, Color laserColor, bool aims)
         {
             Vector2 startPos = new Vector2(Position.X + _texture.Width / 2 - 2, Position.Y + _texture.Height / 2 - 2);
-            int laserCount = Game1.mouseHitbox.lasers.Count;
-            foreach (Enemy enemy in Game1.enemies)
+            int laserCount = OnTheLine.mouseHitbox.lasers.Count;
+            foreach (Enemy enemy in OnTheLine.enemies)
             {
                 laserCount += enemy.body.lasers.Count();
             }
@@ -163,8 +163,8 @@ namespace On_the_Line
             {
                 if (aims)
                 {
-                    int aimX = ((int)Game1.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
-                    int aimY = ((int)Game1.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
+                    int aimX = ((int)OnTheLine.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
+                    int aimY = ((int)OnTheLine.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
                     lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
                 }
                 else
@@ -439,12 +439,12 @@ namespace On_the_Line
             {
                 laser.Draw(spriteBatch);
             }
-            if (!Game1.lose || Game1.lose && showWhenLose)
+            if (!OnTheLine.hasLost || OnTheLine.hasLost && showWhenLose)
             {
-                spriteBatch.Draw(_texture, Position, _color);
-                if (Game1.GameMode == "Spotlight")
+                spriteBatch.Draw(_texture, Position, Color);
+                if (OnTheLine.GameMode == "Spotlight")
                 {
-                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X, Spotlight.Y), Game1.textColor);
+                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X, Spotlight.Y), OnTheLine.TextColor);
                 }
             }
         }

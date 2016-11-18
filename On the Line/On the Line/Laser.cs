@@ -27,7 +27,7 @@ namespace On_the_Line
         }
         public void Update()
         {
-            if ((Game1.screen == 1 && !Game1.pause)||Game1.screen == 2)
+            if (!OnTheLine.isPaused)
             {
                 _rect.X += _moveX;
                 _rect.Y += _moveY;
@@ -48,7 +48,7 @@ namespace On_the_Line
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (Game1.lose == false)
+            if (OnTheLine.hasLost == false)
             {
                 spriteBatch.Draw(_texture, _rect, _color);
             }

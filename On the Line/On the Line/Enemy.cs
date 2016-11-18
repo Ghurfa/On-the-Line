@@ -19,7 +19,7 @@ namespace On_the_Line
         int _slideSpeed;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
         {
-            body = new MouseHitbox(Game1.wallColor, texture, spotlightTexture, true, position, shootstyle, direction);
+            body = new MouseHitbox(OnTheLine.WallColor, texture, spotlightTexture, true, position, shootstyle, direction);
             body.Position = position;
             _laserTexture = laserTexture;
             aims = doesAim;
@@ -62,8 +62,8 @@ namespace On_the_Line
             {
                 if (_rams)
                 {
-                    MouseHitbox MH = Game1.mouseHitbox;
-                    if (aims && Math.Abs(body.Position.Y - MH.Position.Y) < 250 && !Game1.pause)
+                    MouseHitbox MH = OnTheLine.mouseHitbox;
+                    if (aims && Math.Abs(body.Position.Y - MH.Position.Y) < 250 && !OnTheLine.isPaused)
                     {
                         body.Position.X += (MH.Position.X - body.Position.X) / 30;
                         body.Position.Y += (MH.Position.Y - body.Position.Y) / 30;
@@ -75,8 +75,8 @@ namespace On_the_Line
                     {
                         if (aims)
                         {
-                            body.fireLasers(_laserTexture, Game1.wallColor, true);
-                            body.fireLasers(_laserTexture, Game1.wallColor, false);
+                            body.fireLasers(_laserTexture, OnTheLine.WallColor, true);
+                            body.fireLasers(_laserTexture, OnTheLine.WallColor, false);
                         }
                         laserElapsedTime = TimeSpan.Zero;
                     }                    
@@ -84,14 +84,14 @@ namespace On_the_Line
                     {
                         Laser laser = body.lasers[i];
                         body.lasers[i].Update();
-                        if (Game1.screen == 1 && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
+                        if (OnTheLine.screen == (int)Screen.GameScreen && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
                         {
                             body.lasers.Remove(body.lasers[i]);
                         }
-                        if (laser._rect.Intersects(Game1.mouseHitbox._hitbox))
+                        if (laser._rect.Intersects(OnTheLine.mouseHitbox._hitbox))
                         {
                             body.lasers.Clear();
-                            Game1.isLoading = true;
+                            OnTheLine.isLoading = true;
                         }
                     }
                 }
@@ -116,7 +116,7 @@ namespace On_the_Line
                     laser._rect.Y -= laser._moveY;
                 }
             }
-            else if (!Game1.pause && !Game1.lose)
+            else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
                 body.Position.Y++;
             }

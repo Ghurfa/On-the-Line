@@ -10,7 +10,7 @@ namespace On_the_Line
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (OnTheLine game = new OnTheLine())
             {
                 game.Run();
             }
