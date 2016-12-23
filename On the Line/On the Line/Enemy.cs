@@ -8,100 +8,99 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace On_the_Line
 {
-    public class Enemy
+    public class Enemy:MouseHitbox
     {
-        public MouseHitbox body;
-        public static TimeSpan laserCooldown;
-        public TimeSpan laserElapsedTime;
         Texture2D _laserTexture;
         bool aims;
         public bool _rams;
         int _slideSpeed;
         public Enemy(Vector2 position, Texture2D texture, Texture2D spotlightTexture, Texture2D laserTexture, int shootstyle, int direction, bool doesAim, bool rams)
+            :base(OnTheLine.WallColor, texture, spotlightTexture, true, position, shootstyle, direction)
         {
-            body = new MouseHitbox(OnTheLine.WallColor, texture, spotlightTexture, true, position, shootstyle, direction);
-            body.Position = position;
             _laserTexture = laserTexture;
             aims = doesAim;
-            if (body._shootStyle == 0)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 2, 0);
-            }
-            else if (body._shootStyle == 1)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 0, 750);
-            }
-            else if (body._shootStyle == 2)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 4, 0);
-            }
-            else if (body._shootStyle == 3)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 0, 900);
-            }
-            else if (body._shootStyle == 4)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 3, 0);
-            }
-            else if (body._shootStyle == 5)
-            {
-                laserCooldown = new TimeSpan(0, 0, 0, 1, 0);
-            }
             _rams = rams;
             _slideSpeed = 31;
-            body.Position += new Vector2(496, 0);
+            Position += new Vector2(496, 0);
         }
-        public void Update()
+        public new void Update(GameTime gameTime)
         {
             if (_slideSpeed > 0)
             {
-                body.Position -= new Vector2(_slideSpeed, 0);
+                Position -= new Vector2(_slideSpeed, 0);
                 _slideSpeed--;
             }
             else
             {
+                if (_shootStyle == 0)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 3, 7, "Normal", "Good penetration, Forward spread", "No back shooting");
+                }
+                else if (_shootStyle == 1)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 500), 8, 5, "Normal", "Shoots in all directions", "Bad Penetration, Slower reload");
+                }
+                else if (_shootStyle == 2)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 3, 500), 25, 2, "Fast", "Large amount of bullets, Huge spread", "Slow reload, No back shooting");
+                }
+                else if (_shootStyle == 3)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 0, 900), 20, 1, "Fast", "Faster reload, Large spread", "No back shooting, Unfocused");
+                }
+                else if (_shootStyle == 4)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 500), 25, 1, "Zero", "Zero movement on screen", "Slower reload, Low penetration");
+                }
+                else if (_shootStyle == 5)
+                {
+                    stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
+                }
                 if (_rams)
                 {
                     MouseHitbox MH = OnTheLine.mouseHitbox;
-                    if (aims && Math.Abs(body.Position.Y - MH.Position.Y) < 250 && !OnTheLine.isPaused)
+                    if (aims && Math.Abs(Position.Y - MH.Position.Y) < 250 && !OnTheLine.isPaused)
                     {
-                        body.Position.X += (MH.Position.X - body.Position.X) / 30;
-                        body.Position.Y += (MH.Position.Y - body.Position.Y) / 30;
+                        Position.X += (MH.Position.X - Position.X) / 30;
+                        Position.Y += (MH.Position.Y - Position.Y) / 30;
                     }
                 }
                 else
                 {
-                    if (laserElapsedTime >= laserCooldown)
+                    laserElapsedTime += gameTime.ElapsedGameTime;
+                    if (laserElapsedTime >= stats.Item1)
                     {
                         if (aims)
                         {
-                            body.fireLasers(_laserTexture, OnTheLine.WallColor, true);
-                            body.fireLasers(_laserTexture, OnTheLine.WallColor, false);
+                            fireLasers(_laserTexture, OnTheLine.WallColor, true);
+                        }
+                        else
+                        {
+                            fireLasers(_laserTexture, OnTheLine.WallColor, false);
                         }
                         laserElapsedTime = TimeSpan.Zero;
                     }                    
-                    for (int i = 0; i < body.lasers.Count; i++)
+                    for (int i = 0; i < lasers.Count; i++)
                     {
-                        Laser laser = body.lasers[i];
-                        body.lasers[i].Update();
+                        Laser laser = lasers[i];
+                        lasers[i].Update();
                         if (OnTheLine.screen == (int)Screen.GameScreen && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
                         {
-                            body.lasers.Remove(body.lasers[i]);
+                            lasers.Remove(lasers[i]);
                         }
-                        if (laser._rect.Intersects(OnTheLine.mouseHitbox._hitbox))
+                        if (laser._rect.Intersects(OnTheLine.mouseHitbox.Hitbox))
                         {
-                            body.lasers.Clear();
+                            lasers.Clear();
                             OnTheLine.isLoading = true;
                         }
                     }
                 }
-                body._hitbox = new Rectangle((int)body.Position.X + body._texture.Width / 4, (int)body.Position.Y + body._texture.Height / 4, body._texture.Width / 2, body._texture.Height / 2);
             }
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {
-                body.Position.Y++;
-                foreach (Laser laser in body.lasers)
+                Position.Y++;
+                foreach (Laser laser in lasers)
                 {
                     laser._rect.X += laser._moveX;
                     laser._rect.Y += laser._moveY;
@@ -109,8 +108,8 @@ namespace On_the_Line
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
-                body.Position.Y--;
-                foreach (Laser laser in body.lasers)
+                Position.Y--;
+                foreach (Laser laser in lasers)
                 {
                     laser._rect.X -= laser._moveX;
                     laser._rect.Y -= laser._moveY;
@@ -118,12 +117,9 @@ namespace On_the_Line
             }
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
-                body.Position.Y++;
+                Position.Y++;
             }
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            body.Draw(spriteBatch);
+            Hitbox = new Rectangle((int)Position.X + Texture.Width / 4, (int)Position.Y + Texture.Height / 4, Texture.Width / 2, Texture.Height / 2);
         }
     }
 

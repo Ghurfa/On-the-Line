@@ -8,16 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace On_the_Line
 {
-    public class MouseHitbox
+    public class MouseHitbox:Sprite
     {
-        public Vector2 Position;
         public Vector2 RelativePosition;
-        public Color Color;
         MouseState mouseState;
         MouseState lastMouseState;
-        public Texture2D _texture;
         Texture2D spotlightTexture;
-        public Rectangle _hitbox;
         public Rectangle Spotlight;
         int direction = 0;
         public int _shootStyle;
@@ -35,12 +31,13 @@ namespace On_the_Line
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
 
         public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
+            :base(position, texture, color)
         {
             Color = color;
-            _texture = texture;
+            Texture = texture;
             Position = position;
             RelativePosition = Position;
-            _hitbox = new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             spotlightTexture = spotlightTexure;
             _shootStyle = shootStyle;
             this.direction = direction;
@@ -48,7 +45,7 @@ namespace On_the_Line
         }
         public void Update(GameTime gameTime)
         {
-            _hitbox = new Rectangle((int)Position.X + _texture.Width / 4, (int)Position.Y + _texture.Height / 4, _texture.Width / 2, _texture.Height / 2);
+            Hitbox = new Rectangle((int)Position.X + Texture.Width / 4, (int)Position.Y + Texture.Height / 4, Texture.Width / 2, Texture.Height / 2);
             if (!OnTheLine.isPaused)
             {
                 laserElapsedTime += gameTime.ElapsedGameTime;
@@ -87,7 +84,7 @@ namespace On_the_Line
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
             }
-            Spotlight = new Rectangle((int)Position.X + _texture.Width / 2 - 100, (int)Position.Y + _texture.Height / 2 - 100, 200, 200);
+            Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - 100, (int)Position.Y + Texture.Height / 2 - 100, 200, 200);
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
@@ -109,12 +106,12 @@ namespace On_the_Line
                         OnTheLine.isPaused = false;
                         Counting = false;
                     }
-                    if(!_hitbox.Contains(mouseState.X, mouseState.Y))
+                    if(!Hitbox.Contains(mouseState.X, mouseState.Y))
                     {
                         Counting = false;
                     }
                 }
-                if (mouseState.LeftButton == ButtonState.Pressed && _hitbox.Contains(mouseState.X, mouseState.Y) && lastMouseState.LeftButton == ButtonState.Released)
+                if (mouseState.LeftButton == ButtonState.Pressed && Hitbox.Contains(mouseState.X, mouseState.Y) && lastMouseState.LeftButton == ButtonState.Released)
                 {
                     Counting = true;
                     CountingElapsedTime = TimeSpan.Zero;
@@ -138,8 +135,8 @@ namespace On_the_Line
                     }
                     else
                     {
-                        Position.Y = mouseState.Y - (_texture.Height / 2);
-                        Position.X = mouseState.X - (_texture.Width / 2);
+                        Position.Y = mouseState.Y - (Texture.Height / 2);
+                        Position.X = mouseState.X - (Texture.Width / 2);
                     }
                 }
             }
@@ -153,18 +150,18 @@ namespace On_the_Line
         /// <param name="aims">Whether or not it aims (for enemies)</param>
         public void fireLasers(Texture2D texture, Color laserColor, bool aims)
         {
-            Vector2 startPos = new Vector2(Position.X + _texture.Width / 2 - 2, Position.Y + _texture.Height / 2 - 2);
+            Vector2 startPos = new Vector2(Position.X + Texture.Width / 2 - 2, Position.Y + Texture.Height / 2 - 2);
             int laserCount = OnTheLine.mouseHitbox.lasers.Count;
             foreach (Enemy enemy in OnTheLine.enemies)
             {
-                laserCount += enemy.body.lasers.Count();
+                laserCount += enemy.lasers.Count();
             }
             if (canShoot)
             {
                 if (aims)
                 {
-                    int aimX = ((int)OnTheLine.mouseHitbox._hitbox.X - (int)startPos.X) / 25;
-                    int aimY = ((int)OnTheLine.mouseHitbox._hitbox.Y - (int)startPos.Y) / 25;
+                    int aimX = ((int)OnTheLine.mouseHitbox.Hitbox.X - (int)startPos.X) / 25;
+                    int aimY = ((int)OnTheLine.mouseHitbox.Hitbox.Y - (int)startPos.Y) / 25;
                     lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
                 }
                 else
@@ -433,7 +430,7 @@ namespace On_the_Line
         /// This draws the body, its spotlight, and its lasers
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public void Draw(SpriteBatch spriteBatch)
+        public new void Draw(SpriteBatch spriteBatch)
         {
             foreach (Laser laser in lasers)
             {
@@ -441,7 +438,7 @@ namespace On_the_Line
             }
             if (!OnTheLine.hasLost || OnTheLine.hasLost && showWhenLose)
             {
-                spriteBatch.Draw(_texture, Position, Color);
+                spriteBatch.Draw(Texture, Position, Color);
                 if (OnTheLine.GameMode == "Spotlight")
                 {
                     spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X, Spotlight.Y), OnTheLine.TextColor);

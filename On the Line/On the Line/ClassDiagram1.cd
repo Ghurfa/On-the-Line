@@ -8,9 +8,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Checkbox" Collapsed="true">
-    <Position X="3" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgQAoAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <HashCode>AgQAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
       <FileName>Checkbox.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -29,23 +29,29 @@
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.MouseHitbox" Collapsed="true">
-    <Position X="3" Y="1.5" Width="1.5" />
+    <Position X="4.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQQAEAQAYEIIo0kEgAAAAgQAAAAQAAACAAEBCBAAAA=</HashCode>
+      <HashCode>AAQQAEAQAYEAIo0EEgAAAAgQAAAAQAAACAAEBCBAAAA=</HashCode>
       <FileName>MouseHitbox.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Obstacles" Collapsed="true">
-    <Position X="4.75" Y="1.5" Width="1.5" />
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="On_the_Line.Sprite" FixedFromPoint="true">
+      <Path>
+        <Point X="3.25" Y="1.062" />
+        <Point X="3.25" Y="1.75" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AQQAiAQAEQAIAgCgAACIIAAEQAAUAABAAIAEAAIAAAA=</HashCode>
+      <HashCode>AQQAiAAAEAAIAgCAAACIAAAEQAAUAABAAIAEAAIAAAA=</HashCode>
       <FileName>Obstacles.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.OnTheLine" Collapsed="true">
     <Position X="6.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <HashCode>AAYAFkCRQQARA4gKgBALAQQBCQECSQghVwQAAAIAIAQ=</HashCode>
       <FileName>OnTheLine.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -57,7 +63,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Sprite" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Position X="2.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAEAgAgAAAAAAAAAAAAAQAAAAIAgAAAAAA=</HashCode>
       <FileName>Sprite.cs</FileName>

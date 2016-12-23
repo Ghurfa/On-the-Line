@@ -4,44 +4,62 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace On_the_Line
 {
-    class Checkbox
+    class Checkbox:Button
     {
-        public Button checkBox;
+        MouseState lastMS;
         public bool isChecked;
         Texture2D _onTexture;
         Texture2D _offTexture;
         public Checkbox(Vector2 position, Texture2D onTexture, Texture2D offTexture, bool defaultPosition)
+            :base(position, offTexture)
         {
-            checkBox = new Button(position, offTexture);
             isChecked = defaultPosition;
             _onTexture = onTexture;
             _offTexture = offTexture;
         }
 
-        public void Update()
+        public new void Update()
         {
-            checkBox.Update();
-            if (checkBox.Clicked)
+            Color = OnTheLine.TextColor;
+            MouseState MS = Mouse.GetState();
+            bool hovered = Hitbox.Contains(MS.X, MS.Y);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            if (hovered)
             {
-                if (isChecked)
+                Color.A = 128;
+                if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released)
                 {
-                    isChecked = false;
-                    checkBox.Texture = _offTexture;
+                    if (isChecked)
+                    {
+                        isChecked = false;
+                        Texture = _offTexture;
+                    }
+                    else
+                    {
+                        isChecked = true;
+                        Texture = _onTexture;
+                    }
+                }
+                if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed)
+                {
+                    Released = true;
                 }
                 else
                 {
-                    isChecked = true;
-                    checkBox.Texture = _onTexture;
+
+                    Released = false;
                 }
             }
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            checkBox.Draw(spriteBatch);
+            else
+            {
+                Clicked = false;
+                Released = false;
+            }
+            lastMS = MS;
         }
     }
 }

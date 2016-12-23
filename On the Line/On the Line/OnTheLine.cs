@@ -45,10 +45,9 @@ namespace On_the_Line
         public static Color LaserColor = Color.Red;
         public static Color EndGameColor = Color.Black;
         
-        int score = 0;
+        TimeSpan score = TimeSpan.Zero;
         int destroyedObstacles;
         int enemiesKilled;
-        int highestObstacle;
         int slidingSpeed = 0;
         int obstacleSize = 25;
         public static int screen = (int)Screen.MainMenu;
@@ -132,7 +131,7 @@ namespace On_the_Line
         void newObstacle(float yOffset)
         {
             int randomNumber = random.Next(1, 26); //Chooses a random obstacle from all 25
-            if (difficulty[randomNumber - 1] > score / 60) //If you don't have enough score for it to load
+            if (difficulty[randomNumber - 1] > score.TotalSeconds) //If you don't have enough score for it to load
             {
                 newObstacle(yOffset);
             }
@@ -235,34 +234,37 @@ namespace On_the_Line
             hasLost = false;
             mouseHitbox.lasers.Clear();
             isPaused = false;
-            if (screenToSetTo == (int)Screen.MainMenu) //If you are switching to main menu
+            if (slidingSpeed == 0)
             {
-                menuScreen.Position = new Vector2(528, 0);
-                slidingSpeed = 32;
+                if (screenToSetTo == (int)Screen.MainMenu) //If you are switching to main menu
+                {
+                    menuScreen.Position = new Vector2(528, 0);
+                    slidingSpeed = 32;
+                }
+                else if (screenToSetTo == (int)Screen.GameScreen)
+                {
+                    score = TimeSpan.Zero;
+                    obstacles.Clear();
+                    enemies.Clear();
+                    destroyedObstacles = 0;
+                    enemiesKilled = 0;
+                    loadObstacle(1000, "LowerStartingObstacle");
+                    loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                    mouseHitbox.canShoot = true;
+                    mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
+                }
+                else if (screenToSetTo == (int)Screen.OptionsMenu)
+                {
+                    optionsScreen.Position = new Vector2(528, 0);
+                    slidingSpeed = 32;
+                }
+                if (screen == (int)Screen.GameScreen) //If you are on GameScreen before you switch
+                {
+                    obstacles.Clear();
+                    enemies.Clear();
+                }
+                screen = screenToSetTo;
             }
-            else if (screenToSetTo == (int)Screen.GameScreen)
-            {
-                score = 0;
-                obstacles.Clear();
-                enemies.Clear();
-                destroyedObstacles = 0;
-                enemiesKilled = 0;
-                loadObstacle(1000, "LowerStartingObstacle");
-                loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
-                mouseHitbox.canShoot = true;
-                mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238, 250));
-            }
-            else if (screenToSetTo == (int)Screen.OptionsMenu)
-            {
-                optionsScreen.Position = new Vector2(528, 0);
-                slidingSpeed = 32;
-            }
-            if (screen == (int)Screen.GameScreen) //If you are on GameScreen before you switch
-            {
-                obstacles.Clear();
-                enemies.Clear();
-            }
-            screen = screenToSetTo;
         }
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -275,8 +277,17 @@ namespace On_the_Line
             optionsScreen.Update();
             if (obstacles.Count == 0) //If there are no obstacles, make some
             {
-                newObstacle(500);
-                newObstacle(1000);
+                if (screen == (int)Screen.GameScreen)
+                {
+                    enemiesKilled = 0;
+                    loadObstacle(1000, "LowerStartingObstacle");
+                    loadObstacle(500, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                }
+                else
+                {
+                    newObstacle(500);
+                    newObstacle(1000);
+                }
             }
             if (slidingSpeed != 0) //If the screen sprites are supposed to move, move them & decrease the speed they slide
             {
@@ -438,14 +449,8 @@ namespace On_the_Line
                 if (shootStyleButton.Clicked)
                 {
                     mouseHitbox.lasers.Clear();
-                    if (shootStyle != 5)
-                    {
-                        shootStyle++;
-                    }
-                    else
-                    {
-                        shootStyle = 0;
-                    }
+                    shootStyle++;
+                    shootStyle %= 6;
                     mouseHitbox.canShoot = true;
                     mouseHitbox.Update(gameTime);
 
@@ -468,7 +473,7 @@ namespace On_the_Line
                 colorButton.Position = optionsScreen.Position + new Vector2(125, 100);
                 gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 300);
                 shootStyleButton.Position = optionsScreen.Position + new Vector2(125, 500);
-                dotModeCheckbox.checkBox.Position = optionsScreen.Position + new Vector2(400, 315);
+                dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 315);
                 backButton.Position = optionsScreen.Position + new Vector2(125, 900);
             }
             if (!hasLost && !isLoading)
@@ -483,26 +488,26 @@ namespace On_the_Line
                     {
                         obstacle.Update();
                     }
-                    if (obstacle.hitbox.Intersects(mouseHitbox._hitbox) && obstacle._slideSpeed == 0 && !isPaused && !obstacle._gateway && screen == (int)Screen.GameScreen)
+                    if (obstacle.Hitbox.Intersects(mouseHitbox.Hitbox) && obstacle._slideSpeed == 0 && !isPaused && !obstacle._gateway && screen == (int)Screen.GameScreen)
                     {
                         isLoading = true;
                         obstacle.didKill = true;
-                        obstacle._color = EndGameColor;
+                        obstacle.Color = EndGameColor;
                     }
-                    if (obstacle.hitbox.Y < highestObstacle)
+                    if (obstacle.Hitbox.Y < highestObstacle)
                     {
-                        highestObstacle = obstacle.hitbox.Y;
+                        highestObstacle = obstacle.Hitbox.Y;
                     }
                     if (obstacle._breaks)
                     {
                         for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                         {
                             Laser laser = mouseHitbox.lasers[x];
-                            if (laser._rect.Intersects(obstacle.hitbox))
+                            if (laser._rect.Intersects(obstacle.Hitbox))
                             {
                                 obstacles.Remove(obstacle);
                                 destroyedObstacles++;
-                                score += 10;
+                                score += new TimeSpan(0, 0, 10);
                                 i--;
                                 laser._lives--;
                                 if (laser._lives <= 0)
@@ -512,7 +517,7 @@ namespace On_the_Line
                             }
                         }
                     }
-                    if (obstacle.hitbox.Y > 2000)
+                    if (obstacle.Hitbox.Y > 2000)
                     {
                         obstacles.Remove(obstacle);
                         i--;
@@ -527,14 +532,14 @@ namespace On_the_Line
                 for (int i = 0; i < enemies.Count; i++)
                 {
                     Enemy enemy = enemies[i];
-                    enemy.Update();
+                    enemy.Update(gameTime);
                     if (GameMode == "Fastmode")
                     {
-                        enemy.Update();
+                        enemy.Update(gameTime);
                     }
                     foreach (Obstacles obstacle in obstacles)
                     {
-                        if (obstacle.hitbox.Intersects(enemy.body._hitbox) && obstacle._gateway)
+                        if (obstacle.Hitbox.Intersects(enemy.Hitbox) && obstacle._gateway)
                         {
                             enemies.Remove(enemy);
                             enemiesKilled++;
@@ -543,7 +548,7 @@ namespace On_the_Line
                     for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                     {
                         Laser laser = mouseHitbox.lasers[x];
-                        if (enemy.body._hitbox.Intersects(laser._rect))
+                        if (enemy.Hitbox.Intersects(laser._rect))
                         {
                             enemies.Remove(enemy);
                             enemiesKilled++;
@@ -555,14 +560,14 @@ namespace On_the_Line
                         Enemy targetedEnemy = enemies[y];
                         if (enemy != targetedEnemy && !targetedEnemy._rams)
                         {
-                            for (int x = 0; x < enemy.body.lasers.Count; x++)
+                            for (int x = 0; x < enemy.lasers.Count; x++)
                             {
-                                Laser laser = enemy.body.lasers[x];
-                                if (targetedEnemy.body._hitbox.Intersects(laser._rect))
+                                Laser laser = enemy.lasers[x];
+                                if (targetedEnemy.Hitbox.Intersects(laser._rect))
                                 {
                                     enemies.Remove(targetedEnemy);
                                     enemiesKilled++;
-                                    enemy.body.lasers.Remove(laser);
+                                    enemy.lasers.Remove(laser);
                                 }
                             }
                         }
@@ -571,10 +576,10 @@ namespace On_the_Line
                 #endregion
                 if (!isPaused)
                 {
-                    score++;
+                    score += gameTime.ElapsedGameTime;
                     if (GameMode == "Fastmode")
                     {
-                        score++;
+                        score += gameTime.ElapsedGameTime;
                     }
                 }
             }
@@ -598,7 +603,7 @@ namespace On_the_Line
                         obstacle.Update();
                         for (int x = 0; x < OnTheLine.mouseHitbox.lasers.Count; x++)
                         {
-                            if (obstacle.hitbox.Intersects(OnTheLine.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
+                            if (obstacle.Hitbox.Intersects(OnTheLine.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
                             {
                                 OnTheLine.mouseHitbox.lasers[x]._lives -= 2;
                                 if (OnTheLine.mouseHitbox.lasers[x]._lives <= 0)
@@ -619,9 +624,9 @@ namespace On_the_Line
                                 obstacle.Update();
                             }
                         }
-                        if (obstacle.hitbox.Y < highestObstacle)
+                        if (obstacle.Hitbox.Y < highestObstacle)
                         {
-                            highestObstacle = obstacle.hitbox.Y;
+                            highestObstacle = obstacle.Hitbox.Y;
                         }
                     }
                     if (highestObstacle >= 0)
@@ -631,16 +636,16 @@ namespace On_the_Line
                     for (int i = 0; i < enemies.Count; i++)
                     {
                         Enemy enemy = enemies[i];
-                        enemy.Update();
+                        enemy.Update(gameTime);
                         if (ks.IsKeyDown(Keys.RightControl))
                         {
-                            enemy.Update();
+                            enemy.Update(gameTime);
                         }
                         if (ks.IsKeyDown(Keys.LeftControl))
                         {
                             for (int d = 0; d < 6; d++)
                             {
-                                enemy.Update();
+                                enemy.Update(gameTime);
                             }
                         }
                     }
@@ -722,7 +727,7 @@ namespace On_the_Line
                 }
                 foreach (Obstacles obtstacle in obstacles) //Layer 2 - "You Lose"
                 {
-                    if (obtstacle._color.A == 230)
+                    if (obtstacle.Color.A == 230)
                     {
                         obtstacle.Draw(generalSpriteBatch);
                     }
@@ -764,26 +769,25 @@ namespace On_the_Line
                 }
                 if (hasLost)
                 {
-                    generalSpriteBatch.DrawString(endGameFont, $"Score:{score / 50}", new Vector2(100, 450), TextColor);
+                    generalSpriteBatch.DrawString(endGameFont, $"Score:{(int)score.TotalSeconds}", new Vector2(100, 450), TextColor);
                     generalSpriteBatch.DrawString(endGameFont, $"Obstacles Destroyed:{destroyedObstacles}", new Vector2(100, 500), TextColor);
                     generalSpriteBatch.DrawString(endGameFont, $"Enemies Killed:{enemiesKilled}", new Vector2(100, 550), TextColor);
-                    generalSpriteBatch.DrawString(endGameFont2, "Verdict:", new Vector2(160, 650), TextColor);
-                    if (score < 5000)
+                    if (score < new TimeSpan(0, 0, 100))
                     {
-                        generalSpriteBatch.DrawString(endGameFont2, "You're a noob", new Vector2(100, 700), TextColor);
+                        generalSpriteBatch.DrawString(endGameFont2, "You are a noob", new Vector2(100, 700), TextColor);
                     }
                     else
                     {
-                        generalSpriteBatch.DrawString(endGameFont2, "You're a pro", new Vector2(110, 700), TextColor);
+                        generalSpriteBatch.DrawString(endGameFont2, "You are a pro", new Vector2(110, 700), TextColor);
                     }
                     generalSpriteBatch.DrawString(endGameFont2, "Press R to Restart", new Vector2(30, 800), TextColor);
                     generalSpriteBatch.DrawString(endGameFont2, "Press M to go to Menu", new Vector2(0, 850), TextColor);
                 }
                 else
                 {
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format("{0}", obstacles.Count), new Vector2(0, 950), TextColor);
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format("Score: {0}", score / 60), new Vector2(380, 950), TextColor);
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format("{0}", laserCount), new Vector2(240, 950), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{obstacles.Count}"), new Vector2(0, 950), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"Score: {(int)score.TotalSeconds}"), new Vector2(380, 950), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240, 950), TextColor);
                 }
             }
             menuScreen.Draw(generalSpriteBatch);
