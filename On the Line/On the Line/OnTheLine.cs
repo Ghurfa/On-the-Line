@@ -243,7 +243,7 @@ namespace On_the_Line
                 }
                 else if (screenToSetTo == (int)Screen.GameScreen)
                 {
-                    score = TimeSpan.Zero;
+                    score = new TimeSpan(0, 0, 100);
                     obstacles.Clear();
                     enemies.Clear();
                     destroyedObstacles = 0;
@@ -503,7 +503,7 @@ namespace On_the_Line
                         for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                         {
                             Laser laser = mouseHitbox.lasers[x];
-                            if (laser._rect.Intersects(obstacle.Hitbox))
+                            if (laser.Hitbox.Intersects(obstacle.Hitbox))
                             {
                                 obstacles.Remove(obstacle);
                                 destroyedObstacles++;
@@ -548,7 +548,7 @@ namespace On_the_Line
                     for (int x = 0; x < mouseHitbox.lasers.Count; x++)
                     {
                         Laser laser = mouseHitbox.lasers[x];
-                        if (enemy.Hitbox.Intersects(laser._rect))
+                        if (enemy.Hitbox.Intersects(laser.Hitbox))
                         {
                             enemies.Remove(enemy);
                             enemiesKilled++;
@@ -563,7 +563,7 @@ namespace On_the_Line
                             for (int x = 0; x < enemy.lasers.Count; x++)
                             {
                                 Laser laser = enemy.lasers[x];
-                                if (targetedEnemy.Hitbox.Intersects(laser._rect))
+                                if (targetedEnemy.Hitbox.Intersects(laser.Hitbox))
                                 {
                                     enemies.Remove(targetedEnemy);
                                     enemiesKilled++;
@@ -603,7 +603,7 @@ namespace On_the_Line
                         obstacle.Update();
                         for (int x = 0; x < OnTheLine.mouseHitbox.lasers.Count; x++)
                         {
-                            if (obstacle.Hitbox.Intersects(OnTheLine.mouseHitbox.lasers[x]._rect) && obstacle._breaks)
+                            if (obstacle.Hitbox.Intersects(OnTheLine.mouseHitbox.lasers[x].Hitbox) && obstacle._breaks)
                             {
                                 OnTheLine.mouseHitbox.lasers[x]._lives -= 2;
                                 if (OnTheLine.mouseHitbox.lasers[x]._lives <= 0)

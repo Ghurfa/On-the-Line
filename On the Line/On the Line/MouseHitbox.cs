@@ -88,7 +88,7 @@ namespace On_the_Line
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
-                if (OnTheLine.screen == (int)Screen.GameScreen && (lasers[i]._rect.X > 500 || lasers[i]._rect.X < 0 || lasers[i]._rect.Y < 0 || lasers[i]._rect.Y > 1000) || OnTheLine.hasLost)
+                if (OnTheLine.screen == (int)Screen.GameScreen && (lasers[i].Hitbox.X > 500 || lasers[i].Hitbox.X < 0 || lasers[i].Hitbox.Y < 0 || lasers[i].Hitbox.Y > 1000) || OnTheLine.hasLost)
                 {
                     lasers.Remove(lasers[i]);
                     i--;
@@ -432,12 +432,12 @@ namespace On_the_Line
         /// <param name="spriteBatch"></param>
         public new void Draw(SpriteBatch spriteBatch)
         {
-            foreach (Laser laser in lasers)
-            {
-                laser.Draw(spriteBatch);
-            }
             if (!OnTheLine.hasLost || OnTheLine.hasLost && showWhenLose)
             {
+                foreach (Laser laser in lasers)
+                {
+                    laser.Draw(spriteBatch);
+                }
                 spriteBatch.Draw(Texture, Position, Color);
                 if (OnTheLine.GameMode == "Spotlight")
                 {

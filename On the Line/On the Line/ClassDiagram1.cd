@@ -15,32 +15,34 @@
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Enemy" Collapsed="true">
-    <Position X="4.75" Y="0.5" Width="1.5" />
+    <Position X="5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAIAqAAAAAAAAAAAQAAAAgAAAAAAAABAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAIACAAAAAAAAAAAAAAAAgAAAAAAAABAAA=</HashCode>
       <FileName>Enemy.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Laser" Collapsed="true">
-    <Position X="6.5" Y="0.5" Width="1.5" />
+    <Position X="7.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAQAIAwAAAAAIAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Laser.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.MouseHitbox" Collapsed="true">
-    <Position X="4.75" Y="2.5" Width="1.5" />
+    <Position X="5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQQAEAQAYEAIo0EEgAAAAgQAAAAQAAACAAEBCBAAAA=</HashCode>
+      <HashCode>AAQQAEAQAIEAIo0EEAAAAAgQAAAAQAAACAAEBCBAAAA=</HashCode>
       <FileName>MouseHitbox.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Obstacles" Collapsed="true">
-    <Position X="2.5" Y="1.75" Width="1.5" />
+    <Position X="2.75" Y="1.75" Width="1.5" />
     <InheritanceLine Type="On_the_Line.Sprite" FixedFromPoint="true">
       <Path>
-        <Point X="3.25" Y="1.062" />
-        <Point X="3.25" Y="1.75" />
+        <Point X="4.5" Y="1.062" />
+        <Point X="4.5" Y="1.375" />
+        <Point X="3.5" Y="1.375" />
+        <Point X="3.5" Y="1.75" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
@@ -49,21 +51,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.OnTheLine" Collapsed="true">
-    <Position X="6.5" Y="1.5" Width="1.5" />
+    <Position X="2.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAYAFkCRQQARA4gKgBALAQQBCQECSQghVwQAAAIAIAQ=</HashCode>
+      <HashCode>AAQAFkCRQQARA4gKgBALAQQBCQECSQghVwQAAAIAIAQ=</HashCode>
       <FileName>OnTheLine.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Program" Collapsed="true">
-    <Position X="3" Y="2.5" Width="1.5" />
+    <Position X="2.75" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Sprite" Collapsed="true">
-    <Position X="2.5" Y="0.5" Width="1.5" />
+    <Position X="3.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAEAgAgAAAAAAAAAAAAAQAAAAIAgAAAAAA=</HashCode>
       <FileName>Sprite.cs</FileName>

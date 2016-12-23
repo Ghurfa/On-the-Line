@@ -111,7 +111,7 @@ namespace On_the_Line
                 for (int i = 0; i < OnTheLine.mouseHitbox.lasers.Count; i++)
                 {
                     Laser laser = OnTheLine.mouseHitbox.lasers[i];
-                    if (laser._rect.Intersects(Hitbox))
+                    if (laser.Hitbox.Intersects(Hitbox))
                     {
                         if (OnTheLine.GameMode == "Darkmode" && !Show)
                         {

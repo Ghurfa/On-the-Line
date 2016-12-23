@@ -84,11 +84,11 @@ namespace On_the_Line
                     {
                         Laser laser = lasers[i];
                         lasers[i].Update();
-                        if (OnTheLine.screen == (int)Screen.GameScreen && (laser._rect.X > 500 || laser._rect.X < 0 || laser._rect.Y < 0 || laser._rect.Y > 1000))
+                        if (OnTheLine.screen == (int)Screen.GameScreen && (laser.Hitbox.X > 500 || laser.Hitbox.X < 0 || laser.Hitbox.Y < 0 || laser.Hitbox.Y > 1000))
                         {
                             lasers.Remove(lasers[i]);
                         }
-                        if (laser._rect.Intersects(OnTheLine.mouseHitbox.Hitbox))
+                        if (laser.Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox))
                         {
                             lasers.Clear();
                             OnTheLine.isLoading = true;
@@ -102,8 +102,8 @@ namespace On_the_Line
                 Position.Y++;
                 foreach (Laser laser in lasers)
                 {
-                    laser._rect.X += laser._moveX;
-                    laser._rect.Y += laser._moveY;
+                    laser.Position.X += laser.XSpeed;
+                    laser.Position.Y += laser.YSpeed;
                 }
             }
             else if (ks.IsKeyDown(Keys.Down))
@@ -111,8 +111,8 @@ namespace On_the_Line
                 Position.Y--;
                 foreach (Laser laser in lasers)
                 {
-                    laser._rect.X -= laser._moveX;
-                    laser._rect.Y -= laser._moveY;
+                    laser.Position.X -= laser.XSpeed;
+                    laser.Position.Y -= laser.YSpeed;
                 }
             }
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
@@ -122,6 +122,5 @@ namespace On_the_Line
             Hitbox = new Rectangle((int)Position.X + Texture.Width / 4, (int)Position.Y + Texture.Height / 4, Texture.Width / 2, Texture.Height / 2);
         }
     }
-
 }
 

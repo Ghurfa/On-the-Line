@@ -8,50 +8,37 @@ using Microsoft.Xna.Framework.Input;
 
 namespace On_the_Line
 {
-    public class Laser
+    public class Laser:Sprite
     {
-        public int _moveX;
-        public int _moveY;
-        public Rectangle _rect;
-        Texture2D _texture;
         public int _lives;
-        Color _color;
         public Laser(Vector2 startPos, int moveX, int moveY, Texture2D texture, int lives, Color color)
+            :base(startPos, texture, color)
         {
-            _moveX = moveX;
-            _moveY = moveY;
-            _texture = texture;
-            _rect = new Rectangle((int)startPos.X, (int)startPos.Y, texture.Width, texture.Height);
+            XSpeed = moveX;
+            YSpeed = moveY;
             _lives = lives;
-            _color = color;
         }
-        public void Update()
+        public new void Update()
         {
             if (!OnTheLine.isPaused)
             {
-                _rect.X += _moveX;
-                _rect.Y += _moveY;
+                Position.X += XSpeed;
+                Position.Y += YSpeed;
             }
             KeyboardState ks = new KeyboardState();
             if (ks.IsKeyDown(Keys.Up))
             {
-                _rect.Y++;
+                Position.Y++;
                 if (ks.IsKeyDown(Keys.RightControl))
                 {
-                    _rect.Y++;
+                    Position.Y++;
                 }
                 if (ks.IsKeyDown(Keys.LeftControl))
                 {
-                    _rect.Y += 6;
+                    Position.Y += 6;
                 }
             }
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if (OnTheLine.hasLost == false)
-            {
-                spriteBatch.Draw(_texture, _rect, _color);
-            }
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
     }
 }
