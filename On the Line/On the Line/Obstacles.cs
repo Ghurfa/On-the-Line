@@ -10,8 +10,6 @@ namespace On_the_Line
 {
     class Obstacles:Sprite
     {
-        
-
         public Vector2 _startPosition;
         public Vector2 _size;
         public bool _breaks;

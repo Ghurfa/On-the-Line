@@ -84,7 +84,7 @@ namespace On_the_Line
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
             }
-            Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - 100, (int)Position.Y + Texture.Height / 2 - 100, 200, 200);
+            Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - 400, (int)Position.Y + Texture.Height / 2 - 400, 800, 800);
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
@@ -441,7 +441,7 @@ namespace On_the_Line
                 spriteBatch.Draw(Texture, Position, Color);
                 if (OnTheLine.GameMode == "Spotlight")
                 {
-                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X, Spotlight.Y), OnTheLine.TextColor);
+                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X - 100, Spotlight.Y - 100), OnTheLine.BackgroundColor);
                 }
             }
         }

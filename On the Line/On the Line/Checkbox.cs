@@ -44,20 +44,6 @@ namespace On_the_Line
                         Texture = _onTexture;
                     }
                 }
-                if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed)
-                {
-                    Released = true;
-                }
-                else
-                {
-
-                    Released = false;
-                }
-            }
-            else
-            {
-                Clicked = false;
-                Released = false;
             }
             lastMS = MS;
         }

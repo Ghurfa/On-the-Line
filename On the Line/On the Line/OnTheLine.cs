@@ -243,7 +243,7 @@ namespace On_the_Line
                 }
                 else if (screenToSetTo == (int)Screen.GameScreen)
                 {
-                    score = new TimeSpan(0, 0, 100);
+                    score = new TimeSpan(0, 0, 0);
                     obstacles.Clear();
                     enemies.Clear();
                     destroyedObstacles = 0;
@@ -712,33 +712,13 @@ namespace On_the_Line
         {
             GraphicsDevice.Clear(BackgroundColor);
             generalSpriteBatch.Begin();
-            if (screen != 3)
+            foreach (Obstacles obtsacle in obstacles) //Layer 1 - Regular obstacles
             {
-                foreach (Obstacles obtsacle in obstacles) //Layer 0 - Regular obstacles
-                {
-                    obtsacle.Draw(generalSpriteBatch);
-                }
-                foreach (Obstacles obtstacle in obstacles) //Layer 1 - Obstacle that killed you
-                {
-                    if (obtstacle.didKill)
-                    {
-                        obtstacle.Draw(generalSpriteBatch);
-                    }
-                }
-                foreach (Obstacles obtstacle in obstacles) //Layer 2 - "You Lose"
-                {
-                    if (obtstacle.Color.A == 230)
-                    {
-                        obtstacle.Draw(generalSpriteBatch);
-                    }
-                }
-                foreach (Enemy enemy in enemies)
-                {
-                    enemy.Draw(generalSpriteBatch);
-                }
+                obtsacle.Draw(generalSpriteBatch);
             }
             if (screen == (int)Screen.MainMenu || screen == (int)Screen.OptionsMenu)
             {
+                mouseHitbox.Draw(generalSpriteBatch);   
                 startButton.Draw(generalSpriteBatch);
                 optionsButton.Draw(generalSpriteBatch);
                 title.Draw(generalSpriteBatch);
@@ -748,7 +728,6 @@ namespace On_the_Line
                 shootStyleButton.Draw(generalSpriteBatch);
                 mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
                 backButton.Draw(generalSpriteBatch);
-                mouseHitbox.Draw(generalSpriteBatch);
                 int s = (int)shootStyleButton.Position.Y; //make the line look less intimidating
                 generalSpriteBatch.DrawString(statsText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), optionsScreen.Position + new Vector2(125, s + 80), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Penetration: { mouseHitbox.stats.Item3}"), optionsScreen.Position + new Vector2(125, s + 95), TextColor);
@@ -756,8 +735,7 @@ namespace On_the_Line
                 generalSpriteBatch.DrawString(statsText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), optionsScreen.Position + new Vector2(125, s + 125), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), optionsScreen.Position + new Vector2(125, s + 140), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), optionsScreen.Position + new Vector2(125, s + 155), TextColor);
-                KeyboardState ks = Keyboard.GetState();
-                dotModeCheckbox.Draw(generalSpriteBatch);
+                dotModeCheckbox.Draw(generalSpriteBatch);            
             }
             if (screen == (int)Screen.GameScreen)//gameplay
             {
@@ -790,8 +768,24 @@ namespace On_the_Line
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240, 950), TextColor);
                 }
             }
-            menuScreen.Draw(generalSpriteBatch);
-            optionsScreen.Draw(generalSpriteBatch);
+            foreach (Obstacles obtstacle in obstacles) //Layer 2 - Obstacle that killed you
+            {
+                if (obtstacle.didKill)
+                {
+                    obtstacle.Draw(generalSpriteBatch);
+                }
+            }
+            foreach (Obstacles obtstacle in obstacles) //Layer 3 - "You Lose"
+            {
+                if (obtstacle.Color.A == 230)
+                {
+                    obtstacle.Draw(generalSpriteBatch);
+                }
+            }
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Draw(generalSpriteBatch);
+            }
             generalSpriteBatch.End();
             // TODO: Add your drawing code here
 
