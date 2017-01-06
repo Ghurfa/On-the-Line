@@ -233,6 +233,7 @@ namespace On_the_Line
         {
             hasLost = false;
             mouseHitbox.lasers.Clear();
+            mouseHitbox.IsClicked = false;
             isPaused = false;
             if (slidingSpeed == 0)
             {
@@ -741,6 +742,13 @@ namespace On_the_Line
             {
                 int laserCount = mouseHitbox.lasers.Count;
                 mouseHitbox.Draw(generalSpriteBatch);
+                foreach (Obstacles obtstacle in obstacles) //Layer 2 - Obstacle that killed you
+                {
+                    if (obtstacle.didKill)
+                    {
+                        obtstacle.Draw(generalSpriteBatch);
+                    }
+                }
                 if (mouseHitbox.Counting)
                 {
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"0.{mouseHitbox.CountingCentisecond}"), mouseHitbox.Position + new Vector2(-10, -40), TextColor);
@@ -766,13 +774,6 @@ namespace On_the_Line
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"{obstacles.Count}"), new Vector2(0, 950), TextColor);
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"Score: {(int)score.TotalSeconds}"), new Vector2(380, 950), TextColor);
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240, 950), TextColor);
-                }
-            }
-            foreach (Obstacles obtstacle in obstacles) //Layer 2 - Obstacle that killed you
-            {
-                if (obtstacle.didKill)
-                {
-                    obtstacle.Draw(generalSpriteBatch);
                 }
             }
             foreach (Obstacles obtstacle in obstacles) //Layer 3 - "You Lose"

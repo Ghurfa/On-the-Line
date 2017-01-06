@@ -17,10 +17,9 @@ namespace On_the_Line
         public Rectangle Spotlight;
         int direction = 0;
         public int _shootStyle;
-        bool isclicked = false;
+        public bool IsClicked = false;
         public List<Laser> lasers = new List<Laser>();
         bool showWhenLose;
-        public int reloadCycle = 0;
         public int slow = 0;
         public bool canShoot = true;
         public bool Counting = false;
@@ -102,7 +101,7 @@ namespace On_the_Line
                     CountingCentisecond = 50 - (int)CountingElapsedTime.Milliseconds/10;
                     if (CountingCentisecond <= 5)
                     {
-                        isclicked = true;
+                        IsClicked = true;
                         OnTheLine.isPaused = false;
                         Counting = false;
                     }
@@ -118,11 +117,11 @@ namespace On_the_Line
                 }
                 if (mouseState.LeftButton == ButtonState.Released && OnTheLine.screen == (int)Screen.GameScreen)
                 {
-                    isclicked = false;
+                    IsClicked = false;
                     OnTheLine.isPaused = true;
                     Counting = false;
                 }
-                if (isclicked)
+                if (IsClicked)
                 {
                     KeyboardState ks = Keyboard.GetState();
                     if (ks.IsKeyDown(Keys.LeftShift))
@@ -166,7 +165,6 @@ namespace On_the_Line
                 }
                 else
                 {
-                    reloadCycle++;
                     if (laserCount < 500)
                     {
 
