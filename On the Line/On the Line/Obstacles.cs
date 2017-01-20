@@ -133,7 +133,7 @@ namespace On_the_Line
                         Show = false;
                     }
                 }
-                if ((OnTheLine.screen == (int)Screen.GameScreen && (Position.Y > 930 && Color != OnTheLine.TextColor && MaxMove == 0)) || _gateway)
+                if ((OnTheLine.screen == Screen.GameScreen && (Position.Y > 930 && Color != OnTheLine.TextColor && MaxMove == 0)) || _gateway)
                 {
                     Show = false;
                 }

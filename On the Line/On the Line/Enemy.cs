@@ -25,6 +25,7 @@ namespace On_the_Line
         }
         public new void Update(GameTime gameTime)
         {
+            Color = OnTheLine.WallColor;
             if (_slideSpeed > 0)
             {
                 Position -= new Vector2(_slideSpeed, 0);
@@ -84,11 +85,11 @@ namespace On_the_Line
                     {
                         Laser laser = lasers[i];
                         lasers[i].Update();
-                        if (OnTheLine.screen == (int)Screen.GameScreen && (laser.Hitbox.X > 500 || laser.Hitbox.X < 0 || laser.Hitbox.Y < 0 || laser.Hitbox.Y > 1000))
+                        if (OnTheLine.screen == Screen.GameScreen && (laser.Hitbox.X > 500 || laser.Hitbox.X < 0 || laser.Hitbox.Y < 0 || laser.Hitbox.Y > 1000))
                         {
                             lasers.Remove(lasers[i]);
                         }
-                        if (laser.Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox))
+                        if (laser.Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox) && OnTheLine.screen == Screen.GameScreen)
                         {
                             lasers.Clear();
                             OnTheLine.isLoading = true;
