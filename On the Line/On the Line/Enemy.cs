@@ -85,6 +85,7 @@ namespace On_the_Line
                     {
                         Laser laser = lasers[i];
                         lasers[i].Update();
+                        laser.Color = Color;
                         if (OnTheLine.screen == Screen.GameScreen && (laser.Hitbox.X > 500 || laser.Hitbox.X < 0 || laser.Hitbox.Y < 0 || laser.Hitbox.Y > 1000))
                         {
                             lasers.Remove(lasers[i]);

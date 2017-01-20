@@ -63,6 +63,7 @@ namespace On_the_Line
         Button backButton;
         Button gamemodeButton;
         Button shootStyleButton;
+        Button obstacleSizeButton;
         Checkbox dotModeCheckbox;
 
         KeyboardState ks;
@@ -108,7 +109,8 @@ namespace On_the_Line
             startButton = new Button(new Vector2(125, 550), Content.Load<Texture2D>("StartButton"));
             optionsButton = new Button(new Vector2(125, 700), Content.Load<Texture2D>("OptionsButton"));
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
-            gamemodeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>(string.Format("{0}Button", gameMode)));
+            gamemodeButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", gameMode)));
+            //obstacleSizeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>("ObstacleSizeButton"));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
