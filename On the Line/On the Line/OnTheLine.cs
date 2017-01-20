@@ -302,6 +302,7 @@ namespace On_the_Line
                 //Screen 0
                 startButton.Update();
                 optionsButton.Update();
+                title.Update();
                 if (startButton.Clicked)
                 {
                     setScreen(Screen.GameScreen);
@@ -317,7 +318,7 @@ namespace On_the_Line
                 }
                 startButton.Position = new Vector2(125, 550) - (menuScreen.Position - new Vector2(0, 0));
                 optionsButton.Position = menuScreen.Position + new Vector2(125, 700);
-                title.Position = menuScreen.Position + new Vector2(0, 50);
+                title.Position = new Vector2(90, 30-Math.Abs(menuScreen.Position.X));
                 title.Color = TextColor;
                 //Screen 2
                 colorButton.Update();
@@ -480,10 +481,10 @@ namespace On_the_Line
                 {
                     setScreen(0);
                 }
-                colorButton.Position = new Vector2(125, 350) - (optionsScreen.Position - new Vector2(0, 0));
-                gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 500);
-                shootStyleButton.Position = new Vector2(125, 650) - (optionsScreen.Position - new Vector2(0, 0));
-                dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 515);
+                colorButton.Position = new Vector2(125, 410) - (optionsScreen.Position - new Vector2(0, 0));
+                gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 540);
+                dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 555);
+                shootStyleButton.Position = new Vector2(125, 670) - (optionsScreen.Position - new Vector2(0, 0));
                 backButton.Position = optionsScreen.Position + new Vector2(125, 900);
             }
             if (!hasLost && !isLoading)
