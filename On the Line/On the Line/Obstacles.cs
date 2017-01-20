@@ -14,10 +14,10 @@ namespace On_the_Line
         public Vector2 _size;
         public bool _breaks;
         public bool _indestrucable;
-        public int _moveX;
-        public int _moveY;
-        public int _maxMove;
-        public int move = 1;
+        public int MoveX;
+        public int MoveY;
+        public int MaxMove;
+        int move = 1;
         public bool _gateway;
         int slow = 0;
         public int _slideSpeed;
@@ -45,9 +45,9 @@ namespace On_the_Line
             _startPosition = position;
             _size = size;
             Hitbox = new Rectangle((int)position.X, (int)position.Y, (int)(Texture.Width * _size.X), (int)(Texture.Height * _size.Y));
-            _moveX = moveX;
-            _moveY = moveY;
-            _maxMove = maxmove;
+            MoveX = moveX;
+            MoveY = moveY;
+            MaxMove = maxmove;
             _breaks = breaks;
             _indestrucable = indescructable;
             _slideSpeed = 31;
@@ -76,9 +76,9 @@ namespace On_the_Line
                     Color = OnTheLine.BackgroundColor;
                 }
             }
-            if (OnTheLine.GameMode == "Regular" || OnTheLine.GameMode == "Fastmode")
+            if (OnTheLine.gameMode == GameMode.Regular || OnTheLine.gameMode == GameMode.Fastmode)
             {
-                if (_moveX != 0 || _moveY != 0)
+                if (MoveX != 0 || MoveY != 0)
                 {
                     Color = OnTheLine.OuterWallColor;
                 }
@@ -94,7 +94,7 @@ namespace On_the_Line
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(_slideSpeed, 0);
-                if ((OnTheLine.GameMode == "Spotlight" && !Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox)) || OnTheLine.GameMode == "'")
+                if ((OnTheLine.gameMode == GameMode.Spotlight && !Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox)))
                 {
                     Show = false;
                 }
@@ -111,7 +111,7 @@ namespace On_the_Line
                     Laser laser = OnTheLine.mouseHitbox.lasers[i];
                     if (laser.Hitbox.Intersects(Hitbox))
                     {
-                        if (OnTheLine.GameMode == "Darkmode" && !Show)
+                        if (OnTheLine.gameMode == GameMode.Darkmode && !Show)
                         {
                             OnTheLine.mouseHitbox.lasers[i]._lives--;
                             Show = true;
@@ -122,7 +122,7 @@ namespace On_the_Line
                         }
                     }
                 }
-                if (OnTheLine.GameMode == "Spotlight")
+                if (OnTheLine.gameMode == GameMode.Spotlight)
                 {
                     if (Hitbox.Intersects(OnTheLine.mouseHitbox.Spotlight))
                     {
@@ -133,7 +133,7 @@ namespace On_the_Line
                         Show = false;
                     }
                 }
-                if ((OnTheLine.screen == (int)Screen.GameScreen && (Position.Y > 930 && Color != OnTheLine.TextColor && _maxMove == 0)) || _gateway)
+                if ((OnTheLine.screen == (int)Screen.GameScreen && (Position.Y > 930 && Color != OnTheLine.TextColor && MaxMove == 0)) || _gateway)
                 {
                     Show = false;
                 }
@@ -144,32 +144,32 @@ namespace On_the_Line
                 }
                 if ((slow == 0 && !OnTheLine.isPaused) || (slow == 0 && OnTheLine.hasLost == true))
                 {
-                    Position.Y += _moveY * move;
-                    Position.X += _moveX * move;
-                    if (_moveX > 0)
+                    Position.Y += MoveY * move;
+                    Position.X += MoveX * move;
+                    if (MoveX > 0)
                     {
-                        if (Position.X > _startPosition.X + _moveX * _maxMove || Position.X < _startPosition.X)
+                        if (Position.X > _startPosition.X + MoveX * MaxMove || Position.X < _startPosition.X)
                         {
                             move *= -1;
                         }
                     }
-                    else if (_moveX < 0)
+                    else if (MoveX < 0)
                     {
-                        if (Position.X < _startPosition.X + _moveX * _maxMove || Position.X > _startPosition.X)
+                        if (Position.X < _startPosition.X + MoveX * MaxMove || Position.X > _startPosition.X)
                         {
                             move *= -1;
                         }
                     }
-                    else if (_moveY < 0)
+                    else if (MoveY < 0)
                     {
-                        if (Position.Y < _startPosition.Y + _moveY * _maxMove || Position.Y > _startPosition.Y)
+                        if (Position.Y < _startPosition.Y + MoveY * MaxMove || Position.Y > _startPosition.Y)
                         {
                             move *= -1;
                         }
                     }
-                    else if (_moveY > 0)
+                    else if (MoveY > 0)
                     {
-                        if (Position.Y > _startPosition.Y + _moveY * _maxMove || Position.Y < _startPosition.Y)
+                        if (Position.Y > _startPosition.Y + MoveY * MaxMove || Position.Y < _startPosition.Y)
                         {
                             move *= -1;
                         }

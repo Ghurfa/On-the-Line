@@ -127,7 +127,7 @@ namespace On_the_Line
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
                         Position.Y++;
-                        if (OnTheLine.GameMode == "Fastmode")
+                        if (OnTheLine.gameMode == GameMode.Fastmode)
                         {
                             Position.Y++;
                         }
@@ -437,7 +437,7 @@ namespace On_the_Line
                     laser.Draw(spriteBatch);
                 }
                 spriteBatch.Draw(Texture, Position, Color);
-                if (OnTheLine.GameMode == "Spotlight")
+                if (OnTheLine.gameMode == GameMode.Spotlight)
                 {
                     spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X - 100, Spotlight.Y - 100), OnTheLine.BackgroundColor);
                 }
