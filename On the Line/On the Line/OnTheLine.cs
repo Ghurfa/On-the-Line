@@ -109,8 +109,8 @@ namespace On_the_Line
             startButton = new Button(new Vector2(125, 550), Content.Load<Texture2D>("StartButton"));
             optionsButton = new Button(new Vector2(125, 700), Content.Load<Texture2D>("OptionsButton"));
             colorButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", colorScheme)));
-            gamemodeButton = new Button(new Vector2(125, 100), Content.Load<Texture2D>(string.Format("{0}Button", gameMode)));
-            //obstacleSizeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>("ObstacleSizeButton"));
+            obstacleSizeButton = new Button(new Vector2(125, 300), Content.Load<Texture2D>("RegularSizeButton"));
+            gamemodeButton = new Button(new Vector2(125, 200), Content.Load<Texture2D>(string.Format("{0}Button", gameMode)));
             shootStyleButton = new Button(new Vector2(125, 500), Content.Load<Texture2D>("EmptyButton"));
             backButton = new Button(new Vector2(125, 900), Content.Load<Texture2D>("BackButton"));
             dotModeCheckbox = new Checkbox(new Vector2(400, 315), Content.Load<Texture2D>("Checkbox_On"), Content.Load<Texture2D>("Checkbox_Off"), false);
@@ -179,14 +179,7 @@ namespace On_the_Line
 
                     if (currentPixel == Color.Red)
                     {
-                        if (gameMode == GameMode.Darkmode)
-                        {
-                            obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, BackgroundColor, false, 0, 0, 0, false, false));
-                        }
-                        else
-                        {
-                            obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, OuterWallColor, false, 0, 0, 0, false, false, true));
-                        }
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, OuterWallColor, false, 0, 0, 0, false, false, true));
                     }
                     else if (currentPixel == Color.Green)
                     {
@@ -218,14 +211,7 @@ namespace On_the_Line
                     }
                     else if (currentPixel != Color.White)
                     {
-                        if (gameMode == GameMode.Darkmode)
-                        {
-                            obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, BackgroundColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
-                        }
-                        else
-                        {
-                            obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
-                        }
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
                     }
                 }
             }
@@ -320,13 +306,14 @@ namespace On_the_Line
                 }
                 startButton.Position = new Vector2(125, 550) - (menuScreen.Position - new Vector2(0, 0));
                 optionsButton.Position = menuScreen.Position + new Vector2(125, 700);
-                title.Position = new Vector2(90, 30-Math.Abs(menuScreen.Position.X));
+                title.Position = new Vector2(90, 30 - Math.Abs(menuScreen.Position.X));
                 title.Color = TextColor;
                 //Screen 2
                 colorButton.Update();
                 gamemodeButton.Update();
+                obstacleSizeButton.Update();
                 shootStyleButton.Update();
-                dotModeCheckbox.Update();
+                //dotModeCheckbox.Update();
                 backButton.Update();
                 #region Checks Color Button
                 if (colorButton.Clicked)
@@ -370,19 +357,10 @@ namespace On_the_Line
                             mouseHitbox.Color = Color.LightGray;
                             TextColor = Color.Red;
                             LaserColor = Color.Red;
-                            if (gameMode == GameMode.Darkmode || gameMode == GameMode.Spotlight)
-                            {
-                                WallColor = Color.White;
-                                OuterWallColor = Color.White;
-                                BackgroundColor = Color.Black;
-                            }
-                            else
-                            {
-                                WallColor = Color.Black;
-                                OuterWallColor = Color.Black;
-                                BackgroundColor = Color.White;
-                            }
-                            EndGameColor = WallColor;
+                            WallColor = Color.Black;
+                            OuterWallColor = Color.Black;
+                            BackgroundColor = Color.White;
+                            EndGameColor = Color.Black;
                             break;
                     }
                     if (colorScheme == ColorScheme.School)
@@ -392,10 +370,6 @@ namespace On_the_Line
                     else
                     {
                         colorScheme++;
-                    }
-                    if (gameMode == GameMode.Darkmode || gameMode == GameMode.Spotlight)
-                    {
-                        WallColor = OuterWallColor;
                     }
                     colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
@@ -411,38 +385,12 @@ namespace On_the_Line
                     {
                         case GameMode.Regular:
                             gamemodeButton.Texture = Content.Load<Texture2D>("DarkmodeButton");
-                            if (colorScheme == ColorScheme.Default)
-                            {
-                                WallColor = Color.White;
-                                OuterWallColor = Color.White;
-                                BackgroundColor = Color.Black;
-                            }
-                            else
-                            {
-                                WallColor = OuterWallColor;
-                            }
                             break;
                         case GameMode.Darkmode:
                             gamemodeButton.Texture = Content.Load<Texture2D>("SpotlightButton");
-                            if (colorScheme == ColorScheme.Default)
-                            {
-                                WallColor = Color.White;
-                                OuterWallColor = Color.White;
-                                BackgroundColor = Color.Black;
-                            }
-                            else
-                            {
-                                WallColor = OuterWallColor;
-                            }
                             break;
                         case GameMode.Spotlight:
                             gamemodeButton.Texture = Content.Load<Texture2D>("FastmodeButton");
-                            if (colorScheme == ColorScheme.Default)
-                            {
-                                WallColor = Color.Black;
-                                OuterWallColor = Color.Black;
-                                BackgroundColor = Color.White;
-                            }
                             break;
                         case GameMode.Fastmode:
                             gamemodeButton.Texture = Content.Load<Texture2D>("Regularbutton");
@@ -483,10 +431,11 @@ namespace On_the_Line
                 {
                     setScreen(0);
                 }
-                colorButton.Position = new Vector2(125, 410) - (optionsScreen.Position - new Vector2(0, 0));
-                gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 540);
-                dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 555);
-                shootStyleButton.Position = new Vector2(125, 670) - (optionsScreen.Position - new Vector2(0, 0));
+                colorButton.Position = new Vector2(125, 290) - (optionsScreen.Position - new Vector2(0, 0));
+                gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 420);
+                obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125, 550);
+                //dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 565);
+                shootStyleButton.Position = new Vector2(125, 680) - (optionsScreen.Position - new Vector2(0, 0));
                 backButton.Position = optionsScreen.Position + new Vector2(125, 900);
             }
             if (!hasLost && !isLoading)
@@ -741,18 +690,18 @@ namespace On_the_Line
                 title.Draw(generalSpriteBatch);
                 // Screen 2
                 colorButton.Draw(generalSpriteBatch);
+                obstacleSizeButton.Draw(generalSpriteBatch);
                 gamemodeButton.Draw(generalSpriteBatch);
                 shootStyleButton.Draw(generalSpriteBatch);
-                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - Content.Load<Texture2D>("Ball").Height / 2 + 10);
+                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - (Content.Load<Texture2D>("Ball").Height / 2));
                 backButton.Draw(generalSpriteBatch);
-                int s = (int)shootStyleButton.Position.Y; //make the line look less intimidating
                 generalSpriteBatch.DrawString(statsText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), shootStyleButton.Position + new Vector2(0, 80), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Penetration: {mouseHitbox.stats.Item3}"), shootStyleButton.Position + new Vector2(0, 95), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), shootStyleButton.Position + new Vector2(0, 110), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), shootStyleButton.Position + new Vector2(0, 125), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), shootStyleButton.Position + new Vector2(0, 140), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), shootStyleButton.Position + new Vector2(0, 155), TextColor);
-                dotModeCheckbox.Draw(generalSpriteBatch);
+                //dotModeCheckbox.Draw(generalSpriteBatch);
             }
             if (screen == Screen.GameScreen)//gameplay
             {
