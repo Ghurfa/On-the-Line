@@ -414,19 +414,25 @@ namespace On_the_Line
                     shootStyle %= 6;
                     mouseHitbox.canShoot = true;
                     mouseHitbox.Update(gameTime);
-
                     mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), LaserColor, false);
 
                 }
                 #endregion
-                if (dotModeCheckbox.isChecked)
+                #region Checks Obstacle Size Button
+                if (obstacleSizeButton.Clicked)
                 {
-                    obstacleSize = 4;
+                    if (obstacleSize == 25)
+                    {
+                        obstacleSizeButton.Texture = Content.Load<Texture2D>("TinySizeButton");
+                        obstacleSize = 4;
+                    }
+                    else
+                    {
+                        obstacleSizeButton.Texture = Content.Load<Texture2D>("RegularSizeButton");
+                        obstacleSize = 25;
+                    }
                 }
-                else
-                {
-                    obstacleSize = 25;
-                }
+                #endregion
                 if (backButton.Clicked)
                 {
                     setScreen(0);
