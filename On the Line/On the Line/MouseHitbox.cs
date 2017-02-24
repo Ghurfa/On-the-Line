@@ -10,7 +10,6 @@ namespace On_the_Line
 {
     public class MouseHitbox:Sprite
     {
-        public Vector2 RelativePosition;
         MouseState mouseState;
         MouseState lastMouseState;
         Texture2D spotlightTexture;
@@ -35,7 +34,6 @@ namespace On_the_Line
             Color = color;
             Texture = texture;
             Position = position;
-            RelativePosition = Position;
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             spotlightTexture = spotlightTexure;
             _shootStyle = shootStyle;
@@ -81,7 +79,7 @@ namespace On_the_Line
             }
             else if (_shootStyle == 5)
             {
-                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets", "High penetration, Focused");
+                stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets, Focused Fire", "High penetration, No Spread");
             }
             Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - 400, (int)Position.Y + Texture.Height / 2 - 400, 800, 800);
             for (int i = 0; i < lasers.Count; i++)

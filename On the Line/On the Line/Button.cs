@@ -11,7 +11,7 @@ namespace On_the_Line
     public class Button : Sprite
     {
         MouseState lastMS;
-        bool hovered;
+        public bool Hovered;
         public bool Clicked;
         public bool Released;
 
@@ -19,15 +19,18 @@ namespace On_the_Line
             : base(Position, texture, Color.White)
         {
         }
-        public new void Update()
+        public new void Update(Color color, bool turnTranslucent = true)
         {
-            Color = OnTheLine.TextColor;
+            Color = color;
             MouseState MS = Mouse.GetState();
-            hovered = Hitbox.Contains(MS.X, MS.Y);
+            Hovered = Hitbox.Contains(MS.X, MS.Y);
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            if (hovered)
+            if (Hovered)
             {
-                Color.A = 128;
+                if (turnTranslucent)
+                {
+                    Color.A = 128;
+                }
                 if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released)
                 {
                     Clicked = true;

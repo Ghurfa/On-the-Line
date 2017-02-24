@@ -14,8 +14,6 @@ namespace On_the_Line
         public Vector2 _size;
         public bool _breaks;
         public bool _indestrucable;
-        public int MoveX;
-        public int MoveY;
         public int MaxMove;
         int move = 1;
         public bool _gateway;
@@ -39,14 +37,13 @@ namespace On_the_Line
         /// <param name="moveY">How much the obstacle moves in the Y axis</param>
         /// <param name="maxmove">The maximum amount of times the obstacle moves</param>
         /// <param name="indescructable">Whether or not the obstacle absorbs a laser</param>
-        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, int moveX, int moveY, int maxmove, bool indescructable, bool gateway, bool outerWall = false)
+        public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, Vector2 speed, int maxmove, bool indescructable, bool gateway, bool outerWall = false)
             :base(position, texture, color)
         {
             _startPosition = position;
             _size = size;
             Hitbox = new Rectangle((int)position.X, (int)position.Y, (int)(Texture.Width * _size.X), (int)(Texture.Height * _size.Y));
-            MoveX = moveX;
-            MoveY = moveY;
+            Speed = speed;
             MaxMove = maxmove;
             _breaks = breaks;
             _indestrucable = indescructable;
@@ -78,7 +75,7 @@ namespace On_the_Line
             }
             if (OnTheLine.gameMode == GameMode.Regular || OnTheLine.gameMode == GameMode.Fastmode)
             {
-                if (MoveX != 0 || MoveY != 0)
+                if (Speed.X != 0 || Speed.Y != 0)
                 {
                     Color = OnTheLine.OuterWallColor;
                 }
@@ -144,32 +141,32 @@ namespace On_the_Line
                 }
                 if ((slow == 0 && !OnTheLine.isPaused) || (slow == 0 && OnTheLine.hasLost == true))
                 {
-                    Position.Y += MoveY * move;
-                    Position.X += MoveX * move;
-                    if (MoveX > 0)
+                    Position.X += Speed.X * move;
+                    Position.Y += Speed.Y * move;
+                    if (Speed.X > 0)
                     {
-                        if (Position.X > _startPosition.X + MoveX * MaxMove || Position.X < _startPosition.X)
+                        if (Position.X > _startPosition.X + Speed.X * MaxMove || Position.X < _startPosition.X)
                         {
                             move *= -1;
                         }
                     }
-                    else if (MoveX < 0)
+                    else if (Speed.X < 0)
                     {
-                        if (Position.X < _startPosition.X + MoveX * MaxMove || Position.X > _startPosition.X)
+                        if (Position.X < _startPosition.X + Speed.X * MaxMove || Position.X > _startPosition.X)
                         {
                             move *= -1;
                         }
                     }
-                    else if (MoveY < 0)
+                    else if (Speed.Y < 0)
                     {
-                        if (Position.Y < _startPosition.Y + MoveY * MaxMove || Position.Y > _startPosition.Y)
+                        if (Position.Y < _startPosition.Y + Speed.Y * MaxMove || Position.Y > _startPosition.Y)
                         {
                             move *= -1;
                         }
                     }
-                    else if (MoveY > 0)
+                    else if (Speed.Y > 0)
                     {
-                        if (Position.Y > _startPosition.Y + MoveY * MaxMove || Position.Y < _startPosition.Y)
+                        if (Position.Y > _startPosition.Y + Speed.Y * MaxMove || Position.Y < _startPosition.Y)
                         {
                             move *= -1;
                         }

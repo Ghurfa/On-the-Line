@@ -11,8 +11,7 @@ namespace On_the_Line
     {
         public Rectangle Hitbox;
         public Texture2D Texture;
-        public int XSpeed;
-        public int YSpeed;
+        public Vector2 Speed;
         public Color Color;
         public Vector2 Position;
 
@@ -21,6 +20,10 @@ namespace On_the_Line
             Position = position;
             Texture = texture;
             Color = color;
+        }
+        public Vector2 RelativePositon (Vector2 posToCompareAgainst)
+        {
+            return posToCompareAgainst - Position;
         }
         public void Update()
         {

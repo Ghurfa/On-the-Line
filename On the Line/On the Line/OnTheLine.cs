@@ -51,6 +51,7 @@ namespace On_the_Line
         int slidingSpeed = 0;
         int obstacleSize = 25;
         public static Screen screen = Screen.MainMenu;
+        Screen lastScreen;
         public static int shootStyle = 0;
 
         Sprite menuScreen;
@@ -65,6 +66,8 @@ namespace On_the_Line
         Button shootStyleButton;
         Button obstacleSizeButton;
         Checkbox dotModeCheckbox;
+
+        Button pauseMenu;
 
         KeyboardState ks;
         KeyboardState lastKs;
@@ -119,6 +122,7 @@ namespace On_the_Line
             menuScreen = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Screen"), Color.White);
             optionsScreen = new Sprite(new Vector2(-500, 0), Content.Load<Texture2D>("Screen"), Color.White);
             title = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Title"), Color.White);
+            pauseMenu = new Button(new Vector2(500, 250), Content.Load<Texture2D>("PauseMenu"));
         }
 
         protected override void UnloadContent()
@@ -179,15 +183,15 @@ namespace On_the_Line
 
                     if (currentPixel == Color.Red)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, OuterWallColor, false, 0, 0, 0, false, false, true));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, OuterWallColor, false, new Vector2(0, 0), 0, false, false, true));
                     }
                     else if (currentPixel == Color.Green)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, new Color(TextColor.R, TextColor.G, TextColor.B, 230), false, 0, 0, 0, false, false));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, new Color(TextColor.R, TextColor.G, TextColor.B, 230), false, new Vector2(0, 0), 0, false, false));
                     }
                     else if (currentPixel == Color.Purple)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, true, 0, 0, 0, false, false));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, true, new Vector2(0, 0), 0, false, false));
                     }
                     else if (currentPixel == Color.Orange)
                     {
@@ -199,11 +203,11 @@ namespace On_the_Line
                     }
                     else if (currentPixel == Color.Black)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, 0, 0, 0, true, false));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, new Vector2(0, 0), 0, true, false));
                     }
                     else if (currentPixel == Color.Blue)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, BackgroundColor, false, 0, 0, 0, false, true));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, BackgroundColor, false, new Vector2(0, 0), 0, false, true));
                     }
                     else if (currentPixel.R == 254)
                     {
@@ -211,7 +215,7 @@ namespace On_the_Line
                     }
                     else if (currentPixel != Color.White)
                     {
-                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, currentPixel.R - 100, currentPixel.G - 100, currentPixel.B, false, false));
+                        obstacles.Add(new Obstacles(obstaclePixel, position, obstacleSize, WallColor, false, new Vector2(currentPixel.R - 100, currentPixel.G - 100), currentPixel.B, false, false));
                     }
                 }
             }
@@ -221,15 +225,22 @@ namespace On_the_Line
             hasLost = false;
             mouseHitbox.lasers.Clear();
             mouseHitbox.IsClicked = false;
-            isPaused = false;
+            pauseMenu.Position = new Vector2(480, 250);
+            mouseHitbox.Position = new Vector2(248, 250);
             if (slidingSpeed == 0)
             {
                 if (screenToSetTo == Screen.MainMenu) //If you are switching to main menu
                 {
+                    isPaused = false;
+                    if (screen == Screen.GameScreen) //If you are on GameScreen before you switch
+                    {
+                        obstacles.Clear();
+                        enemies.Clear();
+                    }
                     menuScreen.Position = new Vector2(528, 0);
                     slidingSpeed = 32;
                 }
-                else if (screenToSetTo == Screen.GameScreen)
+                else if (screenToSetTo == Screen.GameScreen && lastScreen != Screen.GameScreen)
                 {
                     score = new TimeSpan(0, 0, 0);
                     obstacles.Clear();
@@ -245,11 +256,6 @@ namespace On_the_Line
                 {
                     optionsScreen.Position = new Vector2(528, 0);
                     slidingSpeed = 32;
-                }
-                if (screen == Screen.GameScreen) //If you are on GameScreen before you switch
-                {
-                    obstacles.Clear();
-                    enemies.Clear();
                 }
                 screen = screenToSetTo;
             }
@@ -285,11 +291,11 @@ namespace On_the_Line
             }
             mouseHitbox.Update(gameTime);
             int highestObstacle = 10;
+            optionsButton.Update(TextColor);
             if (screen == (int)Screen.MainMenu || screen == Screen.OptionsMenu)
             {
                 //Screen 0
-                startButton.Update();
-                optionsButton.Update();
+                startButton.Update(TextColor);
                 title.Update();
                 if (startButton.Clicked)
                 {
@@ -298,6 +304,7 @@ namespace On_the_Line
                 if (optionsButton.Released)
                 {
                     setScreen(Screen.OptionsMenu);
+                    lastScreen = Screen.MainMenu;
                 }
                 if (obstacles.Count == 0)
                 {
@@ -309,13 +316,8 @@ namespace On_the_Line
                 title.Position = new Vector2(90, 30 - Math.Abs(menuScreen.Position.X));
                 title.Color = TextColor;
                 //Screen 2
-                colorButton.Update();
-                gamemodeButton.Update();
-                obstacleSizeButton.Update();
-                shootStyleButton.Update();
-                //dotModeCheckbox.Update();
-                backButton.Update();
                 #region Checks Color Button
+                colorButton.Update(TextColor);
                 if (colorButton.Clicked)
                 {
                     EndGameColor = Color.White;
@@ -375,50 +377,55 @@ namespace On_the_Line
                 }
                 #endregion
                 #region Checks Gamemode Button
-                if (gamemodeButton.Clicked)
+                if (lastScreen != Screen.GameScreen)
                 {
-                    foreach (Obstacles obstacle in obstacles)
+                    gamemodeButton.Update(TextColor);
+                    if (gamemodeButton.Clicked)
                     {
-                        obstacle.Show = false;
+                        foreach (Obstacles obstacle in obstacles)
+                        {
+                            obstacle.Show = false;
+                        }
+                        switch (gameMode)
+                        {
+                            case GameMode.Regular:
+                                gamemodeButton.Texture = Content.Load<Texture2D>("DarkmodeButton");
+                                break;
+                            case GameMode.Darkmode:
+                                gamemodeButton.Texture = Content.Load<Texture2D>("SpotlightButton");
+                                break;
+                            case GameMode.Spotlight:
+                                gamemodeButton.Texture = Content.Load<Texture2D>("FastmodeButton");
+                                break;
+                            case GameMode.Fastmode:
+                                gamemodeButton.Texture = Content.Load<Texture2D>("Regularbutton");
+                                break;
+                        }
+                        if (gameMode == GameMode.Fastmode)
+                        {
+                            gameMode = GameMode.Regular;
+                        }
+                        else
+                        {
+                            gameMode++;
+                        }
                     }
-                    switch (gameMode)
+                    #endregion
+                #region Checks Shootstyle Buttoni
+                    shootStyleButton.Update(TextColor);
+                    if (shootStyleButton.Clicked)
                     {
-                        case GameMode.Regular:
-                            gamemodeButton.Texture = Content.Load<Texture2D>("DarkmodeButton");
-                            break;
-                        case GameMode.Darkmode:
-                            gamemodeButton.Texture = Content.Load<Texture2D>("SpotlightButton");
-                            break;
-                        case GameMode.Spotlight:
-                            gamemodeButton.Texture = Content.Load<Texture2D>("FastmodeButton");
-                            break;
-                        case GameMode.Fastmode:
-                            gamemodeButton.Texture = Content.Load<Texture2D>("Regularbutton");
-                            break;
+                        mouseHitbox.lasers.Clear();
+                        shootStyle++;
+                        shootStyle %= 6;
+                        mouseHitbox.canShoot = true;
+                        mouseHitbox.Update(gameTime);
+                        mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), LaserColor, false);
                     }
-                    if (gameMode == GameMode.Fastmode)
-                    {
-                        gameMode = GameMode.Regular;
-                    }
-                    else
-                    {
-                        gameMode++;
-                    }
-                }
-                #endregion
-                #region Checks Shootstyle Button
-                if (shootStyleButton.Clicked)
-                {
-                    mouseHitbox.lasers.Clear();
-                    shootStyle++;
-                    shootStyle %= 6;
-                    mouseHitbox.canShoot = true;
-                    mouseHitbox.Update(gameTime);
-                    mouseHitbox.fireLasers(Content.Load<Texture2D>("Laser"), LaserColor, false);
-
                 }
                 #endregion
                 #region Checks Obstacle Size Button
+                obstacleSizeButton.Update(TextColor);
                 if (obstacleSizeButton.Clicked)
                 {
                     if (obstacleSize == 25)
@@ -433,12 +440,13 @@ namespace On_the_Line
                     }
                 }
                 #endregion
+                backButton.Update(TextColor);
                 if (backButton.Clicked)
                 {
-                    setScreen(0);
+                    setScreen(lastScreen);
                 }
-                colorButton.Position = new Vector2(125, 290) - (optionsScreen.Position - new Vector2(0, 0));
-                gamemodeButton.Position = optionsScreen.Position + new Vector2(125, 420);
+                colorButton.Position = optionsScreen.Position + new Vector2(125, 290);
+                gamemodeButton.Position = new Vector2(125, 420) - (optionsScreen.Position - new Vector2(0, 0));
                 obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125, 550);
                 //dotModeCheckbox.Position = optionsScreen.Position + new Vector2(400, 565);
                 shootStyleButton.Position = new Vector2(125, 680) - (optionsScreen.Position - new Vector2(0, 0));
@@ -634,44 +642,78 @@ namespace On_the_Line
             #region Screen 1 Gameplay
             if (screen == Screen.GameScreen)//gameplay
             {
-                if (hasLost || isLoading)
+                pauseMenu.Update(Color.White, false);
+                pauseMenu.Speed.X = 0;
+                optionsButton.Position = pauseMenu.Position + new Vector2(40, 50);
+                if (isPaused)
                 {
-                    foreach (Obstacles obstacle in obstacles)
+                    if (pauseMenu.Position.X > 480)
                     {
-                        obstacle.Update();
-                        if (gameMode == GameMode.Fastmode)
+                        pauseMenu.Speed.X = -1;
+                    }
+                    else if (pauseMenu.Hovered)
+                    {
+                        if (pauseMenu.Position.X > 170)
                         {
-                            obstacle.Update();
+                            pauseMenu.Speed.X = -15;
+                        }
+                        else if (optionsButton.Clicked)
+                        {
+                            setScreen(Screen.OptionsMenu);
+                            lastScreen = Screen.GameScreen;
                         }
                     }
-                    if (isLoading)
+                    else if (!pauseMenu.Hovered && pauseMenu.Position.X < 480)
                     {
-                        hasLost = true;
-                        loadObstacle(525, "YouLose");
-                        isLoading = false;
-                        mouseHitbox.lasers.Clear();
+                        pauseMenu.Speed.X = 15;
                     }
                 }
-                else if (!hasLost && !isPaused)
+                else
                 {
-                    MouseState ms = Mouse.GetState();
-                    if (ms.Y < 0)
+                    if (pauseMenu.Position.X < 500)
                     {
-                        Mouse.SetPosition(ms.X, 0);
+                        pauseMenu.Speed.X = 1;
                     }
-                    else if (ms.Y > 1000)
+                    if (hasLost || isLoading)
                     {
-                        Mouse.SetPosition(ms.X, 1000);
+                        foreach (Obstacles obstacle in obstacles)
+                        {
+                            obstacle.Update();
+                            if (gameMode == GameMode.Fastmode)
+                            {
+                                obstacle.Update();
+                            }
+                        }
+                        if (isLoading)
+                        {
+                            hasLost = true;
+                            loadObstacle(525, "YouLose");
+                            isLoading = false;
+                            mouseHitbox.lasers.Clear();
+                        }
                     }
-                    if (ms.X < 0)
+                    else if (!hasLost)
                     {
-                        Mouse.SetPosition(0, ms.Y);
-                    }
-                    else if (ms.X > 500)
-                    {
-                        Mouse.SetPosition(500, ms.Y);
+                        MouseState ms = Mouse.GetState();
+                        if (ms.Y < 0)
+                        {
+                            Mouse.SetPosition(ms.X, 0);
+                        }
+                        else if (ms.Y > 1000)
+                        {
+                            Mouse.SetPosition(ms.X, 1000);
+                        }
+                        if (ms.X < 0)
+                        {
+                            Mouse.SetPosition(0, ms.Y);
+                        }
+                        else if (ms.X > 500)
+                        {
+                            Mouse.SetPosition(500, ms.Y);
+                        }
                     }
                 }
+                pauseMenu.Position.X += pauseMenu.Speed.X;
             }
             #endregion
             base.Update(gameTime);
@@ -697,17 +739,25 @@ namespace On_the_Line
                 // Screen 2
                 colorButton.Draw(generalSpriteBatch);
                 obstacleSizeButton.Draw(generalSpriteBatch);
-                gamemodeButton.Draw(generalSpriteBatch);
-                shootStyleButton.Draw(generalSpriteBatch);
-                mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - (Content.Load<Texture2D>("Ball").Height / 2));
+                if (lastScreen != Screen.GameScreen)
+                {
+                    gamemodeButton.Draw(generalSpriteBatch);
+                    shootStyleButton.Draw(generalSpriteBatch);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), shootStyleButton.Position + new Vector2(0, 80), TextColor);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Penetration: {mouseHitbox.stats.Item3}"), shootStyleButton.Position + new Vector2(0, 95), TextColor);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), shootStyleButton.Position + new Vector2(0, 110), TextColor);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), shootStyleButton.Position + new Vector2(0, 125), TextColor);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), shootStyleButton.Position + new Vector2(0, 140), TextColor);
+                    generalSpriteBatch.DrawString(statsText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), shootStyleButton.Position + new Vector2(0, 155), TextColor);
+                    mouseHitbox.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 - Content.Load<Texture2D>("Ball").Width / 2, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 - (Content.Load<Texture2D>("Ball").Height / 2));
+                }
                 backButton.Draw(generalSpriteBatch);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), shootStyleButton.Position + new Vector2(0, 80), TextColor);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Penetration: {mouseHitbox.stats.Item3}"), shootStyleButton.Position + new Vector2(0, 95), TextColor);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Bullet Speed: {mouseHitbox.stats.Item4}"), shootStyleButton.Position + new Vector2(0, 110), TextColor);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Reload: {mouseHitbox.stats.Item1.Seconds + (float)mouseHitbox.stats.Item1.Milliseconds / 1000} sec(s)"), shootStyleButton.Position + new Vector2(0, 125), TextColor);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Pros: {mouseHitbox.stats.Item5}"), shootStyleButton.Position + new Vector2(0, 140), TextColor);
-                generalSpriteBatch.DrawString(statsText, string.Format($"Cons: {mouseHitbox.stats.Item6}"), shootStyleButton.Position + new Vector2(0, 155), TextColor);
                 //dotModeCheckbox.Draw(generalSpriteBatch);
+            }
+            foreach (Enemy enemy in enemies)
+            {
+                if(gameMode != GameMode.Spotlight || (gameMode == GameMode.Spotlight && Math.Abs(enemy.RelativePositon(mouseHitbox.Position).Y) < 400))
+                enemy.Draw(generalSpriteBatch);
             }
             if (screen == Screen.GameScreen)//gameplay
             {
@@ -746,6 +796,8 @@ namespace On_the_Line
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"Score: {(int)score.TotalSeconds}"), new Vector2(380, 950), TextColor);
                     generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240, 950), TextColor);
                 }
+                pauseMenu.Draw(generalSpriteBatch);
+                optionsButton.Draw(generalSpriteBatch);
             }
             foreach (Obstacles obtstacle in obstacles) //Layer 3 - "You Lose"
             {
@@ -753,10 +805,6 @@ namespace On_the_Line
                 {
                     obtstacle.Draw(generalSpriteBatch);
                 }
-            }
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Draw(generalSpriteBatch);
             }
             generalSpriteBatch.End();
             // TODO: Add your drawing code here

@@ -14,16 +14,15 @@ namespace On_the_Line
         public Laser(Vector2 startPos, int moveX, int moveY, Texture2D texture, int lives, Color color)
             :base(startPos, texture, color)
         {
-            XSpeed = moveX;
-            YSpeed = moveY;
+            Speed = new Vector2(moveX, moveY);
             _lives = lives;
         }
         public new void Update()
         {
             if (!OnTheLine.isPaused)
             {
-                Position.X += XSpeed;
-                Position.Y += YSpeed;
+                Position.X += Speed.X;
+                Position.Y += Speed.Y;
             }
             KeyboardState ks = new KeyboardState();
             if (ks.IsKeyDown(Keys.Up))

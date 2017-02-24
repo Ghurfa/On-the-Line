@@ -104,8 +104,8 @@ namespace On_the_Line
                 Position.Y++;
                 foreach (Laser laser in lasers)
                 {
-                    laser.Position.X += laser.XSpeed;
-                    laser.Position.Y += laser.YSpeed;
+                    laser.Position.X += laser.Speed.X;
+                    laser.Position.Y += laser.Speed.X;
                 }
             }
             else if (ks.IsKeyDown(Keys.Down))
@@ -113,8 +113,8 @@ namespace On_the_Line
                 Position.Y--;
                 foreach (Laser laser in lasers)
                 {
-                    laser.Position.X -= laser.XSpeed;
-                    laser.Position.Y -= laser.YSpeed;
+                    laser.Position.X -= laser.Speed.X;
+                    laser.Position.Y -= laser.Speed.X;
                 }
             }
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
