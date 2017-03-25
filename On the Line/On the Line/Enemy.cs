@@ -98,6 +98,14 @@ namespace On_the_Line
                     }
                 }
             }
+            for(int i = 0; i < lasers.Count; i++)
+            {
+                Laser laser = lasers[i];
+                if (laser.Speed.X == 0 ^ laser.Speed.Y == 0)
+                {
+                    lasers.Remove(laser);
+                }
+            }
             KeyboardState ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Up))
             {

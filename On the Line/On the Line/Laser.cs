@@ -21,8 +21,7 @@ namespace On_the_Line
         {
             if (!OnTheLine.isPaused)
             {
-                Position.X += Speed.X;
-                Position.Y += Speed.Y;
+                Position += Speed;
             }
             KeyboardState ks = new KeyboardState();
             if (ks.IsKeyDown(Keys.Up))

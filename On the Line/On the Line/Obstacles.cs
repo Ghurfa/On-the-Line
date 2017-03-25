@@ -15,7 +15,7 @@ namespace On_the_Line
         public bool _breaks;
         public bool _indestrucable;
         public int MaxMove;
-        int move = 1;
+        int moveDirection = 1;
         public bool _gateway;
         int slow = 0;
         public int _slideSpeed;
@@ -53,7 +53,7 @@ namespace On_the_Line
             Show = false;
         }
 
-        public new void Update()
+        public new void Update(bool move = true)
         {
             if (Color.A != 230)
             {
@@ -139,36 +139,36 @@ namespace On_the_Line
                 {
                     slow = 0;
                 }
-                if ((slow == 0 && !OnTheLine.isPaused) || (slow == 0 && OnTheLine.hasLost == true))
+                if (slow == 0 && !OnTheLine.isPaused && OnTheLine.hasLost == false)
                 {
-                    Position.X += Speed.X * move;
-                    Position.Y += Speed.Y * move;
+                    Position.X += Speed.X * moveDirection;
+                    Position.Y += Speed.Y * moveDirection;
                     if (Speed.X > 0)
                     {
                         if (Position.X > _startPosition.X + Speed.X * MaxMove || Position.X < _startPosition.X)
                         {
-                            move *= -1;
+                            moveDirection *= -1;
                         }
                     }
                     else if (Speed.X < 0)
                     {
                         if (Position.X < _startPosition.X + Speed.X * MaxMove || Position.X > _startPosition.X)
                         {
-                            move *= -1;
+                            moveDirection *= -1;
                         }
                     }
                     else if (Speed.Y < 0)
                     {
                         if (Position.Y < _startPosition.Y + Speed.Y * MaxMove || Position.Y > _startPosition.Y)
                         {
-                            move *= -1;
+                            moveDirection *= -1;
                         }
                     }
                     else if (Speed.Y > 0)
                     {
                         if (Position.Y > _startPosition.Y + Speed.Y * MaxMove || Position.Y < _startPosition.Y)
                         {
-                            move *= -1;
+                            moveDirection *= -1;
                         }
                     }
                 }

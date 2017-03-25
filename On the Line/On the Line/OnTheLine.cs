@@ -34,16 +34,17 @@ namespace On_the_Line
         List<Obstacles> obstacles = new List<Obstacles>();
         public static List<Enemy> enemies = new List<Enemy>();
 
-        public readonly int[] difficulty = { 0, 0, 0, 0, 40, 40, 60, 60, 80, 60, 80, 80, 100, 120, 100, 100, 120, 100, 120, 100, 120, 120, 120, 200, 120 };
+        public readonly int[] difficulty = { 0, 0, 0, 0, 40, 40, 60, 60, 80, 60, 80, 80, 100, 120, 100, 100, 120, 100, 120, 100, 120, 120, 120, 200, 120, 100};
 
         Random random = new Random();
 
         public static Color WallColor = Color.Black;
-        public static Color OuterWallColor = Color.Black;
+        public static Color OuterWallColor = new Color(20, 20, 20);
         public static Color BackgroundColor = Color.White;
         public static Color TextColor = Color.Red;
         public static Color LaserColor = Color.Red;
         public static Color EndGameColor = Color.Black;
+        Color pauseMenuColor = Color.LightGray;
 
         TimeSpan score = TimeSpan.Zero;
         int destroyedObstacles;
@@ -135,14 +136,14 @@ namespace On_the_Line
         /// <param name="yOffset">Y offset for the obstacle being added</param>
         void newObstacle(float yOffset)
         {
-            int randomNumber = random.Next(1, 26); //Chooses a random obstacle from all 25
+            int randomNumber = random.Next(1, 27); //Chooses a random obstacle from all 25
             if (difficulty[randomNumber - 1] > score.TotalSeconds) //If you don't have enough score for it to load
             {
                 newObstacle(yOffset);
             }
             else
             {
-                if (randomNumber == 8 || randomNumber == 15) //If the obstacle chosen is a longer obstacle
+                if (randomNumber == 8 || randomNumber == 15 || randomNumber == 26) //If the obstacle chosen is a longer obstacle
                 {
                     yOffset -= 500;
                 }
@@ -227,6 +228,7 @@ namespace On_the_Line
             mouseHitbox.IsClicked = false;
             pauseMenu.Position = new Vector2(480, 250);
             mouseHitbox.Position = new Vector2(248, 250);
+            lastScreen = screen;
             if (slidingSpeed == 0)
             {
                 if (screenToSetTo == Screen.MainMenu) //If you are switching to main menu
@@ -240,9 +242,9 @@ namespace On_the_Line
                     menuScreen.Position = new Vector2(528, 0);
                     slidingSpeed = 32;
                 }
-                else if (screenToSetTo == Screen.GameScreen && lastScreen != Screen.GameScreen)
+                else if (screenToSetTo == Screen.GameScreen && lastScreen != Screen.OptionsMenu)
                 {
-                    score = new TimeSpan(0, 0, 0);
+                    score = TimeSpan.Zero;
                     obstacles.Clear();
                     enemies.Clear();
                     destroyedObstacles = 0;
@@ -304,7 +306,6 @@ namespace On_the_Line
                 if (optionsButton.Released)
                 {
                     setScreen(Screen.OptionsMenu);
-                    lastScreen = Screen.MainMenu;
                 }
                 if (obstacles.Count == 0)
                 {
@@ -321,50 +322,6 @@ namespace On_the_Line
                 if (colorButton.Clicked)
                 {
                     EndGameColor = Color.White;
-                    switch (colorScheme)
-                    {
-                        case ColorScheme.Default:
-                            mouseHitbox.Color = new Color(255, 150, 0);
-                            TextColor = new Color(255, 150, 0);
-                            LaserColor = new Color(255, 150, 0);
-                            WallColor = new Color(30, 250, 230);
-                            OuterWallColor = new Color(30, 250, 230);
-                            BackgroundColor = new Color(13, 13, 13);
-                            break;
-                        case ColorScheme.Ice:
-                            mouseHitbox.Color = new Color(45, 105, 174);
-                            TextColor = new Color(0, 183, 45);
-                            LaserColor = new Color(45, 105, 174);
-                            WallColor = new Color(45, 105, 174);
-                            OuterWallColor = new Color(30, 44, 96);
-                            BackgroundColor = new Color(240, 210, 150);
-                            break;
-                        case ColorScheme.Beach:
-                            mouseHitbox.Color = new Color(50, 20, 0);
-                            TextColor = new Color(50, 20, 0);
-                            LaserColor = new Color(50, 20, 0);
-                            WallColor = Color.White;
-                            OuterWallColor = new Color(40, 10, 0);
-                            BackgroundColor = new Color(80, 50, 20);
-                            break;
-                        case ColorScheme.Gingerbread:
-                            mouseHitbox.Color = Color.Black;
-                            TextColor = Color.Black;
-                            LaserColor = Color.Black;
-                            WallColor = new Color(10, 10, 10);
-                            OuterWallColor = new Color(10, 10, 10);
-                            BackgroundColor = new Color(20, 20, 20);
-                            break;
-                        case ColorScheme.School:
-                            mouseHitbox.Color = Color.LightGray;
-                            TextColor = Color.Red;
-                            LaserColor = Color.Red;
-                            WallColor = Color.Black;
-                            OuterWallColor = Color.Black;
-                            BackgroundColor = Color.White;
-                            EndGameColor = Color.Black;
-                            break;
-                    }
                     if (colorScheme == ColorScheme.School)
                     {
                         colorScheme = ColorScheme.Default;
@@ -372,6 +329,53 @@ namespace On_the_Line
                     else
                     {
                         colorScheme++;
+                    }
+                    switch (colorScheme)
+                    {
+                        case ColorScheme.Default:
+                            mouseHitbox.Color = Color.LightGray;
+                            TextColor = Color.Red;
+                            LaserColor = Color.Red;
+                            WallColor = Color.Black;
+                            OuterWallColor = new Color(20, 20, 20);
+                            BackgroundColor = Color.White;
+                            EndGameColor = Color.Black;
+                            pauseMenuColor = Color.LightGray;
+                            break;
+                        case ColorScheme.Ice:
+                            mouseHitbox.Color = new Color(255, 150, 0);
+                            TextColor = new Color(255, 150, 0);
+                            LaserColor = new Color(255, 150, 0);
+                            WallColor = new Color(30, 220, 230); 
+                            OuterWallColor = new Color(30, 250, 230);
+                            BackgroundColor = new Color(13, 13, 13);
+                            pauseMenuColor = new Color(40, 40, 40);
+                            break;
+                        case ColorScheme.Beach:
+                            mouseHitbox.Color = new Color(45, 105, 174);
+                            TextColor = new Color(0, 183, 45);
+                            LaserColor = new Color(45, 105, 174);
+                            WallColor = new Color(45, 105, 174);
+                            OuterWallColor = new Color(30, 44, 96);
+                            BackgroundColor = new Color(240, 210, 150);
+                            pauseMenuColor = new Color(0, 120, 0);
+                            break;
+                        case ColorScheme.Gingerbread:
+                            mouseHitbox.Color = new Color(50, 20, 0);
+                            TextColor = new Color(50, 20, 0);
+                            LaserColor = new Color(50, 20, 0);
+                            WallColor = Color.White;
+                            OuterWallColor = new Color(40, 10, 0);
+                            BackgroundColor = new Color(80, 50, 20);
+                            break;
+                        case ColorScheme.School:
+                            mouseHitbox.Color = Color.Black;
+                            TextColor = Color.Black;
+                            LaserColor = Color.Black;
+                            WallColor = new Color(10, 10, 10);
+                            OuterWallColor = new Color(20, 20, 20);
+                            BackgroundColor = new Color(30, 30, 30);
+                            break;
                     }
                     colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
@@ -642,7 +646,7 @@ namespace On_the_Line
             #region Screen 1 Gameplay
             if (screen == Screen.GameScreen)//gameplay
             {
-                pauseMenu.Update(Color.White, false);
+                pauseMenu.Update(pauseMenuColor, false);
                 pauseMenu.Speed.X = 0;
                 optionsButton.Position = pauseMenu.Position + new Vector2(40, 50);
                 if (isPaused)
@@ -660,10 +664,9 @@ namespace On_the_Line
                         else if (optionsButton.Clicked)
                         {
                             setScreen(Screen.OptionsMenu);
-                            lastScreen = Screen.GameScreen;
                         }
                     }
-                    else if (!pauseMenu.Hovered && pauseMenu.Position.X < 480)
+                    else if (pauseMenu.Position.X < 480)
                     {
                         pauseMenu.Speed.X = 15;
                     }
@@ -781,11 +784,11 @@ namespace On_the_Line
                     generalSpriteBatch.DrawString(endGameFont, $"Enemies Killed:{enemiesKilled}", new Vector2(100, 550), TextColor);
                     if (score < new TimeSpan(0, 0, 100))
                     {
-                        generalSpriteBatch.DrawString(endGameFont2, "You are a noob", new Vector2(100, 700), TextColor);
+                        generalSpriteBatch.DrawString(endGameFont2, "You suck", new Vector2(100, 700), TextColor);
                     }
                     else
                     {
-                        generalSpriteBatch.DrawString(endGameFont2, "You are a pro", new Vector2(110, 700), TextColor);
+                        generalSpriteBatch.DrawString(endGameFont2, "You don't suck", new Vector2(110, 700), TextColor);
                     }
                     generalSpriteBatch.DrawString(endGameFont2, "Press R to Restart", new Vector2(30, 800), TextColor);
                     generalSpriteBatch.DrawString(endGameFont2, "Press M to go to Menu", new Vector2(0, 850), TextColor);
