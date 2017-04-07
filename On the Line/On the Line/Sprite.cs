@@ -31,7 +31,7 @@ namespace On_the_Line
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Hitbox, Color);
+            spriteBatch.Draw(Texture, Position, null, Color, 0, new Vector2(0.5f, 0.5f), 1, SpriteEffects.None, 0);
         }
     }
 }

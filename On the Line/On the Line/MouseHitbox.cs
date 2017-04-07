@@ -119,9 +119,9 @@ namespace On_the_Line
                     OnTheLine.isPaused = true;
                     Counting = false;
                 }
+                KeyboardState ks = Keyboard.GetState();
                 if (IsClicked)
                 {
-                    KeyboardState ks = Keyboard.GetState();
                     if (ks.IsKeyDown(Keys.LeftShift))
                     {
                         Position.Y++;
@@ -134,6 +134,22 @@ namespace On_the_Line
                     {
                         Position.Y = mouseState.Y - (Texture.Height / 2);
                         Position.X = mouseState.X - (Texture.Width / 2);
+                    }
+                }
+                if (ks.IsKeyDown(Keys.Up))
+                {
+                    foreach (Laser laser in lasers)
+                    {
+                        laser.Position.X += laser.Speed.X;
+                        laser.Position.Y += laser.Speed.Y;
+                    }
+                }
+                else if (ks.IsKeyDown(Keys.Down))
+                {
+                    foreach (Laser laser in lasers)
+                    {
+                        laser.Position.X -= laser.Speed.X;
+                        laser.Position.Y -= laser.Speed.X;
                     }
                 }
             }
@@ -434,7 +450,7 @@ namespace On_the_Line
                 {
                     laser.Draw(spriteBatch);
                 }
-                spriteBatch.Draw(Texture, Position, Color);
+                spriteBatch.Draw(Texture, Position + new Vector2(Texture.Width / 2, Texture.Height / 2), null, Color, 0, new Vector2(Texture.Width / 2, Texture.Height / 2), 1, SpriteEffects.None, 0);
                 if (OnTheLine.gameMode == GameMode.Spotlight)
                 {
                     spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X - 100, Spotlight.Y - 100), OnTheLine.BackgroundColor);

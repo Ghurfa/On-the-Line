@@ -53,7 +53,7 @@ namespace On_the_Line
             Show = false;
         }
 
-        public new void Update(bool move = true)
+        public new void Update()
         {
             if (Color.A != 230)
             {
@@ -216,7 +216,7 @@ namespace On_the_Line
         {
             if (_slideSpeed < 30)
             {
-                spriteBatch.Draw(Texture, new Vector2(Hitbox.X + 12.5f, Hitbox.Y + 12.5f), null, Color, rotation, new Vector2(0.5f, 0.5f), _size, SpriteEffects.None, 0);
+                spriteBatch.Draw(Texture, Position + new Vector2(12.5f, 12.5f), null, Color, 0, new Vector2(0.5f, 0.5f), _size, SpriteEffects.None, 0);
             }
 
         }

@@ -8,6 +8,7 @@ namespace On_the_Line
     public enum Screen
     {
         MainMenu,
+        ScreenTransition,
         GameScreen,
         OptionsMenu
     }

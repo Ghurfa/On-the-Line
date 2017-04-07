@@ -23,19 +23,6 @@ namespace On_the_Line
             {
                 Position += Speed;
             }
-            KeyboardState ks = new KeyboardState();
-            if (ks.IsKeyDown(Keys.Up))
-            {
-                Position.Y++;
-                if (ks.IsKeyDown(Keys.RightControl))
-                {
-                    Position.Y++;
-                }
-                if (ks.IsKeyDown(Keys.LeftControl))
-                {
-                    Position.Y += 6;
-                }
-            }
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
     }

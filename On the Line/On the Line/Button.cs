@@ -31,7 +31,7 @@ namespace On_the_Line
                 {
                     Color.A = 128;
                 }
-                if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released)
+                if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released && Speed == new Vector2(0, 0))
                 {
                     Clicked = true;
                 }
