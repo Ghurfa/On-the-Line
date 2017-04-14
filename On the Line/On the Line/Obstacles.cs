@@ -140,8 +140,8 @@ namespace On_the_Line
                 }
                 if (slow == 0 && !OnTheLine.isPaused && OnTheLine.hasLost == false)
                 {
-                    Position.X += Speed.X * moveDirection;
-                    Position.Y += Speed.Y * moveDirection;
+                    Position.X += Speed.X * moveDirection * OnTheLine.GlobalScaleFactor;
+                    Position.Y += Speed.Y * moveDirection * OnTheLine.GlobalScaleFactor;
                     if (Speed.X > 0)
                     {
                         if (Position.X > StartPosition.X + Speed.X * MaxMove || Position.X < StartPosition.X)
@@ -202,10 +202,10 @@ namespace On_the_Line
             }
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
-                Position.Y++;
-                StartPosition.Y++;
+                Position.Y += OnTheLine.GlobalScaleFactor;
+                StartPosition.Y += OnTheLine.GlobalScaleFactor;
             }
-            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * 25), (int)(Texture.Height * 25));
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * 25 * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * 25 * OnTheLine.GlobalScaleFactor));
         }
         Color reverseColor(Color color)
         {

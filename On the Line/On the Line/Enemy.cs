@@ -129,7 +129,7 @@ namespace On_the_Line
             {
                 Position.Y++;
             }
-            Hitbox = new Rectangle((int)Position.X + Texture.Width / 4, (int)Position.Y + Texture.Height / 4, Texture.Width / 2, Texture.Height / 2);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * OnTheLine.GlobalScaleFactor));
         }
     }
 }

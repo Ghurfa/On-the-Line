@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace On_the_Line
 {
-    public class MouseHitbox:Sprite
+    public class MouseHitbox : Sprite
     {
         MouseState mouseState;
         MouseState lastMouseState;
@@ -29,12 +29,12 @@ namespace On_the_Line
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
 
         public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
-            :base(position, texture, color)
+            : base(position, texture, color)
         {
             Color = color;
             Texture = texture;
             Position = position;
-            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * OnTheLine.GlobalScaleFactor));
             spotlightTexture = spotlightTexure;
             _shootStyle = shootStyle;
             this.direction = direction;
@@ -42,7 +42,7 @@ namespace On_the_Line
         }
         public void Update(GameTime gameTime)
         {
-            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * OnTheLine.GlobalScaleFactor));
             if (!OnTheLine.isPaused)
             {
                 laserElapsedTime += gameTime.ElapsedGameTime;
@@ -81,7 +81,7 @@ namespace On_the_Line
             {
                 stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 5, 10, "Fast", "Fast Bullets, Focused Fire", "High penetration, No Spread");
             }
-            Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - 400, (int)Position.Y + Texture.Height / 2 - 400, 800, 800);
+            Spotlight = new Rectangle((int)Position.X + Texture.Width / 2 - (int)(400 * OnTheLine.GlobalScaleFactor), (int)Position.Y + Texture.Height / 2 - (int)(400 * OnTheLine.GlobalScaleFactor), (int)(800 * OnTheLine.GlobalScaleFactor), (int)(800 * OnTheLine.GlobalScaleFactor));
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
@@ -96,14 +96,14 @@ namespace On_the_Line
             {
                 if (Counting)
                 {
-                    CountingCentisecond = 50 - (int)CountingElapsedTime.Milliseconds/10;
+                    CountingCentisecond = 50 - (int)CountingElapsedTime.Milliseconds / 10;
                     if (CountingCentisecond <= 5)
                     {
                         IsClicked = true;
                         OnTheLine.isPaused = false;
                         Counting = false;
                     }
-                    if(!Hitbox.Contains(mouseState.X, mouseState.Y))
+                    if (!Hitbox.Contains(mouseState.X, mouseState.Y))
                     {
                         Counting = false;
                     }
@@ -225,15 +225,15 @@ namespace On_the_Line
                         {
                             if (direction == 0)
                             {
-                                for(int x = -2; x < 3; x+=2)
+                                for (int x = -2; x < 3; x += 2)
                                 {
-                                    for(int y = -2; y < 3; y+=2)
+                                    for (int y = -2; y < 3; y += 2)
                                     {
-                                        if(x != 0 || y != 0)
-                                        lasers.Add(new Laser(startPos, x, y, texture, stats.Item3, laserColor));
+                                        if (x != 0 || y != 0)
+                                            lasers.Add(new Laser(startPos, x, y, texture, stats.Item3, laserColor));
                                     }
                                 }
-                                
+
                             }
                             else if (direction == 1)
                             {
@@ -450,10 +450,10 @@ namespace On_the_Line
                 {
                     laser.Draw(spriteBatch);
                 }
-                spriteBatch.Draw(Texture, Position + new Vector2(Texture.Width / 2, Texture.Height / 2), null, Color, 0, new Vector2(Texture.Width / 2, Texture.Height / 2), 1, SpriteEffects.None, 0);
+                spriteBatch.Draw(Texture, Position + new Vector2(Texture.Width / 2, Texture.Height / 2), null, Color, 0, new Vector2(Texture.Width / 2, Texture.Height / 2), OnTheLine.GlobalScaleFactor, SpriteEffects.None, 0);
                 if (OnTheLine.gameMode == GameMode.Spotlight && !OnTheLine.hasLost)
                 {
-                    spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X - 100, Spotlight.Y - 100), OnTheLine.BackgroundColor);
+                    spriteBatch.Draw(spotlightTexture, new Vector2(Position.X - spotlightTexture.Width / 2 * OnTheLine.GlobalScaleFactor, Position.Y - spotlightTexture.Height / 2 * OnTheLine.GlobalScaleFactor), null, OnTheLine.BackgroundColor, 0, new Vector2(Texture.Width / 2, Texture.Height / 2), OnTheLine.GlobalScaleFactor, SpriteEffects.None, 0);
                 }
             }
         }
