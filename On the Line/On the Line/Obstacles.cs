@@ -10,18 +10,17 @@ namespace On_the_Line
 {
     class Obstacles:Sprite
     {
-        public Vector2 _startPosition;
-        public Vector2 _size;
-        public bool _breaks;
-        public bool _indestrucable;
+        public Vector2 StartPosition;
+        public Vector2 Size;
+        public bool Breaks;
+        public bool Indestrucable;
         public int MaxMove;
         int moveDirection = 1;
-        public bool _gateway;
+        public bool Gateway;
         int slow = 0;
-        public int _slideSpeed;
+        public int SlideSpeed;
         float growAmount = -0.5f;
         public bool didKill = false;
-        float rotation = 0;
         int growTimes;
         public bool Show = true;
         bool isOuterWall;
@@ -40,15 +39,15 @@ namespace On_the_Line
         public Obstacles(Texture2D texture, Vector2 position, Vector2 size, Color color, bool breaks, Vector2 speed, int maxmove, bool indescructable, bool gateway, bool outerWall = false)
             :base(position, texture, color)
         {
-            _startPosition = position;
-            _size = size;
-            Hitbox = new Rectangle((int)position.X, (int)position.Y, (int)(Texture.Width * _size.X), (int)(Texture.Height * _size.Y));
+            StartPosition = position;
+            Size = size;
+            Hitbox = new Rectangle((int)position.X, (int)position.Y, (int)(Texture.Width * Size.X), (int)(Texture.Height * Size.Y));
             Speed = speed;
             MaxMove = maxmove;
-            _breaks = breaks;
-            _indestrucable = indescructable;
-            _slideSpeed = 31;
-            _gateway = gateway;
+            Breaks = breaks;
+            Indestrucable = indescructable;
+            SlideSpeed = 31;
+            Gateway = gateway;
             isOuterWall = outerWall;
             Show = false;
         }
@@ -84,18 +83,18 @@ namespace On_the_Line
                     Show = true;
                 }
             }
-            if (_slideSpeed > 0)
+            if (SlideSpeed > 0)
             {
-                if (_slideSpeed == 31)
+                if (SlideSpeed == 31)
                 {
                     Position += new Vector2(496, 0);
                 }
-                Position -= new Vector2(_slideSpeed, 0);
+                Position -= new Vector2(SlideSpeed, 0);
                 if ((OnTheLine.gameMode == GameMode.Spotlight && !Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox)))
                 {
                     Show = false;
                 }
-                _slideSpeed--;
+                SlideSpeed--;
             }
             else
             {
@@ -113,7 +112,7 @@ namespace On_the_Line
                             OnTheLine.mouseHitbox.lasers[i]._lives--;
                             Show = true;
                         }
-                        if (OnTheLine.mouseHitbox.lasers[i]._lives <= 0 || _indestrucable)
+                        if (OnTheLine.mouseHitbox.lasers[i]._lives <= 0 || Indestrucable)
                         {
                             OnTheLine.mouseHitbox.lasers.Remove(laser);
                         }
@@ -121,7 +120,7 @@ namespace On_the_Line
                 }
                 if (OnTheLine.gameMode == GameMode.Spotlight)
                 {
-                    if (Hitbox.Intersects(OnTheLine.mouseHitbox.Spotlight))
+                    if (Hitbox.Intersects(OnTheLine.mouseHitbox.Spotlight) || OnTheLine.hasLost)
                     {
                         Show = true;
                     }
@@ -130,7 +129,7 @@ namespace On_the_Line
                         Show = false;
                     }
                 }
-                if ((OnTheLine.screen == Screen.GameScreen && (Position.Y > 930 && Color != OnTheLine.TextColor && MaxMove == 0)) || _gateway)
+                if (Gateway)
                 {
                     Show = false;
                 }
@@ -145,28 +144,28 @@ namespace On_the_Line
                     Position.Y += Speed.Y * moveDirection;
                     if (Speed.X > 0)
                     {
-                        if (Position.X > _startPosition.X + Speed.X * MaxMove || Position.X < _startPosition.X)
+                        if (Position.X > StartPosition.X + Speed.X * MaxMove || Position.X < StartPosition.X)
                         {
                             moveDirection *= -1;
                         }
                     }
                     else if (Speed.X < 0)
                     {
-                        if (Position.X < _startPosition.X + Speed.X * MaxMove || Position.X > _startPosition.X)
+                        if (Position.X < StartPosition.X + Speed.X * MaxMove || Position.X > StartPosition.X)
                         {
                             moveDirection *= -1;
                         }
                     }
                     else if (Speed.Y < 0)
                     {
-                        if (Position.Y < _startPosition.Y + Speed.Y * MaxMove || Position.Y > _startPosition.Y)
+                        if (Position.Y < StartPosition.Y + Speed.Y * MaxMove || Position.Y > StartPosition.Y)
                         {
                             moveDirection *= -1;
                         }
                     }
                     else if (Speed.Y > 0)
                     {
-                        if (Position.Y > _startPosition.Y + Speed.Y * MaxMove || Position.Y < _startPosition.Y)
+                        if (Position.Y > StartPosition.Y + Speed.Y * MaxMove || Position.Y < StartPosition.Y)
                         {
                             moveDirection *= -1;
                         }
@@ -185,7 +184,7 @@ namespace On_the_Line
                 }
                 else
                 {
-                    _size += new Vector2(growAmount, growAmount);
+                    Size += new Vector2(growAmount, growAmount);
                     growAmount += 0.4f;
                     Color = OnTheLine.EndGameColor;
                 }
@@ -194,17 +193,17 @@ namespace On_the_Line
             if (ks.IsKeyDown(Keys.Up))
             {
                 Position.Y++;
-                _startPosition.Y++;
+                StartPosition.Y++;
             }
             else if (ks.IsKeyDown(Keys.Down))
             {
                 Position.Y--;
-                _startPosition.Y--;
+                StartPosition.Y--;
             }
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
                 Position.Y++;
-                _startPosition.Y++;
+                StartPosition.Y++;
             }
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * 25), (int)(Texture.Height * 25));
         }
@@ -214,9 +213,9 @@ namespace On_the_Line
         }
         public new void Draw(SpriteBatch spriteBatch)
         {
-            if (_slideSpeed < 30)
+            if (SlideSpeed < 30)
             {
-                spriteBatch.Draw(Texture, Position + new Vector2(12.5f, 12.5f), null, Color, 0, new Vector2(0.5f, 0.5f), _size, SpriteEffects.None, 0);
+                spriteBatch.Draw(Texture, Position + new Vector2(12.5f, 12.5f), null, Color, 0, new Vector2(0.5f, 0.5f), Size, SpriteEffects.None, 0);
             }
 
         }

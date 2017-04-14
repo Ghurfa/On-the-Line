@@ -42,7 +42,7 @@ namespace On_the_Line
         }
         public void Update(GameTime gameTime)
         {
-            Hitbox = new Rectangle((int)Position.X + Texture.Width / 4, (int)Position.Y + Texture.Height / 4, Texture.Width / 2, Texture.Height / 2);
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             if (!OnTheLine.isPaused)
             {
                 laserElapsedTime += gameTime.ElapsedGameTime;
@@ -451,7 +451,7 @@ namespace On_the_Line
                     laser.Draw(spriteBatch);
                 }
                 spriteBatch.Draw(Texture, Position + new Vector2(Texture.Width / 2, Texture.Height / 2), null, Color, 0, new Vector2(Texture.Width / 2, Texture.Height / 2), 1, SpriteEffects.None, 0);
-                if (OnTheLine.gameMode == GameMode.Spotlight)
+                if (OnTheLine.gameMode == GameMode.Spotlight && !OnTheLine.hasLost)
                 {
                     spriteBatch.Draw(spotlightTexture, new Vector2(Spotlight.X - 100, Spotlight.Y - 100), OnTheLine.BackgroundColor);
                 }

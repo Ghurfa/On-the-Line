@@ -10,6 +10,7 @@ namespace On_the_Line
         MainMenu,
         ScreenTransition,
         GameScreen,
-        OptionsMenu
+        OptionsMenu,
+        InGameOptionsMenu
     }
 }

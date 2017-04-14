@@ -19,7 +19,7 @@ namespace On_the_Line
             : base(Position, texture, Color.White)
         {
         }
-        public new void Update(Color color, bool turnTranslucent = true)
+        public void Update(Color color, bool turnTranslucent = true)
         {
             Color = color;
             MouseState MS = Mouse.GetState();
@@ -45,7 +45,6 @@ namespace On_the_Line
                 }
                 else
                 {
-
                     Released = false;
                 }
             }
