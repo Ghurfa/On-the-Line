@@ -262,10 +262,10 @@ namespace On_the_Line
                     enemies.Clear();
                     destroyedObstacles = 0;
                     enemiesKilled = 0;
-                    loadObstacle(1000 * GlobalScaleFactor, "LowerStartingObstacle");
-                    loadObstacle(500 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                    loadObstacle(500 * GlobalScaleFactor, "UpperStartingObstacle");
+                    loadObstacle(1000 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
                     mouseHitbox.canShoot = true;
-                    mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238 * GlobalScaleFactor + FillerSpaceOnSide, 250 * GlobalScaleFactor));
+                    mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238 * GlobalScaleFactor + FillerSpaceOnSide, 750 * GlobalScaleFactor));
                     restartButton.Position = new Vector2(-500 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
                     mainMenuButton.Position = new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
                 }
@@ -296,13 +296,14 @@ namespace On_the_Line
         {
             menuScreen.Update();
             optionsScreen.Update();
+            leftSideFiller.Color = OuterWallColor;
             if (obstacles.Count == 0) //If there are no obstacles, make some
             {
                 if (screen == Screen.GameScreen)
                 {
                     enemiesKilled = 0;
-                    loadObstacle(1000 * GlobalScaleFactor, "LowerStartingObstacle");
-                    loadObstacle(500 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                    loadObstacle(500 * GlobalScaleFactor, "UpperStartingObstacle");
+                    loadObstacle(1000 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
                 }
                 else
                 {

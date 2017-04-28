@@ -80,8 +80,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LowerStartingObstacle.png">
-      <Name>LowerStartingObstacle</Name>
+    <Compile Include="UpperStartingObstacle.png">
+      <Name>UpperStartingObstacle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
