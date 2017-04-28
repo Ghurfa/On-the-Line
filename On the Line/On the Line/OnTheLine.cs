@@ -82,7 +82,7 @@ namespace On_the_Line
         public static GameMode gameMode = GameMode.Regular;
         public static ColorScheme colorScheme = ColorScheme.Default;
         public static int GlobalRotation = 0;
-        public static float GlobalScaleFactor = 0.5f;
+        public static float GlobalScaleFactor = 1f;
         public static int FillerSpaceOnSide = 25;
         #endregion
         public OnTheLine()
@@ -480,11 +480,11 @@ namespace On_the_Line
                 {
                     setScreen(Screen.MainMenu);
                 }
-                colorButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 290 * GlobalScaleFactor);
-                gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor, 420 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
-                obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 550 * GlobalScaleFactor);
-                shootStyleButton.Position = new Vector2(125 * GlobalScaleFactor, 680 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
-                backButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 900 * GlobalScaleFactor);
+                colorButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 290 * GlobalScaleFactor);
+                gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 420 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
+                obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 550 * GlobalScaleFactor);
+                shootStyleButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 680 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
+                backButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
             }
             int highestObstacleY = 10;
             if (!hasLost && !isLoading)
@@ -868,9 +868,9 @@ namespace On_the_Line
                 {
                     setScreen(lastScreen);
                 }
-                colorButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 290 * GlobalScaleFactor);
-                obstacleSizeButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 550 * GlobalScaleFactor);
-                backButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor, 900 * GlobalScaleFactor);
+                colorButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 290 * GlobalScaleFactor);
+                obstacleSizeButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 550 * GlobalScaleFactor);
+                backButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
             }
             if (screen == Screen.ScreenTransition)
             {
