@@ -33,5 +33,9 @@ namespace On_the_Line
         {
             spriteBatch.Draw(Texture, Position, null, Color, 0, new Vector2(0.5f, 0.5f), OnTheLine.GlobalScaleFactor, SpriteEffects.None, 0);
         }
+        public void Draw(SpriteBatch spriteBatch, Vector2 scale)
+        {
+            spriteBatch.Draw(Texture, Position, null, Color, 0, new Vector2(0, 0), 1 * scale, SpriteEffects.None, 0);
+        }
     }
 }
