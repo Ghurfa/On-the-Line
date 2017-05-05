@@ -35,6 +35,16 @@ namespace On_the_Line
         public static List<Enemy> enemies = new List<Enemy>();
 
         public readonly int[] difficulty = { 0, 0, 0, 0, 40, 40, 60, 60, 80, 60, 80, 80, 100, 120, 100, 100, 120, 100, 120, 100, 120, 120, 120, 200, 120, 100 };
+        Dictionary<ColorScheme, Color> wallColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> outerWallColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> backgroundColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> textColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> laserColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> endGameColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> pauseMenuColors = new Dictionary<ColorScheme, Color>();
+        Dictionary<ColorScheme, Color> mouseHitboxColors = new Dictionary<ColorScheme, Color>();
+
+        PaletteSelector wallColorSelector;
 
         Random random = new Random();
 
@@ -83,7 +93,7 @@ namespace On_the_Line
         public static ColorScheme colorScheme = ColorScheme.Default;
         public static int GlobalRotation = 0;
         public static float GlobalScaleFactor = 1f;
-        public static int FillerSpaceOnSide = 25;
+        public static int FillerSpaceOnSide = 50;
         #endregion
         public OnTheLine()
         {
@@ -116,7 +126,7 @@ namespace On_the_Line
             obstaclePixel.SetData<Color>(new Color[] { Color.White });
 
             //MouseHitbox initialization
-            mouseHitbox = new MouseHitbox(Color.LightGray, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2((500 * GlobalScaleFactor + 2 * FillerSpaceOnSide)/2, 250 * GlobalScaleFactor));
+            mouseHitbox = new MouseHitbox(Color.LightGray, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2((500 * GlobalScaleFactor + 2 * FillerSpaceOnSide) / 2, 250 * GlobalScaleFactor));
 
             //Button initialization
             startButton = new Button(new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 550 * GlobalScaleFactor), Content.Load<Texture2D>("StartButton"));
@@ -133,11 +143,53 @@ namespace On_the_Line
             //Sprite initialization
             menuScreen = new Sprite(new Vector2(0 * GlobalScaleFactor, 0 * GlobalScaleFactor), Content.Load<Texture2D>("Screen"), Color.White);
             optionsScreen = new Sprite(new Vector2(-500 * GlobalScaleFactor, 0 * GlobalScaleFactor), Content.Load<Texture2D>("Screen"), Color.White);
-            inGameOptionsScreen = new Sprite(new Vector2(500 * GlobalScaleFactor, 0 * GlobalScaleFactor), Content.Load<Texture2D>("Screen"), Color.White);
+            inGameOptionsScreen = new Sprite(new Vector2(-500 * GlobalScaleFactor, 0 * GlobalScaleFactor), Content.Load<Texture2D>("Screen"), Color.White);
             title = new Sprite(new Vector2(0 * GlobalScaleFactor, 0 * GlobalScaleFactor), Content.Load<Texture2D>("Title"), Color.White);
             screenChanger = new Sprite(new Vector2(500 * GlobalScaleFactor + 2 * FillerSpaceOnSide, 0 * GlobalScaleFactor), Content.Load<Texture2D>("ScreenChanger"), Color.White);
             leftSideFiller = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Pixel"), OuterWallColor);
             rightSideFiller = new Sprite(new Vector2(500 * GlobalScaleFactor + FillerSpaceOnSide, 0), Content.Load<Texture2D>("Pixel"), OuterWallColor);
+
+            //Color schemes initialization
+            wallColors.Add(ColorScheme.Default, Color.Black);
+            wallColors.Add(ColorScheme.Ice, new Color(30, 220, 230));
+            wallColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
+            wallColors.Add(ColorScheme.Gingerbread, Color.White);
+            wallColors.Add(ColorScheme.School, new Color(10, 10, 10));
+            outerWallColors.Add(ColorScheme.Default, new Color(20, 20, 20));
+            outerWallColors.Add(ColorScheme.Ice, new Color(37, 37, 37));
+            outerWallColors.Add(ColorScheme.Beach, new Color(30, 44, 96));
+            outerWallColors.Add(ColorScheme.Gingerbread, new Color(40, 10, 0));
+            outerWallColors.Add(ColorScheme.School, new Color(20, 20, 20));
+            backgroundColors.Add(ColorScheme.Default, Color.White);
+            backgroundColors.Add(ColorScheme.Ice, Color.Black);
+            backgroundColors.Add(ColorScheme.Beach, new Color(240, 210, 150));
+            backgroundColors.Add(ColorScheme.Gingerbread, new Color(80, 50, 20));
+            backgroundColors.Add(ColorScheme.School, new Color(30, 30, 30));
+            textColors.Add(ColorScheme.Default, Color.Red);
+            textColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
+            textColors.Add(ColorScheme.Beach, new Color(0, 183, 45));
+            textColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
+            textColors.Add(ColorScheme.School, Color.Black);
+            laserColors.Add(ColorScheme.Default, Color.Red);
+            laserColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
+            laserColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
+            laserColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
+            laserColors.Add(ColorScheme.School, Color.Black);
+            endGameColors.Add(ColorScheme.Default, Color.Black);
+            endGameColors.Add(ColorScheme.Ice, Color.White);
+            endGameColors.Add(ColorScheme.Beach, Color.White);
+            endGameColors.Add(ColorScheme.Gingerbread, Color.White);
+            endGameColors.Add(ColorScheme.School, Color.White);
+            pauseMenuColors.Add(ColorScheme.Default, Color.LightGray);
+            pauseMenuColors.Add(ColorScheme.Ice, new Color(255, 255, 255));
+            pauseMenuColors.Add(ColorScheme.Beach, new Color(54, 54, 54));
+            pauseMenuColors.Add(ColorScheme.Gingerbread, new Color(100, 100, 100));
+            pauseMenuColors.Add(ColorScheme.School, new Color(100, 100, 100));
+            mouseHitboxColors.Add(ColorScheme.Default, Color.LightGray);
+            mouseHitboxColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
+            mouseHitboxColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
+            mouseHitboxColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
+            mouseHitboxColors.Add(ColorScheme.School, Color.Black);
         }
 
         protected override void UnloadContent()
@@ -254,20 +306,24 @@ namespace On_the_Line
                     screenChanger.Position = new Vector2(500 * GlobalScaleFactor + 2 * FillerSpaceOnSide, 0);
                     screenChanger.Speed = new Vector2(-30, 0);
                 }
-                else if (screenToSetTo == Screen.GameScreen && lastScreen != Screen.InGameOptionsMenu)
+                else if (screenToSetTo == Screen.GameScreen)
                 {
-                    hasLost = false;
-                    score = TimeSpan.Zero;
-                    obstacles.Clear();
-                    enemies.Clear();
-                    destroyedObstacles = 0;
-                    enemiesKilled = 0;
-                    loadObstacle(500 * GlobalScaleFactor, "UpperStartingObstacle");
-                    loadObstacle(1000 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
-                    mouseHitbox.canShoot = true;
-                    mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238 * GlobalScaleFactor + FillerSpaceOnSide, 750 * GlobalScaleFactor));
-                    restartButton.Position = new Vector2(-500 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
-                    mainMenuButton.Position = new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
+                    slidingSpeed = 32;
+                    if (lastScreen != Screen.InGameOptionsMenu)
+                    {
+                        hasLost = false;
+                        score = TimeSpan.Zero;
+                        obstacles.Clear();
+                        enemies.Clear();
+                        destroyedObstacles = 0;
+                        enemiesKilled = 0;
+                        loadObstacle(500 * GlobalScaleFactor, "UpperStartingObstacle");
+                        loadObstacle(1000 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                        mouseHitbox.canShoot = true;
+                        mouseHitbox = new MouseHitbox(mouseHitbox.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238 * GlobalScaleFactor + FillerSpaceOnSide, 750 * GlobalScaleFactor));
+                        restartButton.Position = new Vector2(-500 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
+                        mainMenuButton.Position = new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
+                    }
                 }
                 else if (screenToSetTo == Screen.OptionsMenu)
                 {
@@ -294,9 +350,19 @@ namespace On_the_Line
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            ks = Keyboard.GetState();
             menuScreen.Update();
             optionsScreen.Update();
-            leftSideFiller.Color = OuterWallColor;
+            if (gameMode == GameMode.Darkmode || gameMode == GameMode.Spotlight)
+            {
+                leftSideFiller.Color = BackgroundColor;
+                rightSideFiller.Color = BackgroundColor;
+            }
+            else
+            {
+                leftSideFiller.Color = OuterWallColor;
+                rightSideFiller.Color = OuterWallColor;
+            }
             if (obstacles.Count == 0) //If there are no obstacles, make some
             {
                 if (screen == Screen.GameScreen)
@@ -351,7 +417,6 @@ namespace On_the_Line
                 colorButton.Update(TextColor);
                 if (colorButton.Clicked)
                 {
-                    EndGameColor = Color.White;
                     if (colorScheme == ColorScheme.School)
                     {
                         colorScheme = ColorScheme.Default;
@@ -360,55 +425,14 @@ namespace On_the_Line
                     {
                         colorScheme++;
                     }
-                    switch (colorScheme)
-                    {
-                        case ColorScheme.Default:
-                            mouseHitbox.Color = Color.LightGray;
-                            TextColor = Color.Red;
-                            LaserColor = Color.Red;
-                            WallColor = Color.Black;
-                            OuterWallColor = new Color(20, 20, 20);
-                            BackgroundColor = Color.White;
-                            EndGameColor = Color.Black;
-                            pauseMenuColor = Color.LightGray;
-                            break;
-                        case ColorScheme.Ice:
-                            mouseHitbox.Color = new Color(255, 150, 0);
-                            TextColor = new Color(255, 150, 0);
-                            LaserColor = new Color(255, 150, 0);
-                            WallColor = new Color(30, 220, 230);
-                            OuterWallColor = new Color(37, 37, 37);
-                            BackgroundColor = new Color(0, 0, 0);
-                            pauseMenuColor = new Color(255, 255, 255);
-                            break;
-                        case ColorScheme.Beach:
-                            mouseHitbox.Color = new Color(45, 105, 174);
-                            TextColor = new Color(0, 183, 45);
-                            LaserColor = new Color(45, 105, 174);
-                            WallColor = new Color(45, 105, 174);
-                            OuterWallColor = new Color(30, 44, 96);
-                            BackgroundColor = new Color(240, 210, 150);
-                            pauseMenuColor = new Color(54, 54, 54);
-                            break;
-                        case ColorScheme.Gingerbread:
-                            mouseHitbox.Color = new Color(50, 20, 0);
-                            TextColor = new Color(50, 20, 0);
-                            LaserColor = new Color(50, 20, 0);
-                            WallColor = Color.White;
-                            OuterWallColor = new Color(40, 10, 0);
-                            BackgroundColor = new Color(80, 50, 20);
-                            pauseMenuColor = new Color(100, 100, 100);
-                            break;
-                        case ColorScheme.School:
-                            mouseHitbox.Color = Color.Black;
-                            TextColor = Color.Black;
-                            LaserColor = Color.Black;
-                            WallColor = new Color(10, 10, 10);
-                            OuterWallColor = new Color(20, 20, 20);
-                            BackgroundColor = new Color(30, 30, 30);
-                            pauseMenuColor = new Color(100, 100, 100);
-                            break;
-                    }
+                    WallColor = wallColors[colorScheme];
+                    OuterWallColor = outerWallColors[colorScheme];
+                    BackgroundColor = backgroundColors[colorScheme];
+                    TextColor = textColors[colorScheme];
+                    LaserColor = laserColors[colorScheme];
+                    EndGameColor = endGameColors[colorScheme];
+                    pauseMenuColor = pauseMenuColors[colorScheme];
+                    mouseHitbox.Color = mouseHitboxColors[colorScheme];
                     colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
                 #endregion
@@ -447,7 +471,7 @@ namespace On_the_Line
                         }
                     }
                     #endregion
-                #region Checks Shootstyle Buttoni
+                    #region Checks Shootstyle Buttoni
                     shootStyleButton.Update(TextColor);
                     if (shootStyleButton.Clicked)
                     {
@@ -596,7 +620,6 @@ namespace On_the_Line
                 }
             }
             #region Check Keyboard
-            ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.M) && !lastKs.IsKeyDown(Keys.M))
             {
                 if (screen == Screen.OptionsMenu)
@@ -698,7 +721,7 @@ namespace On_the_Line
                     {
                         pauseMenu.Speed.X = -1 * GlobalScaleFactor;
                     }
-                    else if (pauseMenu.Hovered)
+                    else if (pauseMenu.Hovered && Mouse.GetState().X < 500 + 2 * FillerSpaceOnSide)
                     {
                         if (pauseMenu.Position.X > 170 * GlobalScaleFactor + 2 * FillerSpaceOnSide)
                         {
@@ -772,6 +795,9 @@ namespace On_the_Line
                     }
                 }
                 pauseMenu.Position.X += pauseMenu.Speed.X;
+                colorButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 290 * GlobalScaleFactor);
+                obstacleSizeButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 550 * GlobalScaleFactor);
+                backButton.Position = inGameOptionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
             }
             else if (screen == Screen.InGameOptionsMenu)
             {
@@ -787,7 +813,6 @@ namespace On_the_Line
                 colorButton.Update(TextColor);
                 if (colorButton.Clicked)
                 {
-                    EndGameColor = Color.White;
                     if (colorScheme == ColorScheme.School)
                     {
                         colorScheme = ColorScheme.Default;
@@ -796,55 +821,14 @@ namespace On_the_Line
                     {
                         colorScheme++;
                     }
-                    switch (colorScheme)
-                    {
-                        case ColorScheme.Default:
-                            mouseHitbox.Color = Color.LightGray;
-                            TextColor = Color.Red;
-                            LaserColor = Color.Red;
-                            WallColor = Color.Black;
-                            OuterWallColor = new Color(20, 20, 20);
-                            BackgroundColor = Color.White;
-                            EndGameColor = Color.Black;
-                            pauseMenuColor = Color.LightGray;
-                            break;
-                        case ColorScheme.Ice:
-                            mouseHitbox.Color = new Color(255, 150, 0);
-                            TextColor = new Color(255, 150, 0);
-                            LaserColor = new Color(255, 150, 0);
-                            WallColor = new Color(30, 220, 230);
-                            OuterWallColor = new Color(37, 37, 37);
-                            BackgroundColor = new Color(0, 0, 0);
-                            pauseMenuColor = new Color(255, 255, 255);
-                            break;
-                        case ColorScheme.Beach:
-                            mouseHitbox.Color = new Color(45, 105, 174);
-                            TextColor = new Color(0, 183, 45);
-                            LaserColor = new Color(45, 105, 174);
-                            WallColor = new Color(45, 105, 174);
-                            OuterWallColor = new Color(30, 44, 96);
-                            BackgroundColor = new Color(240, 210, 150);
-                            pauseMenuColor = new Color(54, 54, 54);
-                            break;
-                        case ColorScheme.Gingerbread:
-                            mouseHitbox.Color = new Color(50, 20, 0);
-                            TextColor = new Color(50, 20, 0);
-                            LaserColor = new Color(50, 20, 0);
-                            WallColor = Color.White;
-                            OuterWallColor = new Color(40, 10, 0);
-                            BackgroundColor = new Color(80, 50, 20);
-                            pauseMenuColor = new Color(100, 100, 100);
-                            break;
-                        case ColorScheme.School:
-                            mouseHitbox.Color = Color.Black;
-                            TextColor = Color.Black;
-                            LaserColor = Color.Black;
-                            WallColor = new Color(10, 10, 10);
-                            OuterWallColor = new Color(20, 20, 20);
-                            BackgroundColor = new Color(30, 30, 30);
-                            pauseMenuColor = new Color(100, 100, 100);
-                            break;
-                    }
+                    WallColor = wallColors[colorScheme];
+                    OuterWallColor = outerWallColors[colorScheme];
+                    BackgroundColor = backgroundColors[colorScheme];
+                    TextColor = textColors[colorScheme];
+                    LaserColor = laserColors[colorScheme];
+                    EndGameColor = endGameColors[colorScheme];
+                    pauseMenuColor = pauseMenuColors[colorScheme];
+                    mouseHitbox.Color = mouseHitboxColors[colorScheme];
                     colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
                 #endregion
@@ -915,13 +899,13 @@ namespace On_the_Line
             {
                 obstacle.Draw(generalSpriteBatch);
             }
+            colorButton.Draw(generalSpriteBatch);
+            obstacleSizeButton.Draw(generalSpriteBatch);
             if (screen == Screen.InGameOptionsMenu)
             {
                 mouseHitbox.Draw(generalSpriteBatch);
                 pauseMenu.Draw(generalSpriteBatch);
                 optionsButton.Draw(generalSpriteBatch);
-                colorButton.Draw(generalSpriteBatch);
-                obstacleSizeButton.Draw(generalSpriteBatch);
                 backButton.Draw(generalSpriteBatch);
             }
             if (screen == Screen.MainMenu || screen == Screen.OptionsMenu)
@@ -931,8 +915,6 @@ namespace On_the_Line
                 optionsButton.Draw(generalSpriteBatch);
                 title.Draw(generalSpriteBatch);
                 // Screen 2
-                colorButton.Draw(generalSpriteBatch);
-                obstacleSizeButton.Draw(generalSpriteBatch);
                 gamemodeButton.Draw(generalSpriteBatch);
                 shootStyleButton.Draw(generalSpriteBatch);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Num of Bullets: {mouseHitbox.stats.Item2}"), shootStyleButton.Position + new Vector2(0, 80 * GlobalScaleFactor), TextColor);
@@ -977,9 +959,9 @@ namespace On_the_Line
                 }
                 else
                 {
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{obstacles.Count}"), new Vector2(0, 950 * GlobalScaleFactor), TextColor);
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"Score: {(int)score.TotalSeconds}"), new Vector2(380 * GlobalScaleFactor, 950 * GlobalScaleFactor), TextColor);
-                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240 * GlobalScaleFactor, 950 * GlobalScaleFactor), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{obstacles.Count}"), new Vector2(0 + FillerSpaceOnSide, 950 * GlobalScaleFactor), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"Score: {(int)score.TotalSeconds}"), new Vector2(380 * GlobalScaleFactor + FillerSpaceOnSide, 950 * GlobalScaleFactor), TextColor);
+                    generalSpriteBatch.DrawString(infoGameFont, string.Format($"{laserCount}"), new Vector2(240 * GlobalScaleFactor + FillerSpaceOnSide, 950 * GlobalScaleFactor), TextColor);
                 }
                 pauseMenu.Draw(generalSpriteBatch);
                 optionsButton.Draw(generalSpriteBatch);

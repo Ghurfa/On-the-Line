@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Button.cs" />
     <Compile Include="Checkbox.cs" />
+    <Compile Include="PaletteSelector.cs" />
     <Compile Include="ColorScheme.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Screen.cs" />
