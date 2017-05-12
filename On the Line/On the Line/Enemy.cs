@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace On_the_Line
 {
-    public class Enemy:MouseHitbox
+    public class Enemy:Player
     {
         Texture2D _laserTexture;
         bool aims;
@@ -59,7 +59,7 @@ namespace On_the_Line
                 }
                 if (_rams)
                 {
-                    MouseHitbox MH = OnTheLine.mouseHitbox;
+                    Player MH = OnTheLine.player;
                     if (aims && Math.Abs(Position.Y - MH.Position.Y) < 250 && !OnTheLine.isPaused)
                     {
                         Position.X += (MH.Position.X - Position.X) / 30;
@@ -90,7 +90,7 @@ namespace On_the_Line
                         {
                             lasers.Remove(lasers[i]);
                         }
-                        if (laser.Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox) && OnTheLine.screen == Screen.GameScreen)
+                        if (laser.Hitbox.Intersects(OnTheLine.player.Hitbox) && OnTheLine.screen == Screen.GameScreen)
                         {
                             lasers.Clear();
                             OnTheLine.isLoading = true;

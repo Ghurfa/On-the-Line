@@ -11,7 +11,6 @@ namespace On_the_Line
     class Obstacles:Sprite
     {
         public Vector2 StartPosition;
-        public Vector2 Size;
         public bool Breaks;
         public bool Indestrucable;
         public int MaxMove;
@@ -90,7 +89,7 @@ namespace On_the_Line
                     Position += new Vector2(496, 0);
                 }
                 Position -= new Vector2(SlideSpeed, 0);
-                if ((OnTheLine.gameMode == GameMode.Spotlight && !Hitbox.Intersects(OnTheLine.mouseHitbox.Hitbox)))
+                if ((OnTheLine.gameMode == GameMode.Spotlight && !Hitbox.Intersects(OnTheLine.player.Hitbox)))
                 {
                     Show = false;
                 }
@@ -102,25 +101,25 @@ namespace On_the_Line
                 {
                     Show = true;
                 }
-                for (int i = 0; i < OnTheLine.mouseHitbox.lasers.Count; i++)
+                for (int i = 0; i < OnTheLine.player.lasers.Count; i++)
                 {
-                    Laser laser = OnTheLine.mouseHitbox.lasers[i];
+                    Laser laser = OnTheLine.player.lasers[i];
                     if (laser.Hitbox.Intersects(Hitbox))
                     {
                         if (OnTheLine.gameMode == GameMode.Darkmode && !Show)
                         {
-                            OnTheLine.mouseHitbox.lasers[i]._lives--;
+                            OnTheLine.player.lasers[i]._lives--;
                             Show = true;
                         }
-                        if (OnTheLine.mouseHitbox.lasers[i]._lives <= 0 || Indestrucable)
+                        if (OnTheLine.player.lasers[i]._lives <= 0 || Indestrucable)
                         {
-                            OnTheLine.mouseHitbox.lasers.Remove(laser);
+                            OnTheLine.player.lasers.Remove(laser);
                         }
                     }
                 }
                 if (OnTheLine.gameMode == GameMode.Spotlight)
                 {
-                    if (Hitbox.Intersects(OnTheLine.mouseHitbox.Spotlight) || OnTheLine.hasLost)
+                    if (Hitbox.Intersects(OnTheLine.player.Spotlight) || OnTheLine.hasLost)
                     {
                         Show = true;
                     }

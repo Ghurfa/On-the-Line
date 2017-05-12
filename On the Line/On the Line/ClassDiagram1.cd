@@ -28,11 +28,11 @@
       <FileName>Laser.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="On_the_Line.MouseHitbox" Collapsed="true">
+  <Class Name="On_the_Line.Player" Collapsed="true">
     <Position X="5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQQAEAQCIAAIoUEEAAAAAgQAAAAQAAACAAEBCBAAAA=</HashCode>
-      <FileName>MouseHitbox.cs</FileName>
+      <FileName>Player.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="On_the_Line.Obstacles" Collapsed="true">

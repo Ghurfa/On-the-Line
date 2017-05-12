@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace On_the_Line
 {
-    public class MouseHitbox : Sprite
+    public class Player : Sprite
     {
         MouseState mouseState;
         MouseState lastMouseState;
@@ -28,7 +28,7 @@ namespace On_the_Line
         public TimeSpan laserElapsedTime;
         public Tuple<TimeSpan, int, int, string, string, string> stats = new Tuple<TimeSpan, int, int, string, string, string>(new TimeSpan(0, 0, 0, 1, 0), 0, 0, "", "", "");//LaserCooldown, NumOfBullets, BulletPenetration, BulletSpeed, Pros, Cons
 
-        public MouseHitbox(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
+        public Player(Color color, Texture2D texture, Texture2D spotlightTexure, bool showWhenLose, Vector2 position, int shootStyle = 0, int direction = 0)
             : base(position, texture, color)
         {
             Color = color;
@@ -164,7 +164,7 @@ namespace On_the_Line
         public void fireLasers(Texture2D texture, Color laserColor, bool aims)
         {
             Vector2 startPos = new Vector2(Position.X + Texture.Width / 2 - 2, Position.Y + Texture.Height / 2 - 2);
-            int laserCount = OnTheLine.mouseHitbox.lasers.Count;
+            int laserCount = OnTheLine.player.lasers.Count;
             foreach (Enemy enemy in OnTheLine.enemies)
             {
                 laserCount += enemy.lasers.Count();
@@ -173,8 +173,8 @@ namespace On_the_Line
             {
                 if (aims)
                 {
-                    int aimX = ((int)OnTheLine.mouseHitbox.Hitbox.X - (int)startPos.X) / 25;
-                    int aimY = ((int)OnTheLine.mouseHitbox.Hitbox.Y - (int)startPos.Y) / 25;
+                    int aimX = ((int)OnTheLine.player.Hitbox.X - (int)startPos.X) / 25;
+                    int aimY = ((int)OnTheLine.player.Hitbox.Y - (int)startPos.Y) / 25;
                     lasers.Add(new Laser(startPos, aimX, aimY, texture, 1, laserColor));
                 }
                 else

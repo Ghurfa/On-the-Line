@@ -80,7 +80,7 @@
     <Compile Include="Screen.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Laser.cs" />
-    <Compile Include="MouseHitbox.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Obstacles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

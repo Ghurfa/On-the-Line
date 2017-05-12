@@ -16,7 +16,7 @@ namespace On_the_Line
         int rows;
         int columns;
         int margin;
-        Color backgroundColor;
+        Color selection;
         public PaletteSelector(List<Color> colors, Vector2 buttonSize, int rows, int columns, int margin, Color backgroundColor, Texture2D pixelTexture, Vector2 position)
             :base(position, pixelTexture, Color.White)
         {
@@ -39,16 +39,30 @@ namespace On_the_Line
             this.rows = rows;
             this.columns = columns; 
             this.margin = margin;
-            this.backgroundColor = backgroundColor;
             background = new Sprite(position, pixelTexture, backgroundColor);
+            selection = buttonColors[0];
         }
         public new void Update()
         {
             for(int i = 0; i < colorButtons.Count(); i++)
             {
                 Button colorButton = colorButtons[i];
-                colorButton.Update(buttonColors[i]);
+                colorButton.Size = buttonSize;
+                int column = i % columns;
+                int row = (int)(i / columns);
+                colorButton.Position = Position + new Vector2(column * buttonSize.X + (column + 1) * margin, row * buttonSize.Y + (row + 1) * margin);
+                colorButton.Update(buttonColors[i], false);
+                if (colorButton.Clicked) 
+                {
+                    selection = buttonColors[i];
+                }
             }
+            background.Position = Position;
+            background.Color = selection;
+        }
+        public Color getColor()
+        {
+            return selection;
         }
         public new void Draw(SpriteBatch spriteBatch)
         {

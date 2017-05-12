@@ -14,12 +14,14 @@ namespace On_the_Line
         public Vector2 Speed;
         public Color Color;
         public Vector2 Position;
+        public Vector2 Size;
 
         public Sprite(Vector2 position, Texture2D texture, Color color)
         {
             Position = position;
             Texture = texture;
             Color = color;
+            Size = new Vector2(texture.Width, texture.Height);
         }
         public Vector2 RelativePositon (Vector2 posToCompareAgainst)
         {

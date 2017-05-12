@@ -19,12 +19,12 @@ namespace On_the_Line
             : base(Position, texture, Color.White)
         {
         }
-        public void Update(Color color, bool turnTranslucent = true)
+        public void Update(Color color, bool turnTranslucent = true, bool resizeHitbox = true)
         {
             Color = color;
             MouseState MS = Mouse.GetState();
             Hovered = Hitbox.Contains(MS.X, MS.Y);
-            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * OnTheLine.GlobalScaleFactor));
+            Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Size.X * OnTheLine.GlobalScaleFactor), (int)(Size.Y * OnTheLine.GlobalScaleFactor));
             if (Hovered)
             {
                 if (turnTranslucent)
