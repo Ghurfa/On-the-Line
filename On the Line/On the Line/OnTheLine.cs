@@ -44,7 +44,17 @@ namespace On_the_Line
         Dictionary<ColorScheme, Color> pauseMenuColors = new Dictionary<ColorScheme, Color>();
         Dictionary<ColorScheme, Color> mouseHitboxColors = new Dictionary<ColorScheme, Color>();
 
+        List<Dictionary<ColorScheme, Color>> colorLists = new List<Dictionary<ColorScheme, Color>>();
+        List<PaletteSelector> colorSelectors = new List<PaletteSelector>();
+
         PaletteSelector wallColorSelector;
+        PaletteSelector outerWallColorSelector;
+        PaletteSelector backgroundColorSelector;
+        PaletteSelector textColorSelector;
+        PaletteSelector laserColorSelector;
+        PaletteSelector endGameColorSelector;
+        PaletteSelector pauseMenuColorSelector;
+        PaletteSelector mouseHitboxColorSelector;
 
         Random random = new Random();
 
@@ -190,6 +200,30 @@ namespace On_the_Line
             mouseHitboxColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
             mouseHitboxColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
             mouseHitboxColors.Add(ColorScheme.School, Color.Black);
+
+            //Color Palette Initialization            
+            List<Color> colorsToAdd = new List<Color>();
+            colorLists.Add(wallColors);
+            colorLists.Add(outerWallColors);
+            colorLists.Add(backgroundColors);
+            colorLists.Add(textColors);
+            colorLists.Add(laserColors);
+            colorLists.Add(endGameColors);
+            colorLists.Add(pauseMenuColors);
+            colorLists.Add(mouseHitboxColors);
+            for(int i = 0; i < 8; i++)
+            {
+                colorsToAdd = new List<Color>();
+                Dictionary<ColorScheme, Color> colorList = colorLists[i];
+                
+                colorsToAdd.Add(colorList[ColorScheme.Default]);
+                colorsToAdd.Add(colorList[ColorScheme.Ice]);
+                colorsToAdd.Add(colorList[ColorScheme.Beach]);
+                colorsToAdd.Add(colorList[ColorScheme.Gingerbread]);
+                colorsToAdd.Add(colorList[ColorScheme.School]);
+
+                colorSelectors.Add(new PaletteSelector(colorsToAdd, new Vector2(20, 20), 5, 1, 10, Color.Purple, Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
+            }
         }
 
         protected override void UnloadContent()
@@ -413,6 +447,7 @@ namespace On_the_Line
                 title.Position = new Vector2(90 * GlobalScaleFactor + FillerSpaceOnSide, 30 * GlobalScaleFactor - Math.Abs(menuScreen.Position.X));
                 title.Color = TextColor;
                 //Screen 2
+                /*
                 #region Checks Color Button
                 colorButton.Update(TextColor);
                 if (colorButton.Clicked)
@@ -435,7 +470,11 @@ namespace On_the_Line
                     mouseHitbox.Color = mouseHitboxColors[colorScheme];
                     colorButton.Texture = Content.Load<Texture2D>(string.Format("{0}Button", colorScheme));
                 }
-                #endregion
+                #endregion*/
+                foreach(PaletteSelector selector in colorSelectors)
+                {
+                    selector.Update();
+                }
                 #region Checks Gamemode Button
                 if (lastScreen != Screen.GameScreen)
                 {
@@ -505,10 +544,9 @@ namespace On_the_Line
                 {
                     setScreen(Screen.MainMenu);
                 }
-                colorButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 290 * GlobalScaleFactor);
-                gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 420 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
-                obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 550 * GlobalScaleFactor);
-                shootStyleButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 680 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
+                gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
+                obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 630 * GlobalScaleFactor);
+                shootStyleButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 720 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
                 backButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
             }
             int highestObstacleY = 10;
@@ -899,7 +937,7 @@ namespace On_the_Line
             {
                 obstacle.Draw(generalSpriteBatch);
             }
-            colorButton.Draw(generalSpriteBatch);
+            //colorButton.Draw(generalSpriteBatch);
             obstacleSizeButton.Draw(generalSpriteBatch);
             if (screen == Screen.InGameOptionsMenu)
             {
@@ -913,6 +951,10 @@ namespace On_the_Line
                 mouseHitbox.Draw(generalSpriteBatch);
                 startButton.Draw(generalSpriteBatch);
                 optionsButton.Draw(generalSpriteBatch);
+                foreach(PaletteSelector selector in colorSelectors)
+                {
+                    selector.Draw(generalSpriteBatch);
+                }
                 title.Draw(generalSpriteBatch);
                 // Screen 2
                 gamemodeButton.Draw(generalSpriteBatch);

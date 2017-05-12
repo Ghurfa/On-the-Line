@@ -9,8 +9,8 @@ namespace On_the_Line
 {
     public class PaletteSelector:Sprite
     {
-        List<Button> colorButtons = new List<Button>();
-        List<Color> buttonColors = new List<Color>();
+        List<Button> colorButtons;
+        List<Color> buttonColors;
         Sprite background;
         Vector2 buttonSize;
         int rows;
@@ -21,6 +21,8 @@ namespace On_the_Line
             :base(position, pixelTexture, Color.White)
         {
             Vector2 spawnPosition = position;
+            buttonColors = new List<Color>();
+            colorButtons = new List<Button>();
             for (int x = 0; x < columns; x++)
             {
                 spawnPosition.Y = position.Y + margin;
@@ -40,7 +42,7 @@ namespace On_the_Line
             this.backgroundColor = backgroundColor;
             background = new Sprite(position, pixelTexture, backgroundColor);
         }
-        public void GetColor()
+        public new void Update()
         {
             for(int i = 0; i < colorButtons.Count(); i++)
             {
@@ -50,7 +52,7 @@ namespace On_the_Line
         }
         public new void Draw(SpriteBatch spriteBatch)
         {
-            background.Draw(spriteBatch, new Vector2(buttonSize.X * columns + margin * (columns + 1), buttonSize.Y * rows + margin * (rows + 1)) * OnTheLine.GlobalScaleFactor);
+             background.Draw(spriteBatch, new Vector2(buttonSize.X * columns + margin * (columns + 1), buttonSize.Y * rows + margin * (rows + 1)) * OnTheLine.GlobalScaleFactor);
             foreach (Button colorButton in colorButtons)
             {
                 colorButton.Draw(spriteBatch, buttonSize * OnTheLine.GlobalScaleFactor);
