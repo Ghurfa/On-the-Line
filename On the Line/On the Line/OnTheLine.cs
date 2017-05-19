@@ -171,7 +171,7 @@ namespace On_the_Line
             colorLists.Add(Content.Load<Texture2D>("PlayerColors"));
             for (int i = 0; i < 8; i++)
             {
-                colorSelectors.Add(new PaletteSelector(colorLists[i], new Vector2(20, 20), 5, 1, 5, Color.Black, Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
+                colorSelectors.Add(new PaletteSelector(colorLists[i], new Vector2(20, 20), 6, 1, 5, Color.Black, Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
             }
         }
 
