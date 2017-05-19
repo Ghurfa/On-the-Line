@@ -17,7 +17,7 @@ namespace On_the_Line
         int columns;
         int margin;
         Color selection;
-        public PaletteSelector(List<Color> colors, Vector2 buttonSize, int rows, int columns, int margin, Color backgroundColor, Texture2D pixelTexture, Vector2 position)
+        public PaletteSelector(Texture2D colors, Vector2 buttonSize, int rows, int columns, int margin, Color backgroundColor, Texture2D pixelTexture, Vector2 position)
             :base(position, pixelTexture, Color.White)
         {
             Vector2 spawnPosition = position;
@@ -34,7 +34,12 @@ namespace On_the_Line
                 }
                 spawnPosition.X += buttonSize.X;
             }
-            buttonColors = colors;
+            Color[] pixels = new Color[colors.Width * colors.Height];
+            colors.GetData<Color>(pixels);
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                buttonColors.Add(pixels[i]);
+            }
             this.buttonSize = buttonSize;
             this.rows = rows;
             this.columns = columns; 

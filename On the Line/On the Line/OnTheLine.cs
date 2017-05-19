@@ -159,70 +159,19 @@ namespace On_the_Line
             leftSideFiller = new Sprite(new Vector2(0, 0), Content.Load<Texture2D>("Pixel"), OuterWallColor);
             rightSideFiller = new Sprite(new Vector2(500 * GlobalScaleFactor + FillerSpaceOnSide, 0), Content.Load<Texture2D>("Pixel"), OuterWallColor);
 
-            //Color schemes initialization
-            wallColors.Add(ColorScheme.Default, Color.Black);
-            wallColors.Add(ColorScheme.Ice, new Color(30, 220, 230));
-            wallColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
-            wallColors.Add(ColorScheme.Gingerbread, Color.White);
-            wallColors.Add(ColorScheme.School, new Color(10, 10, 10));
-            outerWallColors.Add(ColorScheme.Default, new Color(20, 20, 20));
-            outerWallColors.Add(ColorScheme.Ice, new Color(37, 37, 37));
-            outerWallColors.Add(ColorScheme.Beach, new Color(30, 44, 96));
-            outerWallColors.Add(ColorScheme.Gingerbread, new Color(40, 10, 0));
-            outerWallColors.Add(ColorScheme.School, new Color(20, 20, 20));
-            backgroundColors.Add(ColorScheme.Default, Color.White);
-            backgroundColors.Add(ColorScheme.Ice, Color.Black);
-            backgroundColors.Add(ColorScheme.Beach, new Color(240, 210, 150));
-            backgroundColors.Add(ColorScheme.Gingerbread, new Color(80, 50, 20));
-            backgroundColors.Add(ColorScheme.School, new Color(30, 30, 30));
-            textColors.Add(ColorScheme.Default, Color.Red);
-            textColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
-            textColors.Add(ColorScheme.Beach, new Color(0, 183, 45));
-            textColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
-            textColors.Add(ColorScheme.School, Color.Black);
-            laserColors.Add(ColorScheme.Default, Color.Red);
-            laserColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
-            laserColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
-            laserColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
-            laserColors.Add(ColorScheme.School, Color.Black);
-            endGameColors.Add(ColorScheme.Default, Color.Black);
-            endGameColors.Add(ColorScheme.Ice, Color.White);
-            endGameColors.Add(ColorScheme.Beach, Color.White);
-            endGameColors.Add(ColorScheme.Gingerbread, Color.White);
-            endGameColors.Add(ColorScheme.School, Color.White);
-            pauseMenuColors.Add(ColorScheme.Default, Color.LightGray);
-            pauseMenuColors.Add(ColorScheme.Ice, new Color(255, 255, 255));
-            pauseMenuColors.Add(ColorScheme.Beach, new Color(54, 54, 54));
-            pauseMenuColors.Add(ColorScheme.Gingerbread, new Color(100, 100, 100));
-            pauseMenuColors.Add(ColorScheme.School, new Color(100, 100, 100));
-            playerColors.Add(ColorScheme.Default, Color.LightGray);
-            playerColors.Add(ColorScheme.Ice, new Color(255, 150, 0));
-            playerColors.Add(ColorScheme.Beach, new Color(45, 105, 174));
-            playerColors.Add(ColorScheme.Gingerbread, new Color(50, 20, 0));
-            playerColors.Add(ColorScheme.School, Color.Black);
-
             //Color Palette Initialization            
-            List<Color> colorsToAdd = new List<Color>();
-            colorLists.Add(wallColors);
-            colorLists.Add(outerWallColors);
-            colorLists.Add(backgroundColors);
-            colorLists.Add(textColors);
-            colorLists.Add(laserColors);
-            colorLists.Add(endGameColors);
-            colorLists.Add(pauseMenuColors);
-            colorLists.Add(playerColors);
-            for(int i = 0; i < 8; i++)
+            List<Texture2D> colorLists = new List<Texture2D>();
+            colorLists.Add(Content.Load<Texture2D>("WallColors"));
+            colorLists.Add(Content.Load<Texture2D>("OuterWallColors"));
+            colorLists.Add(Content.Load<Texture2D>("BackgroundColors"));
+            colorLists.Add(Content.Load<Texture2D>("TextColors"));
+            colorLists.Add(Content.Load<Texture2D>("LaserColors"));
+            colorLists.Add(Content.Load<Texture2D>("EndGameColors"));
+            colorLists.Add(Content.Load<Texture2D>("PauseMenuColors"));
+            colorLists.Add(Content.Load<Texture2D>("PlayerColors"));
+            for (int i = 0; i < 8; i++)
             {
-                colorsToAdd = new List<Color>();
-                Dictionary<ColorScheme, Color> colorList = colorLists[i];
-                
-                colorsToAdd.Add(colorList[ColorScheme.Default]);
-                colorsToAdd.Add(colorList[ColorScheme.Ice]);
-                colorsToAdd.Add(colorList[ColorScheme.Beach]);
-                colorsToAdd.Add(colorList[ColorScheme.Gingerbread]);
-                colorsToAdd.Add(colorList[ColorScheme.School]);
-
-                colorSelectors.Add(new PaletteSelector(colorsToAdd, new Vector2(20, 20), 5, 1, 5, colorsToAdd[0], Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
+                colorSelectors.Add(new PaletteSelector(colorLists[i], new Vector2(20, 20), 5, 1, 5, Color.Black, Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
             }
         }
 
