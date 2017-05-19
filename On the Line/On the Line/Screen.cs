@@ -11,6 +11,7 @@ namespace On_the_Line
         ScreenTransition,
         GameScreen,
         OptionsMenu,
-        InGameOptionsMenu
+        InGameOptionsMenu,
+        LevelsMenu
     }
 }

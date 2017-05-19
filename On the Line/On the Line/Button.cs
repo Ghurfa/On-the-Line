@@ -13,7 +13,7 @@ namespace On_the_Line
         MouseState lastMS;
         public bool Hovered;
         public bool Clicked;
-        public bool Released;
+        bool pressed;
 
         public Button(Vector2 Position, Texture2D texture)
             : base(Position, texture, Color.White)
@@ -31,7 +31,7 @@ namespace On_the_Line
                 {
                     Color.A = 128;
                 }
-                if (MS.LeftButton == ButtonState.Pressed && lastMS.LeftButton == ButtonState.Released && Speed == new Vector2(0, 0))
+                if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed)
                 {
                     Clicked = true;
                 }
@@ -39,19 +39,10 @@ namespace On_the_Line
                 {
                     Clicked = false;
                 }
-                if (MS.LeftButton == ButtonState.Released && lastMS.LeftButton == ButtonState.Pressed)
-                {
-                    Released = true;
-                }
-                else
-                {
-                    Released = false;
-                }
             }
             else
             {
                 Clicked = false;
-                Released = false;
             }
             lastMS = MS;
         }
