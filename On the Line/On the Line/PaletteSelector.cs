@@ -52,10 +52,10 @@ namespace On_the_Line
             for(int i = 0; i < colorButtons.Count(); i++)
             {
                 Button colorButton = colorButtons[i];
-                colorButton.Size = buttonSize;
+                colorButton.Size = buttonSize * OnTheLine.GlobalScaleFactor;
                 int column = i % columns;
                 int row = (int)(i / columns);
-                colorButton.Position = Position + new Vector2(column * buttonSize.X + (column + 1) * margin, row * buttonSize.Y + (row + 1) * margin);
+                colorButton.Position = Position + new Vector2(column * colorButton.Size.X + (column + 1) * margin * OnTheLine.GlobalScaleFactor, row * colorButton.Size.Y + (row + 1) * margin * OnTheLine.GlobalScaleFactor);
                 colorButton.Update(buttonColors[i], false);
                 if (colorButton.Clicked) 
                 {

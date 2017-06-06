@@ -22,7 +22,7 @@ namespace On_the_Line
         int variation;
         int selection;
         Rotation rotation;
-        public ArrowSelector(Vector2 position, Texture2D decreaseTexture, Texture2D increaseTexture, bool loop, int minValue, int maxValue, int variation, int defaultSelection, Rotation rotation)
+        public ArrowSelector(Vector2 position, Texture2D increaseTexture, Texture2D decreaseTexture, bool loop, int minValue, int maxValue, int variation, int defaultSelection, Rotation rotation)
             : base(position, decreaseTexture, Color.White)
         {
             this.loop = loop;
@@ -41,10 +41,10 @@ namespace On_the_Line
                 decreaseButton = new Button(position + new Vector2(0, increaseTexture.Height + 50), decreaseTexture);
             }
         }
-        public new void Update()
+        public void Update(Color buttonColor)
         {
-            increaseButton.Update(Color.White);
-            decreaseButton.Update(Color.White);
+            increaseButton.Update(buttonColor);
+            decreaseButton.Update(buttonColor);
             if (increaseButton.Clicked)
             {
                 if (selection <= maxValue - variation)
@@ -67,6 +67,16 @@ namespace On_the_Line
                     selection = maxValue;
                 }
             }
+            if (rotation == Rotation.Horizontal)
+            {
+                decreaseButton.Position = Position;
+                increaseButton.Position = Position + new Vector2(decreaseButton.Texture.Width + 50, 0) * OnTheLine.GlobalScaleFactor;
+            }
+            else
+            {
+                increaseButton.Position = Position;
+                decreaseButton.Position = Position + new Vector2(0, increaseButton.Texture.Height + 50) * OnTheLine.GlobalScaleFactor;
+            }
         }
         public new void Draw(SpriteBatch spriteBatch)
         {
@@ -79,7 +89,7 @@ namespace On_the_Line
             }
             else
             {
-                textPosition = Position + new Vector2(0, increaseButton.Texture.Height);
+                textPosition = Position + new Vector2(10 * OnTheLine.GlobalScaleFactor, increaseButton.Texture.Height + 10 * OnTheLine.GlobalScaleFactor);
             }
             spriteBatch.DrawString(OnTheLine.endGameFont, selection.ToString(), textPosition, OnTheLine.TextColor);
         }

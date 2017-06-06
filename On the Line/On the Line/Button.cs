@@ -13,13 +13,12 @@ namespace On_the_Line
         MouseState lastMS;
         public bool Hovered;
         public bool Clicked;
-        bool pressed;
 
         public Button(Vector2 Position, Texture2D texture)
             : base(Position, texture, Color.White)
         {
         }
-        public void Update(Color color, bool turnTranslucent = true, bool resizeHitbox = true)
+        public void Update(Color color, bool turnTranslucent = true)
         {
             Color = color;
             MouseState MS = Mouse.GetState();

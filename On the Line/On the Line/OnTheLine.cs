@@ -86,6 +86,9 @@ namespace On_the_Line
         Button obstacleSizeButton;
         Button restartButton;
         Button mainMenuButton;
+        Button levelStartButton;
+
+        ArrowSelector levelSelector;
 
         Button pauseMenu;
 
@@ -97,7 +100,6 @@ namespace On_the_Line
         public static int GlobalRotation = 0;
         public static float GlobalScaleFactor = 1f;
         public static int FillerSpaceOnSide = 50;
-        ArrowSelector testArrowSelector;
         #endregion
         public OnTheLine()
         {
@@ -143,6 +145,8 @@ namespace On_the_Line
             backButton = new Button(new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor), Content.Load<Texture2D>("BackButton"));
             restartButton = new Button(new Vector2(-500 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor), Content.Load<Texture2D>("RestartButton"));
             mainMenuButton = new Button(new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor), Content.Load<Texture2D>("MainMenuButton"));
+            levelStartButton = new Button(new Vector2(725 * GlobalScaleFactor + FillerSpaceOnSide, 750 * GlobalScaleFactor), Content.Load<Texture2D>("GoButton"));
+
             pauseMenu = new Button(new Vector2(500 * GlobalScaleFactor + FillerSpaceOnSide, 250 * GlobalScaleFactor), Content.Load<Texture2D>("PauseMenu"));
 
             //Sprite initialization
@@ -169,7 +173,9 @@ namespace On_the_Line
             {
                 colorSelectors.Add(new PaletteSelector(colorLists[i], new Vector2(20, 20), 6, 1, 5, Color.Black, Content.Load<Texture2D>("Pixel"), new Vector2(175 + 30 * i, 370)));
             }
-            testArrowSelector = new ArrowSelector(new Vector2(100, 200), Content.Load<Texture2D>("DownArrow"), Content.Load<Texture2D>("UpArrow"), true, 10, 20, 1, 15, ArrowSelector.Rotation.Vertical);
+
+            //Level Selector Initialization
+            levelSelector = new ArrowSelector(new Vector2(260, 500), Content.Load<Texture2D>("UpArrow"), Content.Load<Texture2D>("DownArrow"), false, 1, 2, 1, 1, ArrowSelector.Rotation.Vertical);
         }
 
         protected override void UnloadContent()
@@ -338,7 +344,6 @@ namespace On_the_Line
         protected override void Update(GameTime gameTime)
         {
             ks = Keyboard.GetState();
-            testArrowSelector.Update();
             menuScreen.Update();
             optionsScreen.Update();
             if (gameMode == GameMode.Darkmode || gameMode == GameMode.Spotlight)
@@ -370,6 +375,7 @@ namespace On_the_Line
                 menuScreen.Position.X -= slidingSpeed * GlobalScaleFactor;
                 optionsScreen.Position.X -= slidingSpeed * GlobalScaleFactor;
                 inGameOptionsScreen.Position.X -= slidingSpeed * GlobalScaleFactor;
+                levelsScreen.Position.X -= slidingSpeed * GlobalScaleFactor;
                 slidingSpeed--;
             }
             player.Update(gameTime);
@@ -494,7 +500,20 @@ namespace On_the_Line
                 gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
                 obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 630 * GlobalScaleFactor);
                 shootStyleButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 720 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
-                backButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
+
+                levelSelector.Update(TextColor);
+                levelSelector.Position = new Vector2(270 * GlobalScaleFactor + FillerSpaceOnSide, 500 * GlobalScaleFactor) - (levelsScreen.Position - new Vector2(0, 0));
+                levelStartButton.Update(TextColor);
+                levelStartButton.Position = levelsScreen.Position + new Vector2(225 * GlobalScaleFactor + FillerSpaceOnSide, 700 * GlobalScaleFactor);
+
+                if (screen == Screen.OptionsMenu)
+                {
+                    backButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
+                }
+                else
+                {
+                    backButton.Position = levelsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 900 * GlobalScaleFactor);
+                }
             }
             int highestObstacleY = 10;
             if (!hasLost && !isLoading)
@@ -909,6 +928,12 @@ namespace On_the_Line
                 generalSpriteBatch.DrawString(statsText, string.Format($"Pros: {player.stats.Item5}"), shootStyleButton.Position + new Vector2(0, 140 * GlobalScaleFactor), TextColor);
                 generalSpriteBatch.DrawString(statsText, string.Format($"Cons: {player.stats.Item6}"), shootStyleButton.Position + new Vector2(0, 155 * GlobalScaleFactor), TextColor);
                 player.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 * GlobalScaleFactor - Content.Load<Texture2D>("Ball").Width / 2 * GlobalScaleFactor, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 * GlobalScaleFactor - (Content.Load<Texture2D>("Ball").Height / 2 * GlobalScaleFactor));
+
+                generalSpriteBatch.DrawString(endGameFont, "Choose a level", levelsScreen.Position + new Vector2(150 * GlobalScaleFactor + FillerSpaceOnSide, 400 * GlobalScaleFactor), TextColor);
+                generalSpriteBatch.DrawString(endGameFont, "Level", levelsScreen.Position +  new Vector2(190 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor), TextColor);
+                levelSelector.Draw(generalSpriteBatch);
+                levelStartButton.Draw(generalSpriteBatch);
+
                 backButton.Draw(generalSpriteBatch);
             }
             foreach (Enemy enemy in enemies)
@@ -965,7 +990,6 @@ namespace On_the_Line
             menuScreen.Draw(generalSpriteBatch);
             optionsScreen.Draw(generalSpriteBatch);
             inGameOptionsScreen.Draw(generalSpriteBatch);
-            testArrowSelector.Draw(generalSpriteBatch);
             generalSpriteBatch.End();
             // TODO: Add your drawing code here
 
