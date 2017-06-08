@@ -20,7 +20,7 @@ namespace On_the_Line
         int minValue;
         int maxValue;
         int variation;
-        int selection;
+        public int Selection;
         Rotation rotation;
         public ArrowSelector(Vector2 position, Texture2D increaseTexture, Texture2D decreaseTexture, bool loop, int minValue, int maxValue, int variation, int defaultSelection, Rotation rotation)
             : base(position, decreaseTexture, Color.White)
@@ -29,7 +29,7 @@ namespace On_the_Line
             this.minValue = minValue;
             this.maxValue = maxValue;
             this.variation = variation;
-            selection = defaultSelection;
+            Selection = defaultSelection;
             increaseButton = new Button(position, increaseTexture);
             this.rotation = rotation;
             if (rotation == Rotation.Horizontal)
@@ -47,24 +47,24 @@ namespace On_the_Line
             decreaseButton.Update(buttonColor);
             if (increaseButton.Clicked)
             {
-                if (selection <= maxValue - variation)
+                if (Selection <= maxValue - variation)
                 {
-                    selection += variation;
+                    Selection += variation;
                 }
                 else if (loop)
                 {
-                    selection = minValue;
+                    Selection = minValue;
                 }
             }
             else if (decreaseButton.Clicked)
             {
-                if (selection >= minValue + variation)
+                if (Selection >= minValue + variation)
                 {
-                    selection -= variation;
+                    Selection -= variation;
                 }
                 else if (loop)
                 {
-                    selection = maxValue;
+                    Selection = maxValue;
                 }
             }
             if (rotation == Rotation.Horizontal)
@@ -80,8 +80,14 @@ namespace On_the_Line
         }
         public new void Draw(SpriteBatch spriteBatch)
         {
-            increaseButton.Draw(spriteBatch);
-            decreaseButton.Draw(spriteBatch);
+            if (Selection + variation <= maxValue || loop)
+            {
+                increaseButton.Draw(spriteBatch);
+            }
+            if (Selection - variation >= minValue || loop)
+            {
+                decreaseButton.Draw(spriteBatch);
+            }
             Vector2 textPosition;
             if (rotation == Rotation.Horizontal)
             {
@@ -91,7 +97,7 @@ namespace On_the_Line
             {
                 textPosition = Position + new Vector2(10 * OnTheLine.GlobalScaleFactor, increaseButton.Texture.Height + 10 * OnTheLine.GlobalScaleFactor);
             }
-            spriteBatch.DrawString(OnTheLine.endGameFont, selection.ToString(), textPosition, OnTheLine.TextColor);
+            spriteBatch.DrawString(OnTheLine.endGameFont, Selection.ToString(), textPosition, OnTheLine.TextColor);
         }
     }
 }

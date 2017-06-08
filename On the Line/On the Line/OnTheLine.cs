@@ -35,6 +35,7 @@ namespace On_the_Line
         public static List<Enemy> enemies = new List<Enemy>();
 
         public readonly int[] difficulty = { 0, 0, 0, 0, 40, 40, 60, 60, 80, 60, 80, 80, 100, 120, 100, 100, 120, 100, 120, 100, 120, 120, 120, 200, 120, 100 };
+        public readonly int[] level1 = { 1, 2, 3, 4, 5 };
         Dictionary<ColorScheme, Color> wallColors = new Dictionary<ColorScheme, Color>();
         Dictionary<ColorScheme, Color> outerWallColors = new Dictionary<ColorScheme, Color>();
         Dictionary<ColorScheme, Color> backgroundColors = new Dictionary<ColorScheme, Color>();
@@ -94,6 +95,9 @@ namespace On_the_Line
 
         KeyboardState ks;
         KeyboardState lastKs;
+
+        int level = 1;
+        int obstaclesLoadedSoFar = 0;
 
         public static GameMode gameMode = GameMode.Regular;
         public static ColorScheme colorScheme = ColorScheme.Default;
@@ -311,6 +315,25 @@ namespace On_the_Line
                         mainMenuButton.Position = new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
                     }
                 }
+                else if (screenToSetTo == Screen.LevelGameScreen)
+                {
+                    slidingSpeed = 32;
+                    if (lastScreen != Screen.InGameOptionsMenu)
+                    {
+                        hasLost = false;
+                        score = TimeSpan.Zero;
+                        obstacles.Clear();
+                        enemies.Clear();
+                        destroyedObstacles = 0;
+                        enemiesKilled = 0;
+                        loadObstacle(500 * GlobalScaleFactor, "UpperStartingObstacle");
+                        loadObstacle(1000 * GlobalScaleFactor, string.Format("startingObstacle{0}", random.Next(1, 4)));
+                        player.canShoot = true;
+                        player = new Player(player.Color, Content.Load<Texture2D>("Ball"), Content.Load<Texture2D>("Spotlight"), true, new Vector2(238 * GlobalScaleFactor + FillerSpaceOnSide, 750 * GlobalScaleFactor));
+                        restartButton.Position = new Vector2(-500 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
+                        mainMenuButton.Position = new Vector2(750 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor);
+                    }
+                }
                 else if (screenToSetTo == Screen.OptionsMenu)
                 {
                     hasLost = false;
@@ -394,7 +417,7 @@ namespace On_the_Line
                     setScreen(Screen.ScreenTransition);
                     NextScreen = Screen.GameScreen;
                 }
-                if(levelsButton.Clicked)
+                if (levelsButton.Clicked)
                 {
                     setScreen(Screen.LevelsMenu);
                 }
@@ -412,7 +435,7 @@ namespace On_the_Line
                 optionsButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 800 * GlobalScaleFactor) - (menuScreen.Position - new Vector2(0, 0));
                 title.Position = new Vector2(90 * GlobalScaleFactor + FillerSpaceOnSide, 30 * GlobalScaleFactor - Math.Abs(menuScreen.Position.X));
                 title.Color = TextColor;
-                foreach(PaletteSelector selector in colorSelectors)
+                foreach (PaletteSelector selector in colorSelectors)
                 {
                     selector.Update();
                 }
@@ -459,7 +482,7 @@ namespace On_the_Line
                         }
                     }
                     #endregion
-                #region Checks Shootstyle Buttoni
+                    #region Checks Shootstyle Buttoni
                     shootStyleButton.Update(TextColor);
                     if (shootStyleButton.Clicked)
                     {
@@ -494,8 +517,8 @@ namespace On_the_Line
                     setScreen(Screen.MainMenu);
                 }
                 for (int i = 0; i < colorSelectors.Count(); i++)
-                { 
-                colorSelectors[i].Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide + 30 * i, 360 * GlobalScaleFactor) - optionsScreen.Position;
+                {
+                    colorSelectors[i].Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide + 30 * i, 360 * GlobalScaleFactor) - optionsScreen.Position;
                 }
                 gamemodeButton.Position = new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor) - (optionsScreen.Position - new Vector2(0, 0));
                 obstacleSizeButton.Position = optionsScreen.Position + new Vector2(125 * GlobalScaleFactor + FillerSpaceOnSide, 630 * GlobalScaleFactor);
@@ -503,8 +526,14 @@ namespace On_the_Line
 
                 levelSelector.Update(TextColor);
                 levelSelector.Position = new Vector2(270 * GlobalScaleFactor + FillerSpaceOnSide, 500 * GlobalScaleFactor) - (levelsScreen.Position - new Vector2(0, 0));
+                level = levelSelector.Selection;
                 levelStartButton.Update(TextColor);
                 levelStartButton.Position = levelsScreen.Position + new Vector2(225 * GlobalScaleFactor + FillerSpaceOnSide, 700 * GlobalScaleFactor);
+                if (levelStartButton.Clicked)
+                {
+                    setScreen(Screen.ScreenTransition);
+                    NextScreen = Screen.LevelGameScreen;
+                }
 
                 if (screen == Screen.OptionsMenu)
                 {
@@ -528,7 +557,7 @@ namespace On_the_Line
                     {
                         obstacle.Update();
                     }
-                    if (obstacle.Hitbox.Intersects(player.Hitbox) && obstacle.SlideSpeed == 0 && !isPaused && !obstacle.Gateway && screen == Screen.GameScreen)
+                    if (obstacle.Hitbox.Intersects(player.Hitbox) && obstacle.SlideSpeed == 0 && !isPaused && !obstacle.Gateway && (screen == Screen.GameScreen || screen == Screen.LevelGameScreen))
                     {
                         isLoading = true;
                         obstacle.didKill = true;
@@ -565,7 +594,22 @@ namespace On_the_Line
                 }
                 if (highestObstacleY >= 0 && obstacles.Count < 2000)
                 {
-                    newObstacle(highestObstacleY);
+                    if (screen == Screen.LevelGameScreen)
+                    {
+                        if (obstaclesLoadedSoFar == level1.Length)
+                        {
+                            loadObstacle(highestObstacleY, $"ObstacleX");
+                        }
+                        else
+                        {
+                            loadObstacle(highestObstacleY, $"Obstacle{level1[obstaclesLoadedSoFar]}");
+                            obstaclesLoadedSoFar++;
+                        }
+                    }
+                    else
+                    {
+                        newObstacle(highestObstacleY);
+                    }
                 }
                 #endregion
                 #region Update Enemies
@@ -701,13 +745,13 @@ namespace On_the_Line
             }
             lastKs = ks;
             #endregion
-            if (screen == Screen.GameScreen)//gameplay
+            if (screen == Screen.GameScreen || screen == Screen.LevelGameScreen)//gameplay
             {
                 screenChanger.Position += screenChanger.Speed;
                 pauseMenu.Update(pauseMenuColor, false);
                 pauseMenu.Speed.X = 0;
                 optionsButton.Position = pauseMenu.Position + new Vector2(40 * GlobalScaleFactor, 50 * GlobalScaleFactor);
-                foreach(PaletteSelector selector in colorSelectors)
+                foreach (PaletteSelector selector in colorSelectors)
                 {
                     selector.Update();
                 }
@@ -715,7 +759,15 @@ namespace On_the_Line
                 if (restartButton.Clicked)
                 {
                     setScreen(Screen.ScreenTransition);
-                    NextScreen = Screen.GameScreen;
+                    if (screen == Screen.GameScreen)
+                    {
+                        NextScreen = Screen.GameScreen;
+                    }
+                    else
+                    {
+                        NextScreen = Screen.LevelGameScreen;
+                        obstaclesLoadedSoFar = 0;
+                    }
                 }
                 mainMenuButton.Update(TextColor);
                 if (mainMenuButton.Clicked)
@@ -796,7 +848,7 @@ namespace On_the_Line
                         {
                             Mouse.SetPosition(0, ms.Y);
                         }
-                        else if (ms.X > 500 * GlobalScaleFactor)
+                        else if (ms.X > 500 * GlobalScaleFactor + 2 * FillerSpaceOnSide)
                         {
                             Mouse.SetPosition((int)(500 * GlobalScaleFactor), ms.Y);
                         }
@@ -820,7 +872,7 @@ namespace On_the_Line
                 pauseMenu.Position.X += pauseMenu.Speed.X;
                 pauseMenu.Update(pauseMenuColor, false);
                 optionsButton.Update(TextColor, false);
-                foreach(PaletteSelector selector in colorSelectors)
+                foreach (PaletteSelector selector in colorSelectors)
                 {
                     selector.Update();
                 }
@@ -904,7 +956,7 @@ namespace On_the_Line
             }
             //colorButton.Draw(generalSpriteBatch);
             obstacleSizeButton.Draw(generalSpriteBatch);
-            if (screen == Screen.InGameOptionsMenu || screen == Screen.GameScreen)
+            if (screen == Screen.InGameOptionsMenu || screen == Screen.GameScreen || screen == Screen.LevelGameScreen)
             {
                 player.Draw(generalSpriteBatch);
                 pauseMenu.Draw(generalSpriteBatch);
@@ -930,7 +982,7 @@ namespace On_the_Line
                 player.Position = new Vector2((int)shootStyleButton.Position.X + shootStyleButton.Texture.Width / 2 * GlobalScaleFactor - Content.Load<Texture2D>("Ball").Width / 2 * GlobalScaleFactor, (int)shootStyleButton.Position.Y + shootStyleButton.Texture.Height / 2 * GlobalScaleFactor - (Content.Load<Texture2D>("Ball").Height / 2 * GlobalScaleFactor));
 
                 generalSpriteBatch.DrawString(endGameFont, "Choose a level", levelsScreen.Position + new Vector2(150 * GlobalScaleFactor + FillerSpaceOnSide, 400 * GlobalScaleFactor), TextColor);
-                generalSpriteBatch.DrawString(endGameFont, "Level", levelsScreen.Position +  new Vector2(190 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor), TextColor);
+                generalSpriteBatch.DrawString(endGameFont, "Level", levelsScreen.Position + new Vector2(190 * GlobalScaleFactor + FillerSpaceOnSide, 540 * GlobalScaleFactor), TextColor);
                 levelSelector.Draw(generalSpriteBatch);
                 levelStartButton.Draw(generalSpriteBatch);
 
@@ -952,7 +1004,7 @@ namespace On_the_Line
             }
             restartButton.Draw(generalSpriteBatch);
             mainMenuButton.Draw(generalSpriteBatch);
-            if (screen == Screen.GameScreen)//gameplay
+            if (screen == Screen.GameScreen || screen == Screen.LevelGameScreen)//gameplay
             {
                 int laserCount = player.lasers.Count;
                 player.Draw(generalSpriteBatch);

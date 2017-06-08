@@ -128,6 +128,10 @@ namespace On_the_Line
             else if (!OnTheLine.isPaused && !OnTheLine.hasLost)
             {
                 Position.Y++;
+                foreach (Laser laser in lasers)
+                {
+                    laser.Position.Y++;
+                }
             }
             Hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * OnTheLine.GlobalScaleFactor), (int)(Texture.Height * OnTheLine.GlobalScaleFactor));
         }

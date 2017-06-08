@@ -85,7 +85,7 @@ namespace On_the_Line
             for (int i = 0; i < lasers.Count; i++)
             {
                 lasers[i].Update();
-                if (OnTheLine.screen == Screen.GameScreen && (lasers[i].Hitbox.X > 500 || lasers[i].Hitbox.X < 0 || lasers[i].Hitbox.Y < 0 || lasers[i].Hitbox.Y > 1000) || OnTheLine.hasLost)
+                if ((OnTheLine.screen == Screen.GameScreen || OnTheLine.screen == Screen.LevelGameScreen)&& (lasers[i].Hitbox.X > 500 || lasers[i].Hitbox.X < 0 || lasers[i].Hitbox.Y < 0 || lasers[i].Hitbox.Y > 1000) || OnTheLine.hasLost)
                 {
                     lasers.Remove(lasers[i]);
                     i--;
@@ -113,7 +113,7 @@ namespace On_the_Line
                     Counting = true;
                     CountingElapsedTime = TimeSpan.Zero;
                 }
-                if (mouseState.LeftButton == ButtonState.Released && OnTheLine.screen == Screen.GameScreen)
+                if (mouseState.LeftButton == ButtonState.Released && (OnTheLine.screen == Screen.GameScreen || OnTheLine.screen == Screen.LevelGameScreen))
                 {
                     IsClicked = false;
                     OnTheLine.isPaused = true;

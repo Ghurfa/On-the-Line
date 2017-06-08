@@ -12,6 +12,7 @@ namespace On_the_Line
         GameScreen,
         OptionsMenu,
         InGameOptionsMenu,
-        LevelsMenu
+        LevelsMenu,
+        LevelGameScreen
     }
 }
