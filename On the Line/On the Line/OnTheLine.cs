@@ -62,6 +62,7 @@ namespace On_the_Line
         int destroyedObstacles;
         int enemiesKilled;
         int slidingSpeed = 0;
+        int lastObstacle = 0;
         public static int ObstacleSize = 25;
         public static Screen screen = Screen.MainMenu;
         Screen lastScreen;
@@ -193,7 +194,7 @@ namespace On_the_Line
         void newObstacle(float yOffset)
         {
             int randomNumber = random.Next(1, 27); //Chooses a random obstacle from all 26
-            if (difficulty[randomNumber - 1] > score.TotalSeconds) //If you don't have enough score for it to load, try again
+            if (difficulty[randomNumber - 1] > score.TotalSeconds || randomNumber == lastObstacle) //If you don't have enough score for it to load, try again
             {
                 newObstacle(yOffset);
             }
@@ -207,6 +208,10 @@ namespace On_the_Line
                 {
                     yOffset -= 1000;
                 }
+                //Sets the obstacle to be loaded as the last obstacle so the next obstacle is not the same obstacle
+                lastObstacle = randomNumber;
+
+                //Load the obstacle
                 loadObstacle(yOffset, string.Format("Obstacle{0}", randomNumber));
             }
         }
@@ -228,6 +233,7 @@ namespace On_the_Line
             Texture2D laserTexture = Content.Load<Texture2D>("Laser");
             Vector2 position = new Vector2(0, 0);
             Vector2 obstacleSize = new Vector2(25, 25);
+
 
             //Looks at every single pixel and decides what to load there based off the pixel's color
             for (int y = 0; y < obstacleTexture.Height; y++)
@@ -293,6 +299,7 @@ namespace On_the_Line
                 }
                 else if (screenToSetTo == Screen.ScreenTransition)
                 {
+                    lastObstacle = 0;
                     screenChanger.Position = new Vector2(500 * GlobalScaleFactor + 2 * FillerSpaceOnSide, 0);
                     screenChanger.Speed = new Vector2(-30, 0);
                 }
@@ -758,7 +765,6 @@ namespace On_the_Line
                 restartButton.Update(TextColor);
                 if (restartButton.Clicked)
                 {
-                    setScreen(Screen.ScreenTransition);
                     if (screen == Screen.GameScreen)
                     {
                         NextScreen = Screen.GameScreen;
@@ -768,6 +774,7 @@ namespace On_the_Line
                         NextScreen = Screen.LevelGameScreen;
                         obstaclesLoadedSoFar = 0;
                     }
+                    setScreen(Screen.ScreenTransition);
                 }
                 mainMenuButton.Update(TextColor);
                 if (mainMenuButton.Clicked)
