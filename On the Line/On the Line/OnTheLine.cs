@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Xml;
 using System.Diagnostics;
 
 namespace On_the_Line
@@ -19,6 +20,9 @@ namespace On_the_Line
         GraphicsDeviceManager graphics;
         SpriteBatch generalSpriteBatch;
 
+        string highscoresFileName = @"C:\Users\GMRInstructor\Documents\Visual Studio 2015\Projects\On-the-Line\On the Line\On the LineContent\Highscores.xml";
+        XmlDocument doc = new XmlDocument();
+             
         public static Player player;
         Texture2D obstaclePixel;
 
@@ -109,6 +113,7 @@ namespace On_the_Line
         public OnTheLine()
         {
             //Load default values
+            doc.Load(highscoresFileName);
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = (int)(500 * GlobalScaleFactor) + 2 * FillerSpaceOnSide;
@@ -489,7 +494,7 @@ namespace On_the_Line
                         }
                     }
                     #endregion
-                    #region Checks Shootstyle Buttoni
+                #region Checks Shootstyle Buttoni
                     shootStyleButton.Update(TextColor);
                     if (shootStyleButton.Clicked)
                     {

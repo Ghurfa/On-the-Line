@@ -149,7 +149,7 @@ namespace On_the_Line
                     foreach (Laser laser in lasers)
                     {
                         laser.Position.X -= laser.Speed.X;
-                        laser.Position.Y -= laser.Speed.X;
+                        laser.Position.Y -= laser.Speed.Y;
                     }
                 }
             }
